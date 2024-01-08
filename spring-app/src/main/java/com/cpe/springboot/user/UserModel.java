@@ -98,6 +98,10 @@ public class UserModel implements Serializable{
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	
-	
+
+	@Override
+	public String toString() {
+		return "UserModel [id=" + id + ", login=" + login + ", pwd=" + pwd + ", account=" + account + ", lastName="
+				+ lastName + ", surName=" + surName + ", email=" + email + "]";
+	}
 }
