@@ -10,9 +10,9 @@ export const App = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<CryptoDetailsPage />} />
+        <Route path="/" element={<HomePage />} />
         <Route path="/register" element={<RegistrationPage />} />
-        <Route path="/home" element={<HomePage />} />
+        {/* <Route path="/home" element={<HomePage />} /> */}
         {/* <Route path="/wallet" element={<PersonalWalletPage />} />
         <Route path="/details" element={<CryptoDetailsPage />} />
         <Route path="/game" element={<GamePage />} /> */}

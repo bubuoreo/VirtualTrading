@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { Button } from '@chakra-ui/react';
 
 const CryptoCourbe = () => {
   const [symbol, setSymbol] = useState('BTC-USD');
@@ -43,9 +44,9 @@ const CryptoCourbe = () => {
     <div>
       <h1>Crypto Chart</h1>
 
-      <button onClick={() => updateSymbol('BTC-USD')}>BTC</button>
-      <button onClick={() => updateSymbol('ETH-USD')}>ETH</button>
-      <button onClick={() => updateSymbol('CHZ-USD')}>CHZ</button>
+      <Button onClick={() => updateSymbol('BTC-USD')} variant="futuristic">BTC</Button>
+      <Button onClick={() => updateSymbol('ETH-USD')} variant="futuristic">ETH</Button>
+      <Button onClick={() => updateSymbol('CHZ-USD')} variant="futuristic">CHZ</Button>
 
       <br />
 

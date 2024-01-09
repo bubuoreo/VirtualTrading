@@ -1,3 +1,4 @@
+// chakra.config.js
 import { extendTheme } from '@chakra-ui/react';
 
 const theme = extendTheme({
@@ -12,10 +13,28 @@ const theme = extendTheme({
   },
   components: {
     Button: {
-      // You can customize Button styles here
-    },
-    Table: {
-      // You can customize Table styles here
+      baseStyle: {
+        fontWeight: 'bold',
+        borderRadius: 'full',
+        _focus: {
+          boxShadow: 'none',
+        },
+      },
+      variants: {
+        futuristic: {
+          bg: 'transparent',
+          color: 'brand.500',
+          border: '2px solid',
+          borderColor: 'brand.500',
+          _hover: {
+            bg: 'brand.500',
+            color: 'white',
+          },
+        },
+      },
+      defaultProps: {
+        variant: 'futuristic',
+      },
     },
     // Add more component styles as needed
   },
