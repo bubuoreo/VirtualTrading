@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import LoginPage from './pages/LoginPage.jsx'
 import HomePage from './pages/HomePage.jsx'
 import RegistrationPage from './pages/RegistrationPage.jsx'
+import CryptoDetailsPage from './pages/CryptoDetailsPage.jsx'
 
 export const App = () => {
   
@@ -9,7 +10,7 @@ export const App = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<LoginPage />} />
+        <Route path="/" element={<CryptoDetailsPage />} />
         <Route path="/register" element={<RegistrationPage />} />
         <Route path="/home" element={<HomePage />} />
         {/* <Route path="/wallet" element={<PersonalWalletPage />} />
