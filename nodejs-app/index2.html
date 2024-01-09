@@ -22,37 +22,63 @@
   <script>
 
     let symbol = 'BTC-USD';  // Default symbol
+
+    // Importez l'adaptateur de date
+    import { AdapterDateFns } from 'chartjs-adapter-date-fns';
+
+    // Configurez l'adaptateur de date
+    Chart.register(AdapterDateFns);
+
+    // Function to fetch data and update the candlestick chart
+        function fetchData() {
+        fetch(`http://localhost:3000/finance7j/${symbol}`)
+            .then(response => response.json())
+            .then(data => {
+            const ctx = document.getElementById('cryptoChart').getContext('2d');
+
+            // If the chart already exists, destroy it to create a new one
+            if (window.myChart) {
+                window.myChart.destroy();
+            }
+
+            const candlestickData = data.quotes.map(q => ({
+                t: new Date(q.date),
+                o: q.open,
+                h: q.high,
+                l: q.low,
+                c: q.close
+            }));
+
+            window.myChart = new Chart(ctx, {
+                type: 'candlestick',
+                data: {
+                datasets: [{
+                    label: `${symbol} Candlestick Chart`,
+                    data: candlestickData,
+                    borderColor: 'rgb(75, 192, 192)',
+                    borderWidth: 1,
+                    color: {
+                    up: 'green',
+                    down: 'red',
+                    unchanged: 'gray'
+                    }
+                }]
+                },
+                options: {
+                scales: {
+                    x: {
+                    type: 'time',
+                    time: {
+                        unit: 'day'
+                    }
+                    }
+                }
+                }
+            });
+            })
+            .catch(err => console.error("Error loading candlestick data: ", err));
+        }
   
-    // Function to fetch data and update the chart
-    function fetchData() {
-      fetch(`http://localhost:3000/finance7j/${symbol}`)
-        .then(response => response.json())
-        .then(data => {
-          const ctx = document.getElementById('cryptoChart').getContext('2d');
-  
-          // If the chart already exists, destroy it to create a new one
-          if(window.myChart) {
-            window.myChart.destroy();
-          }
-  
-          const chartData = data.quotes.map(q => q.close);  // Use closing prices
-          const labels = data.quotes.map(q => q.date.substring(0, 10));  // Dates
-  
-          window.myChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-              labels: labels,
-              datasets: [{
-                label: `${symbol} Price`,
-                data: chartData,
-                borderColor: 'rgb(75, 192, 192)',
-                tension: 0.1
-              }]
-            },
-          });
-        })
-        .catch(err => console.error("Error loading chart data: ", err));
-    } 
       
     // Function to fetch and update the price of an asset
     function updatePrice(assetSymbol, displayElementId) {
