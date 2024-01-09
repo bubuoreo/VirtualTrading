@@ -52,13 +52,13 @@ public class UserRestController {
 
 	@RequestMapping(method = RequestMethod.POST, value = "/user")
 	public UserDTO addUser(@RequestBody UserDTO user) {
-		return userService.addUser(user, false);
+		return userService.addUser(user);
 	}
 
 	@RequestMapping(method = RequestMethod.PUT, value = "/user/{id}")
 	public UserDTO updateUser(@RequestBody UserDTO user, @PathVariable String id) {
 		user.setId(Integer.valueOf(id));
-		return userService.updateUser(user, false);
+		return userService.updateUser(user);
 	}
 
 	@RequestMapping(method = RequestMethod.DELETE, value = "/user/{id}")

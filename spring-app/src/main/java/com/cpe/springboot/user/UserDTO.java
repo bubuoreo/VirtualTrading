@@ -1,5 +1,10 @@
 package com.cpe.springboot.user;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import com.cpe.springboot.asset.AssetModel;
+
 public class UserDTO {
 	private Integer id;
 	private String login;
@@ -9,16 +14,22 @@ public class UserDTO {
 	private String surName;
 	private String email;
 	
-	public UserDTO() {}
+	private Set<Integer> assetsList = new HashSet<>();
 
-	public UserDTO(UserModel user) {
-		this.id = user.getId();
-		this.login = user.getLogin();
-		this.pwd = user.getPwd();
-		this.account = user.getAccount();
-		this.lastName = user.getLastName();
-		this.surName = user.getSurName();
-		this.email = user.getEmail();
+	public UserDTO() {
+	}
+
+	public UserDTO(UserModel userModel) {
+		this.id = userModel.getId();
+		this.login = userModel.getLogin();
+		this.pwd = userModel.getPwd();
+		this.account = userModel.getAccount();
+		this.lastName = userModel.getLastName();
+		this.surName = userModel.getSurName();
+		this.email = userModel.getEmail();
+		for (AssetModel asset : userModel.getAssetsList()) {
+			this.assetsList.add(asset.getId());
+		}
 	}
 
 	public Integer getId() {
@@ -82,5 +93,12 @@ public class UserDTO {
 		return "UserDTO [id=" + id + ", login=" + login + ", pwd=" + pwd + ", account=" + account + ", lastName="
 				+ lastName + ", surName=" + surName + ", email=" + email + "]";
 	}
-	
+
+	public Set<Integer> getAssetsList() {
+		return assetsList;
+	}
+
+	public void setAssetsList(Set<Integer> assetsList) {
+		this.assetsList = assetsList;
+	}
 }

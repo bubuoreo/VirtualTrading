@@ -5,8 +5,6 @@ import org.springframework.jms.annotation.JmsListener;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Component;
 
-
-
 @Component
 public class UserListener {
 	
@@ -23,7 +21,7 @@ public class UserListener {
     public void receiveUserModelFromUpdateQueue(UserModel user) {
     	System.out.println("[UserListener] RECEIVED updateUser User=["+user+"]");
     	
-    	userService.updateUser(new UserDTO(user), true);
+    	userService.updateUser(new UserDTO(user));
     }
     
     
@@ -31,6 +29,6 @@ public class UserListener {
     public void receiveUserModelFromAddQueue(UserModel user) {
     	System.out.println("[UserListener] RECEIVED addUser User=["+user+"]");
     	
-    	userService.addUser(new UserDTO(user), true);
+    	userService.addUser(new UserDTO(user));
     }
 }
