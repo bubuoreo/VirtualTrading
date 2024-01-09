@@ -37,6 +37,21 @@ app.get('/finance/:symbol/', async (req, res) => {
   }
 });
 
+app.get('/finance7j/:symbol/', async (req, res) => {
+  const { symbol} = req.params;
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7); // Définir la date à il y a 7 jours
+  try {
+    const result = await yahooFinance.chart(symbol, {
+      period1: sevenDaysAgo.toISOString().split('T')[0], // Start Date 7 days ago
+      interval: '1d',
+    });
+    res.json(result);
+  } catch (error) {
+    res.status(500).send("Error fetching data: " + error);
+  }
+});
+
 
 app.listen(3000, () => {
   console.log('Server is running on http://localhost:3000');
