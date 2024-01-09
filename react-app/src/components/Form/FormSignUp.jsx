@@ -12,7 +12,7 @@ const UserForm = ({ onSubmit, onCancel }) => {
     event.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:8083/user', {
+      const response = await fetch('http://localhost:8080/user', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -25,7 +25,6 @@ const UserForm = ({ onSubmit, onCancel }) => {
           surName: surname,
           account: money,
           lastName: lastname,
-          cardList: [0],
         }),
       });
 

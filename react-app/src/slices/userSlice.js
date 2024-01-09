@@ -11,7 +11,6 @@ export const userSlice = createSlice({
       lastName: '',
       email: '',
       surName: '',
-      cardLisdt: [],
     },
   },
   reducers: {
