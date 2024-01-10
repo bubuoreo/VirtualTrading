@@ -10,11 +10,8 @@ const HomePage = () => {
             
             <div className="bg-gray-200 min-h-screen">
                 <div className="container mx-auto">
-                    <h1 className="text-4xl font-bold mt-8 mb-4">Crypto Details</h1>
-                    {/* Utilisez le composant Link pour créer un lien vers la CryptoDetailsPage */}
-                    <Link to="/crypto-details">
-                        <CryptoItem />
-                    </Link>
+                <h1 className="text-4xl font-bold mt-8 mb-4 center"  style={{ marginLeft: '550px', marginTop: '20px' }}>Crypto Explorer</h1>
+                <CryptoItem />
                 </div>
             </div>
         </div>
