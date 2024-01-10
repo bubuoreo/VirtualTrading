@@ -6,8 +6,21 @@ const yahooFinance = require('yahoo-finance2').default;
 const cors = require('cors');
 const app = express(); 
 const server = http.createServer(app);
-const io = new Server(server);
-app.use(cors()); // Enable CORS
+const io = new Server(server, {
+  cors: {
+    origin: 'http://127.0.0.1:5500',
+    methods: ["GET", "POST"]
+  }
+});
+
+// Ajoutez les options CORS pour autoriser les requêtes de votre client
+const corsOptions = {
+  origin: 'http://127.0.0.1:5500', // ou '*' pour autoriser toutes les origines
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+  optionsSuccessStatus: 204
+};
+app.use(cors(corsOptions));
 
 // Ajout pour News
 const axios = require('axios');
@@ -66,7 +79,7 @@ app.get('/finance7j/:symbol/', async (req, res) => {
 // Cette fonction récupère les données et les envoie via WebSocket
 async function emitCryptoData(socket) {
   try {
-    const symbols = ['BTC-USD']; // Exemple de symboles
+    const symbols = ['BTC-USD','ETH-USD','CHZ-USD',]; // Exemple de symboles
     for (const symbol of symbols) {
       const data = await yahooFinance.quote(symbol);
       socket.emit('cryptoData', { symbol, data });
@@ -110,6 +123,6 @@ app.get('/articles', (req, res) => {
         });
 });
 
-app.listen(3000, () => {
+server.listen(3000, () => {
   console.log('Server is running on http://localhost:3000');
 });
