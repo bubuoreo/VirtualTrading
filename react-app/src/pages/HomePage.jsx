@@ -1,17 +1,19 @@
-import React, { useState } from 'react';
-
+// Importez les modules nécessaires de react-router-dom
+import React from 'react';
+import { Link } from 'react-router-dom';
 import { Header } from '../components/Header/Header.jsx';
-import ActionButton from '../components/ActionButton/ActionButton.jsx';
+import CryptoItem from '../components/Crypto/CryptoItem.jsx';
 
 const HomePage = () => {
     return (
-        <div >
-            <Header page={"Home"}/>
-            {/* <div className='d-flex align-items-center justify-content-center mt-5'>
-                <ActionButton action="buy" label="Buy" />
-                <ActionButton action="sell" label="Sell" />
-                <ActionButton action="selection" label="Play" />
-            </div> */}
+        <div>
+            
+            <div className="bg-gray-200 min-h-screen">
+                <div className="container mx-auto">
+                <h1 className="text-4xl font-bold mt-8 mb-4 center"  style={{ marginLeft: '550px', marginTop: '20px' }}>Crypto Explorer</h1>
+                <CryptoItem />
+                </div>
+            </div>
         </div>
     );
 };
