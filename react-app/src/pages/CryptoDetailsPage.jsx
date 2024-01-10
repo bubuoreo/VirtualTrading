@@ -2,6 +2,7 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import CryptoCourbe from '../components/Crypto/CryptoCourbe';
 import CryptoInfo from '../components/Crypto/CryptoInfo';
+import FormAction from '../components//Form/FormAction';
 
 const CryptoDetailsPage = () => {
   const { cryptoSymbol } = useParams();
@@ -12,8 +13,13 @@ const CryptoDetailsPage = () => {
         <div>
           <CryptoCourbe cryptoSymbol={cryptoSymbol} />
         </div>
-        <div>
-          <CryptoInfo cryptoSymbol={cryptoSymbol} />
+        <div className="flex">
+          <div className="flex-1">
+            <CryptoInfo cryptoSymbol={cryptoSymbol} />
+          </div>
+          <div className="flex-1">
+            <FormAction cryptoSymbol={cryptoSymbol} />
+          </div>
         </div>
       </div>
     </div>
