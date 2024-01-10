@@ -9,6 +9,10 @@ const server = http.createServer(app);
 const io = new Server(server);
 app.use(cors()); // Enable CORS
 
+// Ajout pour News
+const axios = require('axios');
+const port = 3000;
+
 // Déclaration d'une route API dans l'application express qui récupère et renvoie les données 
 // financières d'un actif spécifié (symbol) sur un intervalle de temps donné (timeframe),
 // en utilisant les données de l'année précédente jusqu'à aujourd'hui.
@@ -86,6 +90,25 @@ io.on('connection', (socket) => {
   });
 });
 
+// Ajout pour News
+app.use(express.static('public')); // Pour servir des fichiers statiques comme HTML, CSS, JS
+
+app.get('/articles', (req, res) => {
+    const apiKey = '28969bda89aa4648827906d830743c8b';
+    const q = 'crypto';
+    const language = 'fr';
+    const oldestDate = '2024-01-01';
+    const apiUrl = `https://newsapi.org/v2/everything?q=${q}&from=${oldestDate}&sortBy=publishedAt&language=${language}&apiKey=${apiKey}`;
+
+    axios.get(apiUrl)
+        .then(response => {
+            res.json(response.data);
+        })
+        .catch(error => {
+            console.error('Erreur lors de la requête API :', error);
+            res.status(500).send('Erreur serveur');
+        });
+});
 
 app.listen(3000, () => {
   console.log('Server is running on http://localhost:3000');
