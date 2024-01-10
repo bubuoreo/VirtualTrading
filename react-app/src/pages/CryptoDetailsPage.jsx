@@ -1,17 +1,23 @@
 import React from 'react';
-import CryptoItem from '../components/Crypto/CryptoItem';
+import { useParams } from 'react-router-dom';
 import CryptoCourbe from '../components/Crypto/CryptoCourbe';
+import CryptoInfo from '../components/Crypto/CryptoInfo';
 
 const CryptoDetailsPage = () => {
-return (
+  const { cryptoSymbol } = useParams();
+
+  return (
     <div className="bg-gray-200 min-h-screen">
-        <div className="container mx-auto">
-        <div> <CryptoCourbe /> </div>
-        <h1 className="text-4xl font-bold mt-8 mb-4">Crypto Details</h1>
-        <CryptoItem />
+      <div className="container mx-auto">
+        <div>
+          <CryptoCourbe cryptoSymbol={cryptoSymbol} />
         </div>
+        <div>
+          <CryptoInfo cryptoSymbol={cryptoSymbol} />
+        </div>
+      </div>
     </div>
-    );
+  );
 };
 
 export default CryptoDetailsPage;

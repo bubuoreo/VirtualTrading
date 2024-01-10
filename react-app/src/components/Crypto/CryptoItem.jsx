@@ -1,14 +1,6 @@
 // CryptoItem.jsx
 import React, { useEffect, useState } from 'react';
-import {
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  chakra,
-} from '@chakra-ui/react';
+import { Table, Thead, Tbody, Tr, Th, Td, chakra } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import CryptoCourbe7 from './CryptoCourbe7';
 
@@ -18,13 +10,13 @@ const CryptoItem = () => {
   const [cryptos, setCryptos] = useState(['BTC-USD', 'ETH-USD', 'CHZ-USD', 'WBNB-USD', 'SOL-USD', 'XRP-USD', 'ADA-USD', 'AVAX-USD', 'DOGE-USD', 'EGLD-USD']);
   const [tableData, setTableData] = useState([]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const newData = await Promise.all(
-          cryptos.map(async (crypto) => {
-            const response = await fetch(`http://localhost:3000/finance/${crypto}`);
-            const data = await response.json();
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const newData = await Promise.all(
+                    cryptos.map(async (crypto) => {
+                        const response = await fetch(`http://localhost:3000/finance/${crypto}`);
+                        const data = await response.json();
 
             return {
               crypto,
@@ -40,18 +32,18 @@ const CryptoItem = () => {
           })
         );
 
-        setTableData(newData);
-      } catch (error) {
-        console.error('Error loading data:', error);
-      }
-    };
+                setTableData(newData);
+            } catch (error) {
+                console.error('Error loading data:', error);
+            }
+        };
 
-    fetchData();
+        fetchData();
 
-    const intervalId = setInterval(fetchData, 60000);
+        const intervalId = setInterval(fetchData, 60000);
 
-    return () => clearInterval(intervalId);
-  }, [cryptos]);
+        return () => clearInterval(intervalId);
+    }, [cryptos]);
 
   return (
     <Table variant="simple" mt="8">
