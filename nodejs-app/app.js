@@ -1,30 +1,42 @@
+const CONFIG = require('./config.json')
+
 // Declaration des différents const
 const express = require('express');
 const http = require('http');
-const { Server } = require('socket.io');
-const yahooFinance = require('yahoo-finance2').default;
-const cors = require('cors');
-const app = express(); 
+const socketIo = require('socket.io');
+const axios = require('axios');
+
+const MainControllerClass = require('./app/controllers/MainController.js');
+
+global.CONFIG = CONFIG;
+
+const app = express();
 const server = http.createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: 'http://127.0.0.1:5500',
-    methods: ["GET", "POST"]
-  }
+const io = socketIo(server, {
+    cors: {
+        origin: "*",
+        methods: ["GET", "POST"]
+    }
 });
 
-// Ajoutez les options CORS pour autoriser les requêtes de votre client
-const corsOptions = {
-  origin: 'http://127.0.0.1:5500', // ou '*' pour autoriser toutes les origines
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  credentials: true,
-  optionsSuccessStatus: 204
-};
-app.use(cors(corsOptions));
+const mainController = new MainControllerClass();
 
-// Ajout pour News
-const axios = require('axios');
-const port = 3000;
+
+io.on('connection', (socket) => {
+  const userId = socket.handshake.query.id;
+  console.log('Un utilisateur s\'est connecté');
+  mainController.init({ io, socket, idUser: userId });
+  // emitCryptoData(socket);
+
+  // // Envoyer les données toutes les 60 secondes
+  // const intervalId = setInterval(() => emitCryptoData(socket), 60000);
+
+  socket.on('disconnect', () => {
+    console.log('Un utilisateur s\'est déconnecté');
+    // clearInterval(intervalId);
+    mainController.disconnect({socket: socket, userId: userId});
+  });
+});
 
 // Déclaration d'une route API dans l'application express qui récupère et renvoie les données 
 // financières d'un actif spécifié (symbol) sur un intervalle de temps donné (timeframe),
@@ -89,22 +101,8 @@ async function emitCryptoData(socket) {
   }
 }
 
-// Gestion des connexions WebSocket
-io.on('connection', (socket) => {
-  console.log('A user connected');
-  emitCryptoData(socket);
-
-  // Envoyer les données toutes les 30 secondes
-  const intervalId = setInterval(() => emitCryptoData(socket), 60000);
-
-  socket.on('disconnect', () => {
-    console.log('A user disconnected');
-    clearInterval(intervalId);
-  });
-});
-
 // Ajout pour News
-app.use(express.static('public')); // Pour servir des fichiers statiques comme HTML, CSS, JS
+app.use(express.static(CONFIG.www));
 
 app.get('/articles', (req, res) => {
     const apiKey = '28969bda89aa4648827906d830743c8b';
@@ -123,6 +121,6 @@ app.get('/articles', (req, res) => {
         });
 });
 
-server.listen(3000, () => {
+server.listen(CONFIG.port, () => {
   console.log('Server is running on http://localhost:3000');
 });
