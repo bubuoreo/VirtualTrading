@@ -2,20 +2,23 @@ package com.cpe.springboot.asset;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import com.cpe.springboot.common.DTOMapper;
 import com.cpe.springboot.user.UserModel;
-import com.google.common.base.Optional;
+import com.cpe.springboot.user.UserService;
 
 @Service
 public class AssetModelService {
 	
-	private AssetRepository assetRepository;
+	private final AssetRepository assetRepository;
+	private final UserService userService;
 
-	public AssetModelService(AssetRepository assetRepository) {
+	public AssetModelService(AssetRepository assetRepository, UserService userService) {
 		this.assetRepository = assetRepository;
+		this.userService = userService;
 	}
 
 	public List<AssetModel> getAllAssetModel() {
@@ -44,5 +47,8 @@ public class AssetModelService {
 		return null;
 	}
 
+	public Optional<UserModel> getUser(Integer userId) {
+		return userService.getUser(userId);
+	}
 
 }

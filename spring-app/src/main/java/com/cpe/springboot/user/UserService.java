@@ -45,6 +45,7 @@ public class UserService {
 
 	public UserDTO updateUser(UserDTO user) {
 		UserModel newUserModel = DTOMapper.fromUserDTOToUserModel(user);
+		System.out.println(newUserModel);
 		UserModel updatedUser = userRepository.save(newUserModel);
 		return DTOMapper.fromUserModelToUserDTO(updatedUser);
 	}

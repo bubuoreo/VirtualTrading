@@ -24,11 +24,9 @@ import com.cpe.springboot.user.UserService;
 public class TransactionRestController {
 	
 	private final TransactionService transactionService;
-	private final UserService userService;
 
-	public TransactionRestController(TransactionService transactionService, UserService userService) {
+	public TransactionRestController(TransactionService transactionService) {
 		this.transactionService = transactionService;
-		this.userService = userService;
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value="/transactions")
@@ -42,7 +40,7 @@ public class TransactionRestController {
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/transaction")
 	public TransactionDTO writeTransaction(@RequestBody TransactionDTO t) {
-		Optional<UserModel> user = this.userService.getUser(t.getUserId());
+		Optional<UserModel> user = transactionService.checkUserExistance(t.getUserId());
 		if (user.isPresent()) {
 			return transactionService.writeTransaction(t, false);			
 		}

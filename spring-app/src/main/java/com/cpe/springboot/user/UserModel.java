@@ -123,6 +123,7 @@ public class UserModel implements Serializable{
 	@Override
 	public String toString() {
 		return "UserModel [id=" + id + ", login=" + login + ", pwd=" + pwd + ", account=" + account + ", lastName="
-				+ lastName + ", surName=" + surName + ", email=" + email + "]";
+				+ lastName + ", surName=" + surName + ", email=" + email + ", assetsList=" + assetsList + "]";
 	}
+
 }

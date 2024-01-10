@@ -36,7 +36,6 @@ public class UserRestController {
 			uDTOList.add(DTOMapper.fromUserModelToUserDTO(uM));
 		}
 		return uDTOList;
-
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/user/{id}")

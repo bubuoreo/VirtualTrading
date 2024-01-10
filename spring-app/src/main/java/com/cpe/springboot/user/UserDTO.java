@@ -13,7 +13,7 @@ public class UserDTO {
 	private String lastName;
 	private String surName;
 	private String email;
-	
+
 	private Set<Integer> assetsList = new HashSet<>();
 
 	public UserDTO() {
@@ -91,7 +91,7 @@ public class UserDTO {
 	@Override
 	public String toString() {
 		return "UserDTO [id=" + id + ", login=" + login + ", pwd=" + pwd + ", account=" + account + ", lastName="
-				+ lastName + ", surName=" + surName + ", email=" + email + "]";
+				+ lastName + ", surName=" + surName + ", email=" + email + ", assetsList=" + assetsList + "]";
 	}
 
 	public Set<Integer> getAssetsList() {
