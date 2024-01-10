@@ -1,9 +1,13 @@
 // Declaration des différents const
 const express = require('express');
+const http = require('http');
+const { Server } = require('socket.io');
 const yahooFinance = require('yahoo-finance2').default;
 const cors = require('cors');
-const app = express();
-app.use(cors());  // Enable CORS
+const app = express(); 
+const server = http.createServer(app);
+const io = new Server(server);
+app.use(cors()); // Enable CORS
 
 // Déclaration d'une route API dans l'application express qui récupère et renvoie les données 
 // financières d'un actif spécifié (symbol) sur un intervalle de temps donné (timeframe),
@@ -37,6 +41,7 @@ app.get('/finance/:symbol/', async (req, res) => {
   }
 });
 
+
 app.get('/finance7j/:symbol/', async (req, res) => {
   const { symbol} = req.params;
   const sevenDaysAgo = new Date();
@@ -50,6 +55,35 @@ app.get('/finance7j/:symbol/', async (req, res) => {
   } catch (error) {
     res.status(500).send("Error fetching data: " + error);
   }
+});
+
+// Modification pour utilisation des sockets
+
+// Cette fonction récupère les données et les envoie via WebSocket
+async function emitCryptoData(socket) {
+  try {
+    const symbols = ['BTC-USD']; // Exemple de symboles
+    for (const symbol of symbols) {
+      const data = await yahooFinance.quote(symbol);
+      socket.emit('cryptoData', { symbol, data });
+    }
+  } catch (error) {
+    console.error("Error fetching crypto data: ", error);
+  }
+}
+
+// Gestion des connexions WebSocket
+io.on('connection', (socket) => {
+  console.log('A user connected');
+  emitCryptoData(socket);
+
+  // Envoyer les données toutes les 30 secondes
+  const intervalId = setInterval(() => emitCryptoData(socket), 30000);
+
+  socket.on('disconnect', () => {
+    console.log('A user disconnected');
+    clearInterval(intervalId);
+  });
 });
 
 

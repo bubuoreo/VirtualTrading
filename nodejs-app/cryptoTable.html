@@ -28,6 +28,7 @@
       <!-- Rows will be added here -->
     </tbody>
   </table>
+  <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
 
   <script>
     // List of cryptos to display
@@ -68,9 +69,17 @@
 
     // Populate table on load
     populateTable();
-
-    // Refresh the table every minute (60000 milliseconds)
-    setInterval(populateTable, 60000);
+    
+    // Connectez-vous au serveur WebSocket
+    const socket = io('http://localhost:3000');
+  
+    // Mise à jour des données lors de la réception d'un message WebSocket
+    socket.on('cryptoData', (data) => {
+      // Mettez à jour votre table ici en fonction des données reçues
+      console.log('Received data:', data);
+    });
+    
+    
   </script>
 </body>
 </html>
