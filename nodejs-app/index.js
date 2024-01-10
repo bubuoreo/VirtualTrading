@@ -95,7 +95,7 @@ io.on('connection', (socket) => {
   emitCryptoData(socket);
 
   // Envoyer les données toutes les 30 secondes
-  const intervalId = setInterval(() => emitCryptoData(socket), 30000);
+  const intervalId = setInterval(() => emitCryptoData(socket), 60000);
 
   socket.on('disconnect', () => {
     console.log('A user disconnected');
