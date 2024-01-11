@@ -31,25 +31,25 @@ const CryptoCourbe7 = ({ symbol }) => {
   // Calculate the minimum and maximum values from the chart data
   const minClose = Math.min(...chartData.map((quote) => quote.close));
   const maxClose = Math.max(...chartData.map((quote) => quote.close));
-
+  const strokeColor = chartData[0].close > chartData[chartData.length - 1].close ? 'red' : 'green';
   // Set the domain to be centered around the data values
   const yDomain = [minClose - 10, maxClose + 10];
 
   return (
-    <ResponsiveContainer width="110%" height={100}>
+    <ResponsiveContainer width="100%" height={100}>
       <AreaChart
         data={chartData}
         margin={{ top: 5, right: 5, left: 5, bottom: 5 }}
       >
         <XAxis dataKey="date" display="none" />
-        <YAxis domain={yDomain} display="none" />
+        <YAxis domain={[minClose, maxClose]} tick={false} display="none" />
         <Tooltip />
         <Area
           type="monotone"
           dataKey="close"
           name={`${symbol} Price`}
-          stroke="rgb(75, 192, 192)"
-          fill="rgba(75, 192, 192, 0.2)"
+          stroke={strokeColor}
+          fill={`rgba(${strokeColor === 'red' ? '255, 0, 0' : '0, 255, 0'}, 0.2)`}
         />
       </AreaChart>
     </ResponsiveContainer>
