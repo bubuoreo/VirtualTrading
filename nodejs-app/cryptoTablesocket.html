@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crypto Table</title>
+</head>
+<body>
+  <h1>Crypto Table</h1>
+  <table id="cryptoTable">
+    <thead>
+      <tr>
+        <th>Crypto</th>
+        <th>Crypto Name</th>
+        <th>Crypto Symbole</th>
+        <th>Image</th>
+        <th>Open</th>
+        <th>Close</th>
+        <th>High</th>
+        <th>Low</th>
+        <th>Circulating Supply</th>
+        <th>Market Cap</th>
+        <th>Volume 24H</th>
+      </tr>
+    </thead>
+    <tbody>
+        <!-- Rows will be added here -->
+    </tbody>
+  </table>
+  <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+
+  <script>
+    // État local pour stocker les données des cryptomonnaies
+    let cryptoDataState = {};
+  
+    // Connectez-vous au serveur WebSocket
+    const socket = io('http://localhost:3000');
+  
+    // Mise à jour des données lors de la réception d'un message WebSocket
+    socket.on('cryptoData', (update) => {
+      console.log('Received data:', update);
+      
+      // Mettre à jour l'état local avec les nouvelles données
+      cryptoDataState[update.symbol] = update.data;
+      
+      // Mettre à jour le tableau avec l'état local actuel
+      updateTable();
+    });
+  
+    function updateTable() {
+      const tbody = document.querySelector("#cryptoTable tbody");
+      tbody.innerHTML = ''; // Effacer les anciennes données du tableau
+  
+      // Parcourir l'état local et ajouter chaque cryptomonnaie au tableau
+      Object.keys(cryptoDataState).forEach((symbol) => {
+        const data = cryptoDataState[symbol];
+        const row = `
+          <tr>
+            <td>${data.shortName}</td>
+            <td>${data.fromCurrency}</td>
+            <td>${symbol}</td>
+            <td><img src=${data.coinImageUrl}></td>
+            <td>${data.regularMarketOpen.toFixed(2)}</td>
+            <td>${data.regularMarketPrice.toFixed(2)}</td>
+            <td>${data.regularMarketDayHigh.toFixed(2)}</td>
+            <td>${data.regularMarketDayLow.toFixed(2)}</td>
+            <td>${data.circulatingSupply.toLocaleString()}</td>
+            <td>${data.marketCap.toLocaleString()}</td>
+            <td>${data.volume24Hr.toLocaleString()}</td>
+          </tr>
+        `;
+        tbody.innerHTML += row; // Ajouter la nouvelle ligne au tableau
+      });
+    }
+  </script>
+  
+</body>
+</html>

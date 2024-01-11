@@ -12,20 +12,27 @@
     <thead>
       <tr>
         <th>Crypto</th>
+        <th>Crypto Name</th>
+        <th>Crypto Symbole</th>
+        <th>Image</th>
         <th>Open</th>
         <th>Close</th>
         <th>High</th>
         <th>Low</th>
+        <th>Circulating Supply</th>
+        <th>Market Cap</th>
+        <th>Volume 24H</th>
       </tr>
     </thead>
     <tbody>
       <!-- Rows will be added here -->
     </tbody>
   </table>
+  <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
 
   <script>
     // List of cryptos to display
-    const cryptos = ['BTC-USD', 'ETH-USD', 'CHZ-USD'];
+    const cryptos = ['BTC-USD','ETH-USD','CHZ-USD'];
 
     // Function to fetch data and populate the table
     function populateTable() {
@@ -37,13 +44,20 @@
           .then(response => response.json())
           .then(data => {
             // Utilisez les données directement renvoyées par l'API sans chercher le dernier élément du tableau 'quotes'
+            console.log(data)
             const row = `
               <tr>
+                <td>${data.shortName}</td>
+                <td>${data.fromCurrency}</td>
                 <td>${crypto}</td>
+                <td><img src=${data.coinImageUrl}></img></td>
                 <td>${data.regularMarketOpen.toFixed(2)}</td>
                 <td>${data.regularMarketPrice.toFixed(2)}</td>
                 <td>${data.regularMarketDayHigh.toFixed(2)}</td>
                 <td>${data.regularMarketDayLow.toFixed(2)}</td>
+                <td>${data.circulatingSupply.toLocaleString()}</td>
+                <td>${data.marketCap.toLocaleString()}</td>
+                <td>${data.volume24Hr.toLocaleString()}</td>
               </tr>
             `;
             // Append new rows to the table body
@@ -56,8 +70,16 @@
     // Populate table on load
     populateTable();
 
-    // Refresh the table every minute (60000 milliseconds)
-    setInterval(populateTable, 60000);
+    // Connectez-vous au serveur WebSocket
+    const socket = io('http://localhost:3000');
+  
+    // Mise à jour des données lors de la réception d'un message WebSocket
+    socket.on('cryptoData', (data) => {
+      // Mettez à jour votre table ici en fonction des données reçues
+      console.log('Received data:', data);
+    });
+    
+    
   </script>
 </body>
 </html>

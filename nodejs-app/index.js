@@ -1,9 +1,30 @@
 // Declaration des différents const
 const express = require('express');
+const http = require('http');
+const { Server } = require('socket.io');
 const yahooFinance = require('yahoo-finance2').default;
 const cors = require('cors');
-const app = express();
-app.use(cors());  // Enable CORS
+const app = express(); 
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: 'http://127.0.0.1:5500',
+    methods: ["GET", "POST"]
+  }
+});
+
+// Ajoutez les options CORS pour autoriser les requêtes de votre client
+const corsOptions = {
+  origin: 'http://127.0.0.1:5500', // ou '*' pour autoriser toutes les origines
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+  optionsSuccessStatus: 204
+};
+app.use(cors(corsOptions));
+
+// Ajout pour News
+const axios = require('axios');
+const port = 3000;
 
 // Déclaration d'une route API dans l'application express qui récupère et renvoie les données 
 // financières d'un actif spécifié (symbol) sur un intervalle de temps donné (timeframe),
@@ -37,6 +58,7 @@ app.get('/finance/:symbol/', async (req, res) => {
   }
 });
 
+
 app.get('/finance7j/:symbol/', async (req, res) => {
   const { symbol} = req.params;
   const sevenDaysAgo = new Date();
@@ -52,7 +74,55 @@ app.get('/finance7j/:symbol/', async (req, res) => {
   }
 });
 
+// Modification pour utilisation des sockets
 
-app.listen(3000, () => {
+// Cette fonction récupère les données et les envoie via WebSocket
+async function emitCryptoData(socket) {
+  try {
+    const symbols = ['BTC-USD','ETH-USD','CHZ-USD',]; // Exemple de symboles
+    for (const symbol of symbols) {
+      const data = await yahooFinance.quote(symbol);
+      socket.emit('cryptoData', { symbol, data });
+    }
+  } catch (error) {
+    console.error("Error fetching crypto data: ", error);
+  }
+}
+
+// Gestion des connexions WebSocket
+io.on('connection', (socket) => {
+  console.log('A user connected');
+  emitCryptoData(socket);
+
+  // Envoyer les données toutes les 30 secondes
+  const intervalId = setInterval(() => emitCryptoData(socket), 60000);
+
+  socket.on('disconnect', () => {
+    console.log('A user disconnected');
+    clearInterval(intervalId);
+  });
+});
+
+// Ajout pour News
+app.use(express.static('public')); // Pour servir des fichiers statiques comme HTML, CSS, JS
+
+app.get('/articles', (req, res) => {
+    const apiKey = '28969bda89aa4648827906d830743c8b';
+    const q = 'crypto';
+    const language = 'fr';
+    const oldestDate = '2024-01-01';
+    const apiUrl = `https://newsapi.org/v2/everything?q=${q}&from=${oldestDate}&sortBy=publishedAt&language=${language}&apiKey=${apiKey}`;
+
+    axios.get(apiUrl)
+        .then(response => {
+            res.json(response.data);
+        })
+        .catch(error => {
+            console.error('Erreur lors de la requête API :', error);
+            res.status(500).send('Erreur serveur');
+        });
+});
+
+server.listen(3000, () => {
   console.log('Server is running on http://localhost:3000');
 });
