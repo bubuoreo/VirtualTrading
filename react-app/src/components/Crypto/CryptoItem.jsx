@@ -4,6 +4,7 @@ import { Table, Thead, Tbody, Tr, Th, Td, chakra } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import CryptoCourbe7 from './CryptoCourbe7';
 import { Link } from 'react-router-dom';
+import io from 'socket.io-client';
 
 const MotionTr = chakra(motion.tr);
 
@@ -11,13 +12,13 @@ const CryptoItem = () => {
   const [cryptos, setCryptos] = useState(['BTC-USD', 'ETH-USD', 'CHZ-USD', 'WBNB-USD', 'SOL-USD', 'XRP-USD', 'ADA-USD', 'AVAX-USD', 'DOGE-USD', 'EGLD-USD']);
   const [tableData, setTableData] = useState([]);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const newData = await Promise.all(
-                    cryptos.map(async (crypto) => {
-                        const response = await fetch(`http://localhost:3000/finance/${crypto}`);
-                        const data = await response.json();
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const newData = await Promise.all(
+          cryptos.map(async (crypto) => {
+            const response = await fetch(`http://localhost:3000/finance/${crypto}`);
+            const data = await response.json();
 
             return {
               crypto,
@@ -33,18 +34,43 @@ const CryptoItem = () => {
           })
         );
 
-                setTableData(newData);
-            } catch (error) {
-                console.error('Error loading data:', error);
-            }
-        };
+        setTableData(newData);
+      } catch (error) {
+        console.error('Error loading data:', error);
+      }
+    };
 
-        fetchData();
+    fetchData();
 
-        const intervalId = setInterval(fetchData, 60000);
+    const intervalId = setInterval(fetchData, 60000);
 
-        return () => clearInterval(intervalId);
-    }, [cryptos]);
+    return () => clearInterval(intervalId);
+  }, [cryptos]);
+//     const socket = io('http://localhost:3000');
+
+//     socket.on('cryptoData', (update) => {
+//         setTableData((prevData) =>
+//         prevData.map((item) =>
+//             item.crypto === update.symbol
+//             ? {
+//                 ...item,
+//                 open: data.regularMarketOpen.toFixed(2),
+//                 close: data.regularMarketPrice.toFixed(2),
+//                 high: data.regularMarketDayHigh.toFixed(2),
+//                 low: data.regularMarketDayLow.toFixed(2),
+//                 marketcap: data.marketCap.toLocaleString(),
+//                 volume: data.volume24Hr.toLocaleString(),
+//                 logo: data.coinImageUrl,
+//                 supply: data.circulatingSupply.toLocaleString(),
+//                 }
+//             : item
+//         )
+//         );
+//     });
+
+//     return () => socket.disconnect();
+//   }, []); // Empty dependency array ensures useEffect runs once on mount
+
 
   return (
     <Table variant="simple" mt="8">

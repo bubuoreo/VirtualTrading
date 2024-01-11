@@ -8,14 +8,14 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: 'http://127.0.0.1:5500',
+    origin: '*',
     methods: ["GET", "POST"]
   }
 });
 
 // Ajoutez les options CORS pour autoriser les requêtes de votre client
 const corsOptions = {
-  origin: 'http://127.0.0.1:5500', // ou '*' pour autoriser toutes les origines
+  origin: '*', // ou '*' pour autoriser toutes les origines
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
   optionsSuccessStatus: 204
