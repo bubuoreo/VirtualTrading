@@ -1,5 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import binanceLogo from '../../assets/binance-logo-0.png'
+import { Img } from '@chakra-ui/react';
 
 const User = ({ name, email, balance, page }) => {
 
@@ -10,25 +12,30 @@ const User = ({ name, email, balance, page }) => {
   };
 
   return (
-
-    <div class="ui clearing segment">
-            <h3 class="ui right floated header">
-                <i class="user circle outline icon"></i>
-                <div class="content">
-                    <span id="userNameId">{name}</span>
-                    <div class="sub header"><span>{balance}</span>$</div>
-                </div>
-            </h3>
-            <h3 class="ui left floated header">
-                <i class="money icon" onClick={handleHome}></i>
-                <div class="content">
-                    {page}
-                    <div class="sub header">{page} your card to get money</div>
-                </div>
-            </h3>
+    <div className="ui clearing segment">
+      <h3 className="ui right floated header " style={{ lineHeight: '3' }}>
+        <i className="user circle outline icon"></i>
+        <div className="content">
+          <span id="userNameId">{name}</span>
+          <div className="sub header"><span>{balance}</span>$</div>
+        </div>
+      </h3>
+      <h3 className="ui left floated header">
+        {/* Utilisez la balise img pour afficher le logo de Binance */}
+        <Img
+          src={binanceLogo} // Assurez-vous d'ajuster le chemin en conséquence
+          alt="Binance Logo"
+          style={{
+            width: '80px',
+            height: '80px',
+            cursor: 'pointer',
+            // Ajoutez d'autres styles selon vos besoins
+          }}
+          onClick={handleHome}
+        />
+      </h3>
     </div>
-
-);
+  );
 };
 
 export default User;

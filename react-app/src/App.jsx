@@ -10,8 +10,9 @@ export const App = () => {
     <Router>
       <Routes>
         {/* Définissez la page d'accueil comme composant pour le chemin "/" */}
-        <Route path="/" element={<HomePage />} />
+        <Route path="/" element={<LoginPage />} />
         <Route path="/register" element={<RegistrationPage />} />
+        <Route path="/home" element={<HomePage />} />
         <Route path="/crypto-details/:cryptoSymbol" element={<CryptoDetailsPage />} />
         {/* Ajoutez d'autres routes au besoin */}
       </Routes>

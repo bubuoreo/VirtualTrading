@@ -2,6 +2,23 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { update_user_action } from '../../slices/userSlice';
 import { useNavigate } from 'react-router-dom';
+import {
+  FormControl,
+  FormLabel,
+  Input,
+  Button,
+  Stack,
+  Heading,
+  Flex,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
+} from '@chakra-ui/react';
 
 const FormLogin = ({ onConnect, onCancel }) => {
   const [username, setUsername] = useState('');
@@ -54,50 +71,110 @@ const FormLogin = ({ onConnect, onCancel }) => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
-      <div className="w-full max-w-xs">
-        <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="Username">
-              Username
-            </label>
-            <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="username"
-              type="text"
-              placeholder="Username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-            />
-          </div>
-          <div className="mb-6">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
-              Password
-            </label>
-            <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
-              id="password"
-              type="password"
-              placeholder="******************"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-          <div className="flex items-center justify-between">
-            <button
-              onClick={handleSubmit}
-              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-              type="submit"
-            >
-              Connect
-            </button>
-            <button className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800" onClick={handleRegisterClick}>
-              Register
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+    <Flex
+  direction="column"
+  align="center"
+  justify="center"
+  h="100vh"
+  bg="gray.100"
+  >
+  <Heading mb="4">Sign In</Heading>
+      <form onSubmit={handleSubmit}>
+        <Stack spacing={4} width="300px">
+      <FormControl mb="4">
+        <FormLabel htmlFor="username">Username</FormLabel>
+        <Input
+          type="text"
+          id="username"
+          placeholder="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          required
+        />
+      </FormControl>
+      <FormControl mb="6">
+        <FormLabel htmlFor="password">Password</FormLabel>
+        <Input
+          type="password"
+          id="password"
+          placeholder="******************"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+        />
+      </FormControl>
+      <Flex justify="space-between">
+        <Button
+          onClick={handleSubmit}
+          colorScheme="green"
+          type="submit"
+          className="font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        >
+          Connect
+        </Button>
+        <Button
+          onClick={handleRegisterClick}
+          colorScheme="blue"
+          className="inline-block align-baseline font-bold text-sm hover:text-blue-800"
+        >
+          Register
+        </Button>
+      </Flex>
+      </Stack>
+    </form>
+</Flex>
+
+
+    // <div className="flex flex-col items-center justify-center h-screen">
+    //   <div className="w-full max-w-xs">
+    //     <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+    //       <FormControl mb="4">
+    //         <FormLabel htmlFor="username" className="block text-gray-700 text-sm font-bold mb-2">
+    //           Username
+    //         </FormLabel>
+    //         <Input
+    //           type="text"
+    //           id="username"
+    //           placeholder="Username"
+    //           value={username}
+    //           onChange={(e) => setUsername(e.target.value)}
+    //           className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+    //         />
+    //       </FormControl>
+    //       <FormControl mb="6">
+    //         <FormLabel htmlFor="password" className="block text-gray-700 text-sm font-bold mb-2">
+    //           Password
+    //         </FormLabel>
+    //         <Input
+    //           type="password"
+    //           id="password"
+    //           placeholder="******************"
+    //           value={password}
+    //           onChange={(e) => setPassword(e.target.value)}
+    //           className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+    //         />
+    //       </FormControl>
+    //       <div className="flex items-center justify-between">
+    //         <Button
+    //           onClick={handleSubmit}
+    //           colorScheme="green"
+    //           type="submit"
+    //           className="font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+    //         >
+    //           Connect
+    //         </Button>
+    //         <Button
+    //           onClick={handleRegisterClick}
+    //           colorScheme="blue"
+    //           className="inline-block align-baseline font-bold text-sm hover:text-blue-800"
+    //         >
+    //           Register
+    //         </Button>
+    //       </div>
+    //     </form>
+    //   </div>
+    // </div>
   );
 };
 
