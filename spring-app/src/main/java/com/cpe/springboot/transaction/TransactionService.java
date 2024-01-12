@@ -48,15 +48,15 @@ public class TransactionService {
 
 			Optional<UserModel> user = userService.getUser(t.getUserId());
 			Set<AssetModel> userAssetsList = new HashSet<AssetModel>();
-			userAssetsList = user.get().getAssetsList();
+//			userAssetsList = user.get().getAssetsList();
 			// TODO: Check in a loop over all user's assets if the asset symbol is present in one of them
 			// in case of success of the previous condition, Do not create a new asset but
 			// add up the AssetQuantity field with the one in the transaction
 			boolean assetExists = false;
-			for (Iterator<AssetModel> iterator = userAssetsList.iterator(); iterator.hasNext();) {
-				AssetModel assetModel = (AssetModel) iterator.next();
-				System.out.println(assetModel);
-			}
+//			for (Iterator<AssetModel> iterator = userAssetsList.iterator(); iterator.hasNext();) {
+//				AssetModel assetModel = (AssetModel) iterator.next();
+//				System.out.println(assetModel);
+//			}
 //			for (AssetModel asset : userAssetsList) {
 //			    if (asset.getSymbol().equals(transactionSaved.getSymbol())) {
 //			        assetExists = true;
