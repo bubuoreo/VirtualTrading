@@ -1,4 +1,4 @@
-const SYMBOLS = ['BTC-USD', 'ETH-USD', 'CHZ-USD', 'WBNB-USD', 'SOL-USD', 'XRP-USD', 'ADA-USD', 'AVAX-USD', 'DODGE-USD', 'EGLD-USD'];
+const SYMBOLS = ['BTC-USD', 'ETH-USD', 'CHZ-USD', 'WBNB-USD', 'SOL-USD', 'XRP-USD', 'ADA-USD', 'AVAX-USD', 'DOGE-USD', 'EGLD-USD'];
 const HOME_FETCH_BASE_CODES = ["/finance7j/", "/finance/"];
 
 const yahooFinance = require('yahoo-finance2').default;
