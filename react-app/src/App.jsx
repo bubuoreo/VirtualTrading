@@ -4,6 +4,7 @@ import LoginPage from './pages/LoginPage.jsx';
 import HomePage from './pages/HomePage.jsx';
 import RegistrationPage from './pages/RegistrationPage.jsx';
 import CryptoDetailsPage from './pages/CryptoDetailsPage.jsx';
+import PersonalWalletPage from './pages/PersonalWalletPage.jsx';
 
 export const App = () => {
   return (
@@ -14,6 +15,7 @@ export const App = () => {
         <Route path="/register" element={<RegistrationPage />} />
         <Route path="/home" element={<HomePage />} />
         <Route path="/crypto-details/:cryptoSymbol" element={<CryptoDetailsPage />} />
+        <Route path="/wallet" element={<PersonalWalletPage />} />
         {/* Ajoutez d'autres routes au besoin */}
       </Routes>
     </Router>

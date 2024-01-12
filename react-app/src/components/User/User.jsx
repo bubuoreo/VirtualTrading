@@ -11,10 +11,14 @@ const User = ({ name, email, balance, page }) => {
     navigate('/home');
   };
 
+  const handleWallet = async () => {
+    navigate('/wallet');
+  };
+
   return (
     <div className="ui clearing segment">
       <h3 className="ui right floated header " style={{ lineHeight: '3' }}>
-        <i className="user circle outline icon"></i>
+        <i className="user circle outline icon" onClick={handleWallet}></i>
         <div className="content">
           <span id="userNameId">{name}</span>
           <div className="sub header"><span>{balance}</span>$</div>
