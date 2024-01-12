@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crypto Chart</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Chart.js library -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    function getRandomInt(min, max) {
+      min = Math.ceil(min);
+      max = Math.floor(max);
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function messageAlert(msg) {
+      alert(msg);
+    }
+
+    function load() {
+
+      var randomNumber = getRandomInt(1, 1000);
+      const socket = io({ query: { id: randomNumber } });
+      var btcButton = document.getElementById('btc');
+      var ethButton = document.getElementById('eth');
+      var chzButton = document.getElementById('chz');
+      var dataDiv = document.getElementById('data');
+
+      btcButton.addEventListener('click', () => { socket.emit('update_page', 'BTC'); });
+      ethButton.addEventListener('click', () => { socket.emit('update_page', 'ETH'); });
+      chzButton.addEventListener('click', () => { socket.emit('update_page', 'CHZ'); });
+
+      socket.on('/finance', (data) => {
+        var item = document.createElement('p');
+        item.textContent = data;
+        dataDiv.appendChild(item);
+        window.scrollTo(0, document.body.scrollHeight);
+      });
+      socket.on('/finance7j', (data) => {
+        var item = document.createElement('p');
+        item.textContent = data;
+        dataDiv.appendChild(item);
+        window.scrollTo(0, document.body.scrollHeight);
+      });
+      socket.on('/financeChart', (data) => {
+        var item = document.createElement('p');
+        item.textContent = data;
+        dataDiv.appendChild(item);
+        window.scrollTo(0, document.body.scrollHeight);
+      });
+    }
+  </script>
+</head>
+
+<body onload="load()">
+  <h1>Crypto Chart</h1>
+
+  <button id="btc">BTC</button> <span id="btc-price"></span>
+  <button id="eth">ETH</button> <span id="eth-price"></span>
+  <button id="chz">CHZ</button> <span id="chz-price"></span>
+
+  <div id="data"></div>
+</body>
+
+</html>
