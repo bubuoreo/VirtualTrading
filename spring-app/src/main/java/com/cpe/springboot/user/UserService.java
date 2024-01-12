@@ -16,7 +16,7 @@ public class UserService {
 
 	private final UserRepository userRepository;
 	@Autowired
-    private final UserRequester userRequester;
+	private final UserRequester userRequester;
 
 	public UserService(UserRepository userRepository, UserRequester userRequester) {
 		this.userRepository = userRepository;
@@ -37,30 +37,17 @@ public class UserService {
 		return userRepository.findById(id);
 	}
 
-	public UserDTO addUser(UserDTO user, boolean dequeued) {
-		UserDTO ret = new UserDTO();
-		UserModel u = DTOMapper.fromUserDTOToUserModel(user);
-		if (dequeued) {
-			UserModel u_saved = userRepository.save(u);
-			ret = DTOMapper.fromUserModelToUserDTO(u_saved);
-		}
-		else {
-			userRequester.addUserModelToAddQueue(u);
-		}
-		return ret;
+	public UserDTO addUser(UserDTO user) {
+		UserModel newUserModel = DTOMapper.fromUserDTOToUserModel(user);
+		UserModel userSaved = userRepository.save(newUserModel);
+		return DTOMapper.fromUserModelToUserDTO(userSaved);
 	}
 
-	public UserDTO updateUser(UserDTO user, boolean dequeued) {
-		UserDTO ret = new UserDTO();
-		UserModel u = DTOMapper.fromUserDTOToUserModel(user);
-		if (dequeued) {
-			UserModel uBd =userRepository.save(u);
-			ret = DTOMapper.fromUserModelToUserDTO(uBd);
-		}
-		else {
-			userRequester.addUserModelToUpdateQueue(u);
-		}
-		return ret;
+	public UserDTO updateUser(UserDTO user) {
+		UserModel newUserModel = DTOMapper.fromUserDTOToUserModel(user);
+		System.out.println(newUserModel);
+		UserModel updatedUser = userRepository.save(newUserModel);
+		return DTOMapper.fromUserModelToUserDTO(updatedUser);
 	}
 
 	public void deleteUser(String id) {

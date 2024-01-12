@@ -1,14 +1,19 @@
 package com.cpe.springboot.user;
 
+import com.cpe.springboot.asset.AssetModel;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 @Entity
 @JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class, property="id")
@@ -25,6 +30,9 @@ public class UserModel implements Serializable{
 	private String surName;
 	private String email;
 	
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
+	private Set<AssetModel> assetsList = new HashSet<AssetModel>();
+
 	public UserModel() {
 		this.login = "";
 		this.pwd = "";
@@ -98,10 +106,24 @@ public class UserModel implements Serializable{
 	public void setEmail(String email) {
 		this.email = email;
 	}
+	
+	public void addAsset(AssetModel asset) {
+		this.assetsList.add(asset);
+		asset.setUserId(this.id);
+	}
+	
+	public Set<AssetModel> getAssetsList() {
+		return assetsList;
+	}
+
+	public void setAssetsList(Set<AssetModel> assetsList) {
+		this.assetsList = assetsList;
+	}
 
 	@Override
 	public String toString() {
 		return "UserModel [id=" + id + ", login=" + login + ", pwd=" + pwd + ", account=" + account + ", lastName="
-				+ lastName + ", surName=" + surName + ", email=" + email + "]";
+				+ lastName + ", surName=" + surName + ", email=" + email + ", assetsList=" + assetsList + "]";
 	}
+
 }
