@@ -8,7 +8,7 @@ class UserService {
         this.socketsMap.set(id, socketId);
     }
 
-    removeUser(id) {
+    removeUser({id}) {
         this.socketsMap.delete(id);
     }
 
@@ -22,7 +22,7 @@ class UserService {
     }
 
     getConnectedUsers() {
-        return this.socketsMap.keys();
+        return [...this.socketsMap.keys()];
     }
 }
 
