@@ -3,7 +3,7 @@ import { Table, Thead, Tbody, Tr, Th, Td, chakra } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import CryptoCourbe7 from './CryptoCourbe7';
 import { Link } from 'react-router-dom';
-import io from 'socket.io-client';
+//import io from 'socket.io-client';
 
 const MotionTr = chakra(motion.tr);
 
