@@ -131,39 +131,39 @@ app.get('/articles', (req, res) => {
 		});
 });
 
-app.get('/articles/:keyword', (req, res) => {
-	const apiKey = '28969bda89aa4648827906d830743c8b';
-	const { keyword } = req.params;
-	const sevenDaysAgo = new Date();
-	sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7); // Définir la date à il y a 7 jours
-	const q = 'crypto AND ' + keyword;
-	const language = 'fr';
-	const oldestDate = '2024-01-01';
-	const apiUrl = `https://newsapi.org/v2/everything?q=${q}&from=${oldestDate}&sortBy=publishedAt&language=${language}&apiKey=${apiKey}`;
-	
-	async function utils() {
-		const response = await axios.get("https://newsapi.org/v2/everything", {
-			params: {
-				q: 'crypto AND ' + keyword,
-				from: sevenDaysAgo,
-				sortBy: 'publishedAt',
-				language: 'en',
-				apiKey: apiKey
-			}
-		});
+app.get('/articles/:keyword', async (req, res) => {
+    const apiKey = '28969bda89aa4648827906d830743c8b';
+    const { keyword } = req.params;
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7); // Définir la date à il y a 7 jours
+    const URL = 'https://newsapi.org/v2/everything';
 
-		const articles = response.data.articles;
-		
-	}
+    async function utils() {
+        try {
+            const response = await axios.get(URL, {
+                params: {
+                    q: 'crypto AND ' + keyword,
+                    from: sevenDaysAgo.toISOString(), // Utiliser une chaîne de date ISO pour from
+                    sortBy: 'publishedAt',
+                    language: 'en',
+                    apiKey: apiKey
+                }
+            });
+            const articles = response.data.articles;
+            const score = mainController.analyzeSentiment({ articles: articles }); // Assurez-vous que mainController est défini
+            return { articles, score };
+        } catch (error) {
+            console.error('Erreur lors de la requête API :', error);
+            throw error; // Lancez l'erreur pour la gérer dans la route express
+        }
+    }
 
-	axios.get(apiUrl)
-		.then(response => {
-			res.json(response.data);
-		})
-		.catch(error => {
-			console.error('Erreur lors de la requête API :', error);
-			res.status(500).send('Erreur serveur');
-		});
+    try {
+        const result = await utils();
+        res.json(result);
+    } catch (error) {
+        res.status(500).send('Erreur serveur');
+    }
 });
 
 server.listen(CONFIG.port, () => {

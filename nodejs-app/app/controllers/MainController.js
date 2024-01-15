@@ -58,6 +58,10 @@ class MainController {
     resetDatabase() {
         this.mainService.resetDatabase();
     }
+
+    analyzeSentiment({ articles }){
+        return this.mainService.analyzeSentiment({articles});
+    }
 }
 
 module.exports = MainController
