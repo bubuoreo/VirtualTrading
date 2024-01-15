@@ -32,8 +32,9 @@ public class AssetModelService {
 		return null;
 	}
 
-	public AssetDTO createAsset(AssetModel asset) {
-		AssetModel savedAssetModel =assetRepository.save(asset);
+	public AssetDTO createAsset(AssetDTO asset) {
+		AssetModel newAssetModel = DTOMapper.fromAssetDTOToAssetModel(asset);
+		AssetModel savedAssetModel =assetRepository.save(newAssetModel);
 		return DTOMapper.fromAssetModelToAssetDTO(savedAssetModel);
 	}
 
@@ -42,9 +43,11 @@ public class AssetModelService {
 
 	}
 
-	public AssetDTO updateAsset(AssetModel asset) {
-		// TODO Auto-generated method stub
-		return null;
+	public AssetDTO updateAsset(AssetDTO asset) {
+		AssetModel newAssetModel = DTOMapper.fromAssetDTOToAssetModel(asset);
+		System.out.println(newAssetModel);
+		AssetModel updatedAsset = assetRepository.save(newAssetModel);
+		return DTOMapper.fromAssetModelToAssetDTO(updatedAsset);
 	}
 
 	public Optional<UserModel> getUser(Integer userId) {

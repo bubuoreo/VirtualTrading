@@ -10,6 +10,7 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -30,8 +31,8 @@ public class UserModel implements Serializable{
 	private String surName;
 	private String email;
 	
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
-	private Set<AssetModel> assetsList = new HashSet<AssetModel>();
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "userId", fetch = FetchType.EAGER)
+	private Set<AssetModel> assetsList = new HashSet<>();
 
 	public UserModel() {
 		this.login = "";
