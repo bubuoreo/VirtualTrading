@@ -1,4 +1,3 @@
-// CryptoCourbe7.jsx
 import React, { useEffect, useState } from 'react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 

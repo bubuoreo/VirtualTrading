@@ -4,7 +4,7 @@ import binanceLogo from '../../assets/binance-logo-0.png'
 import { Img } from '@chakra-ui/react';
 
 const User = ({ name, email, balance, page }) => {
-
+  
   const navigate = useNavigate();
 
   const handleHome = async () => {
@@ -18,7 +18,7 @@ const User = ({ name, email, balance, page }) => {
   return (
     <div className="ui clearing segment">
       <h3 className="ui right floated header " style={{ lineHeight: '3' }}>
-        <i className="user circle outline icon" onClick={handleWallet}></i>
+        <i className="user circle outline icon" onClick={handleWallet} style={{cursor: 'pointer'}}></i>
         <div className="content">
           <span id="userNameId">{name}</span>
           <div className="sub header"><span>{balance}</span>$</div>

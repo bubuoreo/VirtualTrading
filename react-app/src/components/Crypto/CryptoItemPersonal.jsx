@@ -8,9 +8,8 @@ import io from 'socket.io-client';
 
 const MotionTr = chakra(motion.tr);
 
-const CryptoItemPersonal = () => {
-    const [cryptos, setCryptos] = useState(['BTC-USD', 'ETH-USD']);
-    const [amounts, setAmounts] = useState(['3', '2']);
+const CryptoItemPersonal = ({ cryptos, amounts }) => {
+
     const [tableData, setTableData] = useState([]);
 
     useEffect(() => {
