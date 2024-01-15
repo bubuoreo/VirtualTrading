@@ -1,5 +1,8 @@
 const SYMBOLS = ['BTC-USD', 'ETH-USD', 'CHZ-USD', 'WBNB-USD', 'SOL-USD', 'XRP-USD', 'ADA-USD', 'AVAX-USD', 'DOGE-USD', 'EGLD-USD'];
-const HOME_FETCH_BASE_CODES = ["/finance7j/", "/finance/"];
+const FINANCE_STR = "/finance/"
+const FINANCE7J_STR = "/finance7j/"
+const FINANCE_CHART_STR = "/financeChart/"
+const HOME_FETCH_BASE_CODES = [FINANCE7J_STR, FINANCE_STR];
 
 const yahooFinance = require('yahoo-finance2').default;
 
@@ -16,50 +19,115 @@ class MainService {
         this.database.set(code, json);
     }
 
-    async addUserToNotifPageQueues({ socketId, page }) {
-        this.removeUserFromAllQueues({ userSocketId: socketId});
+    async addUserToNotifPageQueues({ socketId, request }) {
+        this.removeUserFromAllQueues({ userSocketId: socketId });
         var ret = [];
-        switch (page) {
-            case 'home':
-                console.log('MainService: addUserToNotifPageQueues: Ajout à la queue de notification de la page \'home\'');
-                for (const codeBase of HOME_FETCH_BASE_CODES) {
-                    for (const symbol of SYMBOLS) {
-                        console.log('MainService: addUserToNotifPageQueues: Vérification de l\'existance de la donnée dans la database');
-                        const code = codeBase + symbol;
-                        if (this.database.has(code)) {
-                            console.log('MainService: addUserToNotifPageQueues: Le code est dans la Database');
-                            const element = {
-                                "dest": [socketId],
-                                "code": code,
-                                "data": this.database.get(code),
-                            };
-                            ret = [...ret, element];
-                        } else {
-                            const result = await this.apiRequest({ code });
-                            const element = {
-                                "dest": [socketId],
-                                "code": code,
-                                "data": result,
-                            };
-                            ret = [...ret, element];
-                        }
-                        if (this.fetchQueues.has(code)) {
-                            const queue = this.fetchQueues.get(code);
-                            this.fetchQueues.set(code, [...queue, socketId]);
-                        } else {
-                            this.fetchQueues.set(code, [socketId]);
-                        }
-                    }
+
+        if (request === 'HOME') {
+            console.log('MainService: addUserToNotifPageQueues: Ajout à la queue de notification de la page \'home\'');
+            for (const codeBase of HOME_FETCH_BASE_CODES) {
+                for (const symbol of SYMBOLS) {
+                    console.log('MainService: addUserToNotifPageQueues: Vérification de l\'existance de la donnée dans la database');
+                    const code = codeBase + symbol;
+
+                    // if (this.database.has(code)) {
+                    //     console.log('MainService: addUserToNotifPageQueues: Le code est dans la Database');
+                    //     const element = {
+                    //         "dest": [socketId],
+                    //         "code": code,
+                    //         "data": this.database.get(code),
+                    //     };
+                    //     ret = [...ret, element];
+                    // } else {
+                    //     const result = await this.apiRequest({ code });
+                    //     const element = {
+                    //         "dest": [socketId],
+                    //         "code": code,
+                    //         "data": result,
+                    //     };
+                    //     ret = [...ret, element];
+                    // }
+
+                    // if (this.fetchQueues.has(code)) {
+                    //     const queue = this.fetchQueues.get(code);
+                    //     this.fetchQueues.set(code, [...queue, socketId]);
+                    // } else {
+                    //     this.fetchQueues.set(code, [socketId]);
+                    // }
+                    const result = await this.retrieveCodeData({ code, socketId });
+                    ret = [...ret, result];
                 }
-                break;
-            
-            default:
-                console.log(`Sorry, we are out of ${expr}.`);
+            }
+        } else if (request.match(/[A-Z]*-[A-Z]*/g)[0]) {
+            console.log(`${request}`);
+            const codesList = [FINANCE_STR + request, FINANCE_CHART_STR + request];
+            for (const code of codesList) {
+                // if (this.database.has(code)) {
+                //     console.log('MainService: addUserToNotifPageQueues: Le code est dans la Database');
+                //     const element = {
+                //         "dest": [socketId],
+                //         "code": code,
+                //         "data": this.database.get(code),
+                //     };
+                //     ret = [...ret, element];
+                // } else {
+                //     const result = await this.apiRequest({ code: code });
+                //     const element = {
+                //         "dest": [socketId],
+                //         "code": code,
+                //         "data": result,
+                //     };
+                //     ret = [...ret, element];
+                // }
+
+                // if (this.fetchQueues.has(code)) {
+                //     const queue = this.fetchQueues.get(code);
+                //     this.fetchQueues.set(code, [...queue, socketId]);
+                // } else {
+                //     this.fetchQueues.set(code, [socketId]);
+                // }
+                const result = await this.retrieveCodeData({ code, socketId });
+                ret = [...ret, result];
+            }
+        } else {
+            console.log(`No reference found for: ${request}.`);
         }
+
         console.log("MainService: addUserToNotifPageQueues:");
         console.log([...this.fetchQueues.entries()]);
         return ret;
     }
+
+    async retrieveCodeData({ code, socketId }) {
+        var ret;
+        if (this.database.has(code)) {
+            console.log('MainService: retrieveCodeData: Le code est dans la Database');
+            const element = {
+                "dest": [socketId],
+                "code": code,
+                "data": this.database.get(code),
+            };
+            ret = element;
+        } else {
+            const result = await this.apiRequest({ code: code });
+            const element = {
+                "dest": [socketId],
+                "code": code,
+                "data": result,
+            };
+            ret = element;
+        }
+
+        if (this.fetchQueues.has(code)) {
+            const queue = this.fetchQueues.get(code);
+            this.fetchQueues.set(code, [...queue, socketId]);
+        } else {
+            this.fetchQueues.set(code, [socketId]);
+        }
+
+        return ret;
+    }
+
 
     removeUserFromAllQueues({ userSocketId }) {
         for (const [url, queue] of this.fetchQueues.entries()) {
@@ -121,7 +189,8 @@ class MainService {
             }
         }
         else if (code.startsWith("/financeChart/")) {
-            const timeframe = code.match(/\d\w*$/g);
+            const timeframe = code.match(/\d\w*$/g)[0];
+            console.log(timeframe);
             const oneYearAgo = new Date();
             oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
             try {
