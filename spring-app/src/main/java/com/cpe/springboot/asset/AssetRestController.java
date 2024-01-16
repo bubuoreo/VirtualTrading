@@ -41,8 +41,7 @@ public class AssetRestController {
 
 	@RequestMapping(method = RequestMethod.GET, value = "/asset/{id}")
 	private AssetDTO getAsset(@PathVariable String id) {
-		Optional<AssetModel> asset;
-		asset = assetModelService.getAsset(Integer.valueOf(id));
+		Optional<AssetModel> asset = assetModelService.getAsset(Integer.valueOf(id));
 		if (asset.isPresent()) {
 			return DTOMapper.fromAssetModelToAssetDTO(asset.get());
 		}
