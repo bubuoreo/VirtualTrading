@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Button } from '@chakra-ui/react';
 
-const FormAction = ({ cryptoSymbol, type }) => {
+const FormBuy = ({ cryptoSymbol}) => {
   const [usdAmount, setUsdAmount] = useState('');
   const [cryptoPrice, setCryptoPrice] = useState(null);
   const currentDate = new Date();
@@ -31,7 +31,7 @@ const FormAction = ({ cryptoSymbol, type }) => {
         dateTime: currentDate.toISOString().slice(0, 19),
         userId: user.id,
         symbol: cryptoSymbol,
-        type: type,
+        type: "BUY",
         assetPrice: cryptoPrice,
         transactionPrice: parseInt(usdAmount, 10),
         assetQuantity: parseFloat(calculateBitcoinAmount()),
@@ -86,11 +86,11 @@ const FormAction = ({ cryptoSymbol, type }) => {
           <p>Quantité de {cryptoSymbol}: {calculateBitcoinAmount()}</p>
         </div>
         <Button type="submit">
-          {type}
+          Acheter
         </Button>
       </form>
     </div>
   );
 };
 
-export default FormAction;
+export default FormBuy;

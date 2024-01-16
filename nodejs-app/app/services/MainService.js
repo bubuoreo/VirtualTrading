@@ -160,9 +160,6 @@ class MainService {
             }
             ret = [...ret, element]
         }
-        console.log("MainService: apiRequestAllURLs:");
-        console.log(this.database);
-        console.log(ret);
         return ret;
     }
 
@@ -214,7 +211,6 @@ class MainService {
     resetDatabase() {
         console.log("MainService: resetDatabase: On réinitialise la Database");
         this.database.clear();
-        console.log(this.database);
     }
 
     analyzeSentiment({articles}) {
