@@ -5,6 +5,8 @@ const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
 const axios = require('axios');
+const cors = require('cors');
+const yahooFinance = require('yahoo-finance2').default;
 
 const MainControllerClass = require('./app/controllers/MainController.js');
 const UserService = require('./app/services/UserService.js');
@@ -19,6 +21,15 @@ const io = socketIo(server, {
 		methods: ["GET", "POST"]
 	}
 });
+
+const corsOptions = {
+	origin: '*',
+	methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+	credentials: 'true',
+	optionsSuccessStatus: 204
+};
+
+app.use(cors(corsOptions))
 
 const mainController = new MainControllerClass();
 
@@ -52,6 +63,7 @@ io.on('connection', (socket) => {
 // financières d'un actif spécifié (symbol) sur un intervalle de temps donné (timeframe),
 // en utilisant les données de l'année précédente jusqu'à aujourd'hui.
 app.get('/finance/:symbol/:timeframe', async (req, res) => {
+	console.log("fetch: /finance/:symbol/:timeframe");
 	const { symbol, timeframe } = req.params;
 	const oneYearAgo = new Date();
 	oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
@@ -70,6 +82,7 @@ app.get('/finance/:symbol/:timeframe', async (req, res) => {
 // actuelles d'un actif spécifié (symbol), telles que le prix du marché et d'autres informations 
 // pertinentes, en utilisant la méthode 'quote' du package yahoo-finance2.
 app.get('/finance/:symbol/', async (req, res) => {
+	console.log("fetch: /finance/:symbol/");
 	const { symbol } = req.params;
 	try {
 		// Utilisez la méthode 'quote' pour obtenir les données actuelles de l'actif
@@ -82,6 +95,7 @@ app.get('/finance/:symbol/', async (req, res) => {
 
 
 app.get('/finance7j/:symbol/', async (req, res) => {
+	console.log("fetch: /finance7j/:symbol/");
 	const { symbol } = req.params;
 	const sevenDaysAgo = new Date();
 	sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7); // Définir la date à il y a 7 jours
@@ -129,6 +143,41 @@ app.get('/articles', (req, res) => {
 			console.error('Erreur lors de la requête API :', error);
 			res.status(500).send('Erreur serveur');
 		});
+});
+
+app.get('/articles/:keyword', async (req, res) => {
+    const apiKey = '28969bda89aa4648827906d830743c8b';
+    const { keyword } = req.params;
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7); // Définir la date à il y a 7 jours
+    const URL = 'https://newsapi.org/v2/everything';
+
+    async function utils() {
+        try {
+            const response = await axios.get(URL, {
+                params: {
+                    q: 'crypto AND ' + keyword,
+                    from: sevenDaysAgo.toISOString(), // Utiliser une chaîne de date ISO pour from
+                    sortBy: 'publishedAt',
+                    language: 'en',
+                    apiKey: apiKey
+                }
+            });
+            const articles = response.data.articles;
+            const score = mainController.analyzeSentiment({ articles: articles }); // Assurez-vous que mainController est défini
+            return { articles, score };
+        } catch (error) {
+            console.error('Erreur lors de la requête API :', error);
+            throw error; // Lancez l'erreur pour la gérer dans la route express
+        }
+    }
+
+    try {
+        const result = await utils();
+        res.json(result);
+    } catch (error) {
+        res.status(500).send('Erreur serveur');
+    }
 });
 
 server.listen(CONFIG.port, () => {

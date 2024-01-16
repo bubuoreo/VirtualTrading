@@ -66,13 +66,13 @@ public class AssetRestController {
 
 	@RequestMapping(method = RequestMethod.POST, value = "/asset")
 	public AssetDTO createAsset(@RequestBody AssetDTO asset) {
-		return assetModelService.createAsset(DTOMapper.fromAssetDTOToAssetModel(asset));
+		return assetModelService.createAsset(asset);
 	}
 
 	@RequestMapping(method = RequestMethod.PUT, value = "/asset/{id}")
 	public AssetDTO updateAsset(@RequestBody AssetDTO asset, @PathVariable String id) {
 		asset.setId(Integer.valueOf(id));
-		return assetModelService.updateAsset(DTOMapper.fromAssetDTOToAssetModel(asset));
+		return assetModelService.updateAsset(asset);
 	}
 
 	@RequestMapping(method = RequestMethod.DELETE, value = "/asset/{id}")

@@ -14,6 +14,7 @@ import com.cpe.springboot.asset.AssetDTO;
 import com.cpe.springboot.asset.AssetModel;
 import com.cpe.springboot.asset.AssetModelService;
 import com.cpe.springboot.common.DTOMapper;
+import com.cpe.springboot.user.UserDTO;
 import com.cpe.springboot.user.UserModel;
 import com.cpe.springboot.user.UserService;
 
@@ -46,40 +47,36 @@ public class TransactionService {
 		if (dequeued) {
 			TransactionModel transactionSaved = transactionRepository.save(newTransactionModel);
 
-			Optional<UserModel> user = userService.getUser(t.getUserId());
-			Set<AssetModel> userAssetsList = new HashSet<AssetModel>();
-//			userAssetsList = user.get().getAssetsList();
-			// TODO: Check in a loop over all user's assets if the asset symbol is present in one of them
-			// in case of success of the previous condition, Do not create a new asset but
-			// add up the AssetQuantity field with the one in the transaction
-			boolean assetExists = false;
-//			for (Iterator<AssetModel> iterator = userAssetsList.iterator(); iterator.hasNext();) {
-//				AssetModel assetModel = (AssetModel) iterator.next();
-//				System.out.println(assetModel);
-//			}
-//			for (AssetModel asset : userAssetsList) {
-//			    if (asset.getSymbol().equals(transactionSaved.getSymbol())) {
-//			        assetExists = true;
-//			        break;
-//			    }
-//			}
+			Optional<UserModel> userOptional = checkUserExistance(newTransactionModel.getUserId());
 
-			if (assetExists) {
+			AssetModel asset = null;
+
+			UserModel userModel = userOptional.get();
+			for (AssetModel assetModel : userModel.getAssetsList()) {
+				if (assetModel.getSymbol().equals(transactionSaved.getSymbol())) {
+					asset = assetModel;
+				}
+			}
+			if (t.getType().equals("BUY")) {
+				userModel.setAccount(userModel.getAccount() - transactionSaved.getTransactionPrice());				
+			} else if (t.getType().equals("SELL")) {
+				userModel.setAccount(userModel.getAccount() + transactionSaved.getTransactionPrice());
+			}
+			userService.updateUser(DTOMapper.fromUserModelToUserDTO(userModel));
+
+			if (asset != null) {
 				// Asset already exists, update the existing asset quantity
-				userAssetsList.stream().filter(asset -> asset.getSymbol().equals(transactionSaved.getSymbol()))
-						.findFirst().ifPresent(existingAsset -> {
-							existingAsset.setAssetQuantity(
-									existingAsset.getAssetQuantity() + transactionSaved.getAssetQuantity());
-							assetModelService.updateAsset(existingAsset);
-						});
+				asset.setAssetQuantity(asset.getAssetQuantity() + transactionSaved.getAssetQuantity());
+				assetModelService.updateAsset(DTOMapper.fromAssetModelToAssetDTO(asset));
+
 			} else {
 				// Asset does not exist, create a new asset
-				AssetModel newAssetModel = new AssetModel();
-				newAssetModel.setSymbol(transactionSaved.getSymbol());
-				newAssetModel.setAssetQuantity(transactionSaved.getAssetQuantity());
-				newAssetModel.setUserId(t.getUserId());
+				AssetDTO newAssetDTO = new AssetDTO();
+				newAssetDTO.setSymbol(transactionSaved.getSymbol());
+				newAssetDTO.setAssetQuantity(transactionSaved.getAssetQuantity());
+				newAssetDTO.setUserId(t.getUserId());
 
-				assetModelService.createAsset(newAssetModel);
+				assetModelService.createAsset(newAssetDTO);
 			}
 		} else {
 			transactionRequester.addTransactionModelToAddQueue(newTransactionModel);
@@ -101,5 +98,18 @@ public class TransactionService {
 
 	public Optional<UserModel> checkUserExistance(Integer userId) {
 		return userService.getUser(userId);
+	}
+
+	public boolean checkAssetAvailability(TransactionDTO t, UserModel userModel) {
+		boolean ret = false;
+		List<AssetModel> assetModelsList = new ArrayList<AssetModel>();
+		for (AssetModel assetModel : userModel.getAssetsList()) {
+			if (assetModel.getSymbol().equals(t.getSymbol())) {
+				if (assetModel.getAssetQuantity() >= t.getAssetQuantity()) {
+					ret = true;
+				}
+			}
+		}
+		return ret;
 	}
 }

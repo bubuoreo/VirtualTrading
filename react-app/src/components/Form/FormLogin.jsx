@@ -9,16 +9,9 @@ import {
   Button,
   Stack,
   Heading,
-  Flex,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  ModalFooter,
-  useDisclosure,
+  Flex
 } from '@chakra-ui/react';
+import Cookies from 'universal-cookie';
 
 const FormLogin = ({ onConnect, onCancel }) => {
   const [username, setUsername] = useState('');
@@ -46,6 +39,7 @@ const FormLogin = ({ onConnect, onCancel }) => {
       }
 
       const data = await response.json();
+
       navigate('/home');
 
       const userinfo = await fetch('http://localhost:8080/user/' + String(data), {
@@ -61,6 +55,9 @@ const FormLogin = ({ onConnect, onCancel }) => {
 
       const userinfo1 = await userinfo.json();
       dispatch(update_user_action(userinfo1));
+      const userToken = userinfo1.id; // Remplacez cela par le vrai token obtenu lors de l'authentification
+      const cookies = new Cookies();
+      cookies.set('userToken', userToken, { path: '/' });
     } catch (error) {
       console.error('Erreur lors de la requête :', error.message);
     }

@@ -62,4 +62,10 @@ public class AssetModel implements Serializable{
 		this.userId = userId;
 	}
 
+	@Override
+	public String toString() {
+		return "AssetModel [id=" + id + ", symbol=" + symbol + ", assetQuantity=" + assetQuantity + ", userId=" + userId
+				+ "]";
+	}
+
 }
