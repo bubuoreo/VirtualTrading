@@ -12,35 +12,11 @@ const MotionTr = chakra(motion.tr);
 
 const CryptoItem = () => {
   const cryptoinfoData = useSelector((state) => state.cryptodataReducer.cryptoinfoData);
-  const user = useSelector((state) => state.userReducer.user);
-  const socketRef = useRef(null);
-  const dispatch = useDispatch();
+  // const user = useSelector((state) => state.userReducer.user);
+  // const socketRef = useRef(null);
+  // const dispatch = useDispatch();
   
-  useEffect(() => {
-    socketRef.current = io('http://localhost:3000', { query: { id: user.id } });
-    setSocketsListeners(socketRef.current);
-
-    return () => {
-      if (socketRef.current) {
-        socketRef.current.disconnect();
-      }
-    };
-  }, [user.id, dispatch]);
-
-  const setSocketsListeners = (socket) => {
-    socket.on('/finance7j', function (data) {
-      const result = JSON.parse(data);
-      const code = result.meta.symbol;
-      dispatch(update_crypto_data({ code, data: result.quotes }));
-      
-    });
-
-    socket.on('/finance', function (data) {
-      const result = JSON.parse(data);
-      const symbol = result.symbol;
-      dispatch(update_crypto_info({ symbol, data: result }));
-    });
-  };
+  
   const formatPrice = (price) => {
     const parts = price.toFixed(2).split('.');
     const formattedInteger = parseInt(parts[0]).toLocaleString();

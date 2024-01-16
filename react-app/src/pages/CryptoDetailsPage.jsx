@@ -6,7 +6,7 @@ import FormAction from '../components/Form/FormAction';
 import { Header } from '../components/Header/Header.jsx';
 
 
-const CryptoDetailsPage = () => {
+const CryptoDetailsPage = ({socket}) => {
   const { cryptoSymbol } = useParams();
 
 
@@ -17,7 +17,7 @@ const CryptoDetailsPage = () => {
         <div className="container mx-auto">
           {/* CryptoCourbe prend toute la largeur */}
           <div>
-            <CryptoCourbe cryptoSymbol={cryptoSymbol} />
+            <CryptoCourbe cryptoSymbol={cryptoSymbol} socket={socket} />
           </div>
 
           <div className="flex">
