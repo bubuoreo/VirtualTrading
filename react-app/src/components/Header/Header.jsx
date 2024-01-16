@@ -6,7 +6,6 @@ import Cookies from 'universal-cookie';
 
 export const Header = ({ page }) => {
   let user = useSelector(state => state.userReducer.user);
-  console.log(user);
   const dispatch = useDispatch();
   const cookies = new Cookies();
   const userToken = cookies.get('userToken');
@@ -25,7 +24,6 @@ export const Header = ({ page }) => {
       }
 
       const userinfo1 = await userinfo.json();
-      console.log(userinfo1);
       dispatch(update_user_action(userinfo1));
     } catch (error) {
       console.error('Error fetching user:', error);
