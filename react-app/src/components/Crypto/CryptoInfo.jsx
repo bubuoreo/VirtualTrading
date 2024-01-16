@@ -1,35 +1,25 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import { useSelector } from 'react-redux';
 
 const CryptoInfo = ({ cryptoSymbol }) => {
-  const [cryptoInfo, setCryptoInfo] = useState(null);
+  const cryptoinfoData = useSelector((state) => state.cryptodataReducer.cryptoinfoData);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(`http://localhost:3000/finance/${cryptoSymbol}`);
-        const data = await response.json();
-        setCryptoInfo(data);
-      } catch (error) {
-        console.error('Error loading crypto info:', error);
-      }
-    };
-
-    fetchData();
-  }, [cryptoSymbol]);
+  // Assurez-vous que les données sont disponibles pour le symbole de la crypto-monnaie
+  const cryptoInfo = cryptoinfoData[cryptoSymbol];
 
   if (!cryptoInfo) {
     return <div>Loading...</div>;
   }
-  console.log(cryptoInfo)
+
   return (
     <div>
-      <h2> ({cryptoInfo.symbol})</h2>
-      <img src={cryptoInfo.coinImageUrl}></img>
+      <h2>({cryptoInfo.symbol})</h2>
+      <img src={cryptoInfo.coinImageUrl} alt={cryptoInfo.shortName} />
       <p>{cryptoInfo.shortName}</p>
       <p>Price: {cryptoInfo.regularMarketPrice.toLocaleString()}</p>
       <p>Market Cap: {cryptoInfo.marketCap.toLocaleString()}</p>
       <p>Volume 24h: {cryptoInfo.volume24Hr.toLocaleString()}</p>
-      <p>Circulate supply: {cryptoInfo.circulatingSupply.toLocaleString()}</p>
+      <p>Circulating Supply: {cryptoInfo.circulatingSupply.toLocaleString()}</p>
       {/* Ajoutez d'autres informations pertinentes */}
     </div>
   );

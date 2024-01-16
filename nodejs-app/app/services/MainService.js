@@ -24,7 +24,7 @@ class MainService {
                 console.log('MainService: addUserToNotifPageQueues: Ajout à la queue de notification de la page \'home\'');
                 for (const codeBase of HOME_FETCH_BASE_CODES) {
                     for (const symbol of SYMBOLS) {
-                        console.log('MainService: addUserToNotifPageQueues: Vérification de l\'existance de la donnée dans la database');
+                        console.log(`MainService: addUserToNotifPageQueues: Vérification de l\'existance de ${symbol} dans la database`);
                         const code = codeBase + symbol;
                         if (this.database.has(code)) {
                             console.log('MainService: addUserToNotifPageQueues: Le code est dans la Database');
@@ -87,9 +87,6 @@ class MainService {
             }
             ret = [...ret, element]
         }
-        console.log("MainService: apiRequestAllURLs:");
-        console.log(this.database);
-        console.log(ret);
         return ret;
     }
 
@@ -140,7 +137,6 @@ class MainService {
     resetDatabase() {
         console.log("MainService: resetDatabase: On réinitialise la Database");
         this.database.clear();
-        console.log(this.database);
     }
 }
 

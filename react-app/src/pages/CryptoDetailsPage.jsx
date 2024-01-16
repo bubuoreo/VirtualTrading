@@ -12,9 +12,9 @@ const CryptoDetailsPage = () => {
     <div className="bg-gray-200 min-h-screen">
       <div className="container mx-auto">
         {/* CryptoCourbe prend toute la largeur */}
-        <div>
+        {/* <div>
           <CryptoCourbe cryptoSymbol={cryptoSymbol} />
-        </div>
+        </div> */}
 
         <div className="flex">
           {/* CryptoInfo à gauche */}
@@ -22,18 +22,18 @@ const CryptoDetailsPage = () => {
             <CryptoInfo cryptoSymbol={cryptoSymbol} />
           </div>
           {/* FormAction à droite */}
-          <div className="flex-1">
+          {/* <div className="flex-1">
             <FormAction cryptoSymbol={cryptoSymbol} />
-          </div>
+          </div> */}
         </div>
 
         {/* ActionButton centré en dessous */}
         <div className="flex justify-center mt-4">
           {/* Exemple d'utilisation pour le bouton "Buy" */}
-          <ActionButton type="buy" />
+          {/* <ActionButton type="buy" /> */}
 
           {/* Exemple d'utilisation pour le bouton "Sell" */}
-          <ActionButton type="sell" />
+          {/* <ActionButton type="sell" /> */}
         </div>
       </div>
     </div>
