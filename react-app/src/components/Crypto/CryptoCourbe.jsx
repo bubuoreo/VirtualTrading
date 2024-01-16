@@ -1,39 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { Button } from '@chakra-ui/react';
+import { useSelector, useDispatch } from 'react-redux';
 
-const CryptoCourbe = ({ cryptoSymbol }) => {
+const CryptoCourbe = ({ cryptoSymbol, socket }) => {
+    const cryptoData = useSelector((state) => state.cryptochartReducer.cryptochartData);
     const [timeframe, setTimeframe] = useState('1mo');
     const [chartData, setChartData] = useState([]);
+    console.log(cryptoData);
 
     useEffect(() => {
-        fetchData();
+        socket.emit('update_page', `${cryptoSymbol}/${timeframe}`);
     }, [cryptoSymbol, timeframe]);
 
-    const fetchData = () => {
-        fetch(`http://localhost:3000/finance/${cryptoSymbol}/${timeframe}`)
-            .then(response => response.json())
-            .then(data => {
-                setChartData(data.quotes.map(q => ({ date: q.date.substring(0, 10), close: q.close })));
-            })
-            .catch(err => console.error("Error loading chart data: ", err));
-    };
-
-    const updateSymbol = (newSymbol) => {
-        // Mise à jour du symbole de la crypto-monnaie
-        fetchData();
-        updatePrice(newSymbol);
-    };
-
-    const updatePrice = (assetSymbol) => {
-        fetch(`http://localhost:3000/finance/${assetSymbol}`)
-            .then(response => response.json())
-            .then(data => {
-                const priceFormatted = Number(data.regularMarketPrice).toFixed(2);
-                // Mettez à jour la logique d'affichage du prix ici
-            })
-            .catch(err => console.error("Error loading data: ", err));
-    };
+    useEffect(() => {
+        // Check if cryptoData is defined before updating chartData
+        if (cryptoData && cryptoData[cryptoSymbol] && cryptoData[cryptoSymbol].quotes) {
+            setChartData(cryptoData[cryptoSymbol].quotes.map(q => ({ date: q.date.substring(0, 10), close: q.close })));
+        }
+    }, [cryptoData, cryptoSymbol]);
 
     const handleTimeframeClick = (newTimeframe) => {
         setTimeframe(newTimeframe);
@@ -42,13 +26,7 @@ const CryptoCourbe = ({ cryptoSymbol }) => {
     return (
         <div>
             <h1>Crypto Chart</h1>
-
-            <Button onClick={() => updateSymbol('BTC-USD')} variant="futuristic">BTC</Button>
-            <Button onClick={() => updateSymbol('ETH-USD')} variant="futuristic">ETH</Button>
-            <Button onClick={() => updateSymbol('CHZ-USD')} variant="futuristic">CHZ</Button>
-
             <br />
-
             <button onClick={() => handleTimeframeClick('1d')}>Day</button>
             <button onClick={() => handleTimeframeClick('1wk')}>Week</button>
             <button onClick={() => handleTimeframeClick('1mo')}>Month</button>

@@ -11,7 +11,7 @@ class MainController {
     async init({ io, socket, idUser }) {
         console.log(`MainController: init: ${idUser}`);
         this.userService.addUser({ id: idUser, socketId: socket.id });
-        this.addUserToNotifPageQueues({ io: io, socket: socket, request: "HOME" });
+        //this.addUserToNotifPageQueues({ io: io, socket: socket, request: "HOME" });
         // this.addUserToNotifPageQueues({ io: io, socket: socket, request: "BTC-USD/1wk" });
         // this.addUserToNotifPageQueues({ io: io, socket: socket, request: "ETH-USD/1wk" });
 

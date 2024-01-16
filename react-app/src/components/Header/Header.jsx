@@ -24,6 +24,7 @@ export const Header = ({ page }) => {
       }
 
       const userinfo1 = await userinfo.json();
+      
       dispatch(update_user_action(userinfo1));
     } catch (error) {
       console.error('Error fetching user:', error);

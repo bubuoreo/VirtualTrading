@@ -1,78 +1,42 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { Table, Thead, Tbody, Tr, Th, Td, chakra } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import CryptoCourbe7 from './CryptoCourbe7';
 import { Link } from 'react-router-dom';
-//import io from 'socket.io-client';
+import io from 'socket.io-client';
+import { update_crypto_data } from '../../slices/cryptoSlice'; 
+import { update_crypto_info } from '../../slices/cryptodataSlice';  
 
 const MotionTr = chakra(motion.tr);
 
 const CryptoItem = () => {
-  const [cryptos, setCryptos] = useState(['BTC-USD', 'ETH-USD', 'CHZ-USD', 'WBNB-USD', 'SOL-USD', 'XRP-USD', 'ADA-USD', 'AVAX-USD', 'DOGE-USD', 'EGLD-USD']);
-  const [tableData, setTableData] = useState([]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const newData = await Promise.all(
-          cryptos.map(async (crypto) => {
-            const response = await fetch(`http://localhost:3000/finance/${crypto}`);
-            const data = await response.json();
-
-            return {
-              crypto,
-              Ychangepercent: data.fiftyTwoWeekChangePercent.toFixed(2),
-              price: formatPrice(data.regularMarketPrice),
-              marketcap: data.marketCap.toLocaleString(),
-              volume: data.volume24Hr.toLocaleString(),
-              logo: data.coinImageUrl,
-              supply: data.circulatingSupply.toLocaleString(),
-            };
-          })
-        );
-
-        setTableData(newData);
-      } catch (error) {
-        console.error('Error loading data:', error);
-      }
+  const cryptoinfoData = useSelector((state) => state.cryptodataReducer.cryptoinfoData);
+  // const user = useSelector((state) => state.userReducer.user);
+  // const socketRef = useRef(null);
+  // const dispatch = useDispatch();
+  
+  
+  const formatPrice = (price) => {
+    const parts = price.toFixed(2).split('.');
+    const formattedInteger = parseInt(parts[0]).toLocaleString();
+    return `${formattedInteger}.${parts[1]}`;
+  };
+  // Use the cryptoinfoData from the Redux store directly
+  const tableData = Object.keys(cryptoinfoData).map(symbol => {
+    const cryptoInfo = cryptoinfoData[symbol];
+    return {
+      crypto: cryptoInfo.symbol,
+      Ychangepercent: cryptoInfo.fiftyTwoWeekChangePercent.toFixed(2),
+      price: formatPrice(cryptoInfo.regularMarketPrice),
+      marketcap: cryptoInfo.marketCap.toLocaleString(),
+      volume: cryptoInfo.volume24Hr.toLocaleString(),
+      logo: cryptoInfo.coinImageUrl,
+      supply: cryptoInfo.circulatingSupply.toLocaleString(),
     };
+  });
 
-    fetchData();
 
-//     const socket = io('http://localhost:3000');
-
-//     socket.on('cryptoData', (update) => {
-//         setTableData((prevData) =>
-//         prevData.map((item) =>
-//             item.crypto === update.symbol
-//             ? {
-//                 ...item,
-//                 open: data.regularMarketOpen.toFixed(2),
-//                 close: data.regularMarketPrice.toFixed(2),
-//                 high: data.regularMarketDayHigh.toFixed(2),
-//                 low: data.regularMarketDayLow.toFixed(2),
-//                 marketcap: data.marketCap.toLocaleString(),
-//                 volume: data.volume24Hr.toLocaleString(),
-//                 logo: data.coinImageUrl,
-//                 supply: data.circulatingSupply.toLocaleString(),
-//                 }
-//             : item
-//         )
-//         );
-//     });
-
-//     return () => socket.disconnect();
-//   }, []); // Empty dependency array ensures useEffect runs once on mount
-
-    const formatPrice = (price) => {
-      const parts = price.toFixed(2).split('.');
-      const formattedInteger = parseInt(parts[0]).toLocaleString();
-      return `${formattedInteger}.${parts[1]}`;
-    };
-    const intervalId = setInterval(fetchData, 60000);
-
-    return () => clearInterval(intervalId);
-  }, [cryptos]);
 
   return (
     <Table variant="simple" mt="8">
@@ -112,9 +76,10 @@ const CryptoItem = () => {
             <Td><Link to={`/crypto-details/${rowData.crypto}`}>{rowData.marketcap}</Link></Td>
             <Td><Link to={`/crypto-details/${rowData.crypto}`}>{rowData.supply}</Link></Td>
             <Td><Link to={`/crypto-details/${rowData.crypto}`}>{rowData.volume}</Link></Td>
-            <Td><Link to={`/crypto-details/${rowData.crypto}`}>
-              {/* Render the CryptoCourbe7 component for each row */}
-                <CryptoCourbe7 symbol={rowData.crypto} /></Link>
+            <Td>
+              <Link to={`/crypto-details/${rowData.crypto}`}>
+                <CryptoCourbe7 symbol={rowData.crypto} />
+              </Link>
             </Td>
           </MotionTr>
         ))}
