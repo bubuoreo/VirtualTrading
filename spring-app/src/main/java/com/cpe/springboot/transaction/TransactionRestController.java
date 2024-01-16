@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -66,6 +67,15 @@ public class TransactionRestController {
 		} else {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User id:" + t.getUserId() + ", not found", null);
 		}
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/transactions/user/{id}")
+	private List<TransactionDTO> getAllTransactions(@PathVariable String id) {
+		List<TransactionDTO> tDTOList = new ArrayList<TransactionDTO>();
+		for (TransactionModel transactionModel : transactionService.getUserTransactions(Integer.valueOf(id))) {
+			tDTOList.add(DTOMapper.fromTransactionModelToTransactionDTO(transactionModel));
+		}
+		return tDTOList;
 	}
 
 }

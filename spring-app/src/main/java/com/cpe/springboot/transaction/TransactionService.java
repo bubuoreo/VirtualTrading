@@ -8,7 +8,9 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.cpe.springboot.asset.AssetDTO;
 import com.cpe.springboot.asset.AssetModel;
@@ -66,8 +68,17 @@ public class TransactionService {
 
 			if (asset != null) {
 				// Asset already exists, update the existing asset quantity
-				asset.setAssetQuantity(asset.getAssetQuantity() + transactionSaved.getAssetQuantity());
-				assetModelService.updateAsset(DTOMapper.fromAssetModelToAssetDTO(asset));
+				if (t.getType().equals("BUY")) {
+					asset.setAssetQuantity(asset.getAssetQuantity() + transactionSaved.getAssetQuantity());				
+				} else if (t.getType().equals("SELL")) {
+					asset.setAssetQuantity(asset.getAssetQuantity() - transactionSaved.getAssetQuantity());
+				}
+				System.out.println(asset.getAssetQuantity());
+				if (asset.getAssetQuantity() == 0.0) {
+					assetModelService.deleteAssetModel(asset.getId());
+				} else {
+					assetModelService.updateAsset(DTOMapper.fromAssetModelToAssetDTO(asset));
+				}
 
 			} else {
 				// Asset does not exist, create a new asset
@@ -78,6 +89,7 @@ public class TransactionService {
 
 				assetModelService.createAsset(newAssetDTO);
 			}
+			
 		} else {
 			transactionRequester.addTransactionModelToAddQueue(newTransactionModel);
 		}
@@ -111,5 +123,9 @@ public class TransactionService {
 			}
 		}
 		return ret;
+	}
+
+	public List<TransactionModel> getUserTransactions(Integer userId) {
+		return transactionRepository.findByUserId(userId);
 	}
 }

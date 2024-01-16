@@ -28,8 +28,7 @@ public class AssetModelService {
 	}
 
 	public Optional<AssetModel> getAsset(Integer id) {
-		// TODO Auto-generated method stub
-		return null;
+		return assetRepository.findById(id);
 	}
 
 	public AssetDTO createAsset(AssetDTO asset) {
@@ -39,8 +38,18 @@ public class AssetModelService {
 	}
 
 	public void deleteAssetModel(Integer id) {
-		// TODO Auto-generated method stub
-
+		Optional<AssetModel> assetOptional = getAsset(id);
+		if (assetOptional.isPresent()) {
+			AssetModel asset = assetOptional.get();
+			assetRepository.deleteById(id);
+			Optional<UserModel> userModelOptional = userService.getUser(id);
+			if (userModelOptional.isPresent()) {
+				UserModel userModel = userModelOptional.get();
+				// Delete asset id in userAssetList
+				userModel.getAssetsList().remove(asset);
+				userService.updateUser(DTOMapper.fromUserModelToUserDTO(userModel));
+			}
+		}
 	}
 
 	public AssetDTO updateAsset(AssetDTO asset) {

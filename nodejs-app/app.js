@@ -145,6 +145,41 @@ app.get('/articles', (req, res) => {
 		});
 });
 
+app.get('/articles/:keyword', async (req, res) => {
+    const apiKey = '28969bda89aa4648827906d830743c8b';
+    const { keyword } = req.params;
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7); // Définir la date à il y a 7 jours
+    const URL = 'https://newsapi.org/v2/everything';
+
+    async function utils() {
+        try {
+            const response = await axios.get(URL, {
+                params: {
+                    q: 'crypto AND ' + keyword,
+                    from: sevenDaysAgo.toISOString(), // Utiliser une chaîne de date ISO pour from
+                    sortBy: 'publishedAt',
+                    language: 'en',
+                    apiKey: apiKey
+                }
+            });
+            const articles = response.data.articles;
+            const score = mainController.analyzeSentiment({ articles: articles }); // Assurez-vous que mainController est défini
+            return { articles, score };
+        } catch (error) {
+            console.error('Erreur lors de la requête API :', error);
+            throw error; // Lancez l'erreur pour la gérer dans la route express
+        }
+    }
+
+    try {
+        const result = await utils();
+        res.json(result);
+    } catch (error) {
+        res.status(500).send('Erreur serveur');
+    }
+});
+
 server.listen(CONFIG.port, () => {
 	console.log('Server is running on http://localhost:3000');
 });

@@ -5,6 +5,10 @@ const FINANCE_CHART_STR = "/financeChart/"
 const HOME_FETCH_BASE_CODES = [FINANCE7J_STR, FINANCE_STR];
 
 const yahooFinance = require('yahoo-finance2').default;
+const natural = require('natural');
+const SentimentAnalyzer = natural.SentimentAnalyzer;
+const stemmer = natural.PorterStemmer;
+const sentimentAnalyzer = new SentimentAnalyzer('English', stemmer, 'afinn');
 
 class MainService {
 
@@ -13,6 +17,7 @@ class MainService {
         this.fetchQueues = new Map();
         this.database = new Map();
         this.updateDatabase = this.updateDatabase.bind(this);
+        this.analyzeSentiment = this.analyzeSentiment.bind(this);
     }
 
     updateDatabase({ code, json }) {
@@ -210,6 +215,50 @@ class MainService {
         console.log("MainService: resetDatabase: On réinitialise la Database");
         this.database.clear();
         console.log(this.database);
+    }
+
+    analyzeSentiment({articles}) {
+        var ret;
+        let totalSentiment = 0;
+        let totalWeight = 0;
+    
+        articles.forEach(article => {
+            let titleSentiment = 0;
+            let contentSentiment = 0;
+            let descriptionSentiment = 0;
+    
+            if (article.title) {
+                titleSentiment = sentimentAnalyzer.getSentiment(article.title.split(' '));
+            }
+    
+            if (article.content) {
+                contentSentiment = sentimentAnalyzer.getSentiment(article.content.split(' '));
+            }
+    
+            if (article.description) {
+                descriptionSentiment = sentimentAnalyzer.getSentiment(article.description.split(' '));
+            }
+    
+            // Définir des poids pour chaque partie de l'article
+            const titleWeight = 0.5;  // Poids pour le titre
+            const contentWeight = 0.25;  // Poids pour le contenu
+            const descriptionWeight = 0.25;  // Poids pour la description
+    
+            // Calculer le score pondéré de l'article
+            const weightedSentiment = (titleSentiment * titleWeight) + (contentSentiment * contentWeight) + (descriptionSentiment * descriptionWeight);
+    
+            totalSentiment += weightedSentiment;
+            totalWeight += 1;  // Vous pouvez ajuster cela en fonction de votre propre logique de pondération.
+        });
+    
+        if (totalWeight > 0) {
+            const averageSentiment = totalSentiment / totalWeight;
+            ret = averageSentiment
+            console.log(`Moyenne pondérée du sentiment du marché: ${averageSentiment}`);
+        } else {
+            console.log("Aucun article trouvé pour l'analyse.");
+        }
+        return ret;
     }
 }
 
