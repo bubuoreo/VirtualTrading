@@ -71,7 +71,7 @@ const FormAction = ({ cryptoSymbol, type }) => {
 
   return (
     <div>
-      <h2>Acheter des {cryptoSymbol}</h2>
+      <h2>{type} des {cryptoSymbol}</h2>
       <form onSubmit={handleSubmit}>
         <label>
           Montant en USD:

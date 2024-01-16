@@ -4,6 +4,7 @@ import CryptoCourbe from '../components/Crypto/CryptoCourbe';
 import CryptoInfo from '../components/Crypto/CryptoInfo';
 import FormAction from '../components/Form/FormAction';
 import { Header } from '../components/Header/Header.jsx';
+import { Flex } from "@chakra-ui/react";
 
 
 const CryptoDetailsPage = ({socket}) => {
@@ -26,9 +27,10 @@ const CryptoDetailsPage = ({socket}) => {
               <CryptoInfo cryptoSymbol={cryptoSymbol} />
             </div>
             {/* FormAction à droite */}
-            <div className="flex-1">
-              <FormAction cryptoSymbol={cryptoSymbol} type="BUY" />
-            </div>
+            <Flex align="center" justify="center">
+              <div><FormAction cryptoSymbol={cryptoSymbol} type="BUY" /></div>
+              <FormAction cryptoSymbol={cryptoSymbol} type="SELL" />
+            </Flex>
           </div>
         </div>
       </div>

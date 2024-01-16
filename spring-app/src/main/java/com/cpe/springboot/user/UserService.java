@@ -1,5 +1,6 @@
 package com.cpe.springboot.user;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -44,7 +45,28 @@ public class UserService {
 	}
 
 	public UserDTO updateUser(UserDTO user) {
+		Optional<UserModel> userOptional= getUser(user.getId());
 		UserModel newUserModel = DTOMapper.fromUserDTOToUserModel(user);
+		if (userOptional.isPresent()) {
+			UserModel userModel = userOptional.get();
+			if (user.getLogin() != null) {
+				userModel.setLogin(user.getLogin());
+			}
+			if (user.getLastName() != null) {
+				userModel.setLastName(user.getLastName());
+			}
+			if (user.getSurName() != null) {
+				userModel.setSurName(user.getSurName());
+			}
+			if (user.getEmail() != null) {
+				userModel.setEmail(user.getEmail());
+			}
+			if (user.getAccount() != 0) {
+				userModel.setAccount(user.getAccount());
+			}
+			// TODO
+			
+		}
 		System.out.println(newUserModel);
 		UserModel updatedUser = userRepository.save(newUserModel);
 		return DTOMapper.fromUserModelToUserDTO(updatedUser);
@@ -58,5 +80,19 @@ public class UserService {
 		List<UserModel> ulist = null;
 		ulist = userRepository.findByLoginAndPwd(login, pwd);
 		return ulist;
+	}
+
+	public String createConnectionCookie(Integer id) {
+		Optional<UserModel> userOptional = userRepository.findById(id);
+		if (userOptional.isPresent()) {
+			CookieUtil test = new CookieUtil();
+			try {
+				System.out.println(userOptional.get().toString());
+				test.createSecureCookie(userOptional.get().toString());
+			} catch (NoSuchAlgorithmException e) {
+				e.printStackTrace();
+			}			
+		}
+		return null;
 	}
 }
