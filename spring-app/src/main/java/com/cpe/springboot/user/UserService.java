@@ -40,31 +40,34 @@ public class UserService {
 
 	public UserDTO addUser(UserDTO user) {
 		UserModel newUserModel = DTOMapper.fromUserDTOToUserModel(user);
+		newUserModel.setAccount(100000);
 		UserModel userSaved = userRepository.save(newUserModel);
 		return DTOMapper.fromUserModelToUserDTO(userSaved);
 	}
 
 	public UserDTO updateUser(UserDTO user) {
 		Optional<UserModel> userOptional= getUser(user.getId());
-		UserModel newUserModel = DTOMapper.fromUserDTOToUserModel(user);
+		UserModel newUserModel = null;
 		if (userOptional.isPresent()) {
-			UserModel userModel = userOptional.get();
+			newUserModel = userOptional.get();
 			if (user.getLogin() != null) {
-				userModel.setLogin(user.getLogin());
+				newUserModel.setLogin(user.getLogin());
+			}
+			if (user.getPwd() != null) {
+				newUserModel.setPwd(user.getPwd());
 			}
 			if (user.getLastName() != null) {
-				userModel.setLastName(user.getLastName());
+				newUserModel.setLastName(user.getLastName());
 			}
 			if (user.getSurName() != null) {
-				userModel.setSurName(user.getSurName());
+				newUserModel.setSurName(user.getSurName());
 			}
 			if (user.getEmail() != null) {
-				userModel.setEmail(user.getEmail());
+				newUserModel.setEmail(user.getEmail());
 			}
 			if (user.getAccount() != 0) {
-				userModel.setAccount(user.getAccount());
+				newUserModel.setAccount(user.getAccount());
 			}
-			// TODO
 			
 		}
 		System.out.println(newUserModel);

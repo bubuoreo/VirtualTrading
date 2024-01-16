@@ -44,28 +44,32 @@ public class TransactionRestController {
 
 		Optional<UserModel> user = transactionService.checkUserExistance(t.getUserId());
 
-		if (user.isPresent()) {
-			UserModel userModel = user.get();
-			if (t.getType().equals("BUY")) {
-				// Transaction is "BUY" Type
-				if (userModel.getAccount() >= t.getTransactionPrice()) {
-					return transactionService.writeTransaction(t, false);
-
+		if (t.getAssetQuantity() != 0.0 && t.getAssetPrice() != 0.0) {
+			if (user.isPresent()) {
+				UserModel userModel = user.get();
+				if (t.getType().equals("BUY")) {
+					// Transaction is "BUY" Type
+					if (userModel.getAccount() >= t.getTransactionPrice()) {
+						return transactionService.writeTransaction(t, false);
+	
+					} else {
+						throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+								"User id:" + t.getUserId() + ", not enough funds", null);
+					}
 				} else {
-					throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-							"User id:" + t.getUserId() + ", not enough funds", null);
+					// Transaction is "SELL" Type
+					if (transactionService.checkAssetAvailability(t, userModel)) {
+						return transactionService.writeTransaction(t, false);
+					} else {
+						throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User id:" + t.getUserId() + ", lack of",
+								null);
+					}
 				}
 			} else {
-				// Transaction is "SELL" Type
-				if (transactionService.checkAssetAvailability(t, userModel)) {
-					return transactionService.writeTransaction(t, false);
-				} else {
-					throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User id:" + t.getUserId() + ", lack of",
-							null);
-				}
+				throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User id:" + t.getUserId() + ", not found", null);
 			}
 		} else {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User id:" + t.getUserId() + ", not found", null);
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Null amount transaction not accepted", null);
 		}
 	}
 	
