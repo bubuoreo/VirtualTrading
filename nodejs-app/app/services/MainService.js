@@ -27,39 +27,6 @@ class MainService {
     async addUserToNotifPageQueues({ socketId, request }) {
         this.removeUserFromAllQueues({ userSocketId: socketId });
         var ret = [];
-<<<<<<< HEAD
-        switch (page) {
-            case 'home':
-                console.log('MainService: addUserToNotifPageQueues: Ajout à la queue de notification de la page \'home\'');
-                for (const codeBase of HOME_FETCH_BASE_CODES) {
-                    for (const symbol of SYMBOLS) {
-                        console.log(`MainService: addUserToNotifPageQueues: Vérification de l\'existance de ${symbol} dans la database`);
-                        const code = codeBase + symbol;
-                        if (this.database.has(code)) {
-                            console.log('MainService: addUserToNotifPageQueues: Le code est dans la Database');
-                            const element = {
-                                "dest": [socketId],
-                                "code": code,
-                                "data": this.database.get(code),
-                            };
-                            ret = [...ret, element];
-                        } else {
-                            const result = await this.apiRequest({ code });
-                            const element = {
-                                "dest": [socketId],
-                                "code": code,
-                                "data": result,
-                            };
-                            ret = [...ret, element];
-                        }
-                        if (this.fetchQueues.has(code)) {
-                            const queue = this.fetchQueues.get(code);
-                            this.fetchQueues.set(code, [...queue, socketId]);
-                        } else {
-                            this.fetchQueues.set(code, [socketId]);
-                        }
-                    }
-=======
 
         if (request === 'HOME') {
             console.log('MainService: addUserToNotifPageQueues: Ajout à la queue de notification de la page \'home\'');
@@ -94,7 +61,6 @@ class MainService {
                     // }
                     const result = await this.retrieveCodeData({ code, socketId });
                     ret = [...ret, result];
->>>>>>> main
                 }
             }
         } else if (request.match(/[A-Z]*-[A-Z]*/g)[0]) {
