@@ -74,12 +74,29 @@ public class TransactionRestController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/transactions/user/{id}")
-	private List<TransactionDTO> getAllTransactions(@PathVariable String id) {
+	private List<TransactionDTO> getUserTransactions(@PathVariable String id) {
 		List<TransactionDTO> tDTOList = new ArrayList<TransactionDTO>();
 		for (TransactionModel transactionModel : transactionService.getUserTransactions(Integer.valueOf(id))) {
 			tDTOList.add(DTOMapper.fromTransactionModelToTransactionDTO(transactionModel));
 		}
 		return tDTOList;
 	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/transactions/user/{id}/{symbol}")
+	private List<TransactionDTO> getUserTransactionsForParticularSymbol(@PathVariable String id, @PathVariable String symbol) {
+		System.out.println(symbol);
+	    List<TransactionDTO> userTransactionsDTOList = getUserTransactions(id);
+
+	    List<TransactionDTO> filteredTransactions = new ArrayList<>();
+	    for (TransactionDTO transaction : userTransactionsDTOList) {
+	    	System.out.println(transaction);
+	        if (transaction.getSymbol().equals(symbol)) {
+	        	System.out.println("oui: " + transaction);
+	            filteredTransactions.add(transaction);
+	        }
+	    }
+	    return filteredTransactions;
+	}
+
 
 }
