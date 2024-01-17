@@ -44,38 +44,59 @@ public class TransactionRestController {
 
 		Optional<UserModel> user = transactionService.checkUserExistance(t.getUserId());
 
-		if (user.isPresent()) {
-			UserModel userModel = user.get();
-			if (t.getType().equals("BUY")) {
-				// Transaction is "BUY" Type
-				if (userModel.getAccount() >= t.getTransactionPrice()) {
-					return transactionService.writeTransaction(t, false);
-
+		if (t.getAssetQuantity() != 0.0 && t.getAssetPrice() != 0.0) {
+			if (user.isPresent()) {
+				UserModel userModel = user.get();
+				if (t.getType().equals("BUY")) {
+					// Transaction is "BUY" Type
+					if (userModel.getAccount() >= t.getTransactionPrice()) {
+						return transactionService.writeTransaction(t, false);
+	
+					} else {
+						throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+								"User id:" + t.getUserId() + ", not enough funds", null);
+					}
 				} else {
-					throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-							"User id:" + t.getUserId() + ", not enough funds", null);
+					// Transaction is "SELL" Type
+					if (transactionService.checkAssetAvailability(t, userModel)) {
+						return transactionService.writeTransaction(t, false);
+					} else {
+						throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User id:" + t.getUserId() + ", lack of",
+								null);
+					}
 				}
 			} else {
-				// Transaction is "SELL" Type
-				if (transactionService.checkAssetAvailability(t, userModel)) {
-					return transactionService.writeTransaction(t, false);
-				} else {
-					throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User id:" + t.getUserId() + ", lack of",
-							null);
-				}
+				throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User id:" + t.getUserId() + ", not found", null);
 			}
 		} else {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User id:" + t.getUserId() + ", not found", null);
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Null amount transaction not accepted", null);
 		}
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/transactions/user/{id}")
-	private List<TransactionDTO> getAllTransactions(@PathVariable String id) {
+	private List<TransactionDTO> getUserTransactions(@PathVariable String id) {
 		List<TransactionDTO> tDTOList = new ArrayList<TransactionDTO>();
 		for (TransactionModel transactionModel : transactionService.getUserTransactions(Integer.valueOf(id))) {
 			tDTOList.add(DTOMapper.fromTransactionModelToTransactionDTO(transactionModel));
 		}
 		return tDTOList;
 	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/transactions/user/{id}/{symbol}")
+	private List<TransactionDTO> getUserTransactionsForParticularSymbol(@PathVariable String id, @PathVariable String symbol) {
+		System.out.println(symbol);
+	    List<TransactionDTO> userTransactionsDTOList = getUserTransactions(id);
+
+	    List<TransactionDTO> filteredTransactions = new ArrayList<>();
+	    for (TransactionDTO transaction : userTransactionsDTOList) {
+	    	System.out.println(transaction);
+	        if (transaction.getSymbol().equals(symbol)) {
+	        	System.out.println("oui: " + transaction);
+	            filteredTransactions.add(transaction);
+	        }
+	    }
+	    return filteredTransactions;
+	}
+
 
 }
