@@ -22,23 +22,28 @@ const MotionTr = chakra(motion.tr);
 const CryptoItemPersonal = ({ cryptos, amounts, socket }) => {
     const cryptoinfoData = useSelector((state) => state.cryptodataReducer.cryptoinfoData);
     const [tableData, setTableData] = useState([]);
+    const [selectedCrypto, setSelectedCrypto] = useState(null);
 
-    const { isOpen, onOpen, onClose } = useDisclosure(); // Hook to control modal visibility
+
+    // Utiliser deux états distincts pour les modales
+    const { isOpen: isBuyModalOpen, onOpen: onBuyModalOpen, onClose: onBuyModalClose } = useDisclosure();
+    const { isOpen: isSellModalOpen, onOpen: onSellModalOpen, onClose: onSellModalClose } = useDisclosure();
 
     const handleBuy = (cryptoSymbol) => {
         setSelectedCrypto(cryptoSymbol);
-        onOpen(); // Open the modal when the "BUY" button is clicked
+        onBuyModalOpen(); // Ouvrir la modal pour l'achat
     };
 
     const handleSell = (cryptoSymbol) => {
         setSelectedCrypto(cryptoSymbol);
-        onOpen(); // Open the modal when the "BUY" button is clicked
+        onSellModalOpen(); // Ouvrir la modal pour la vente
     };
 
     const handleModalClose = () => {
         setSelectedCrypto(null);
-        onClose();
-      };
+        onBuyModalClose(); // Fermer la modal d'achat
+        onSellModalClose(); // Fermer la modal de vente
+    };
 
     const calculateUSDAmount = (amount, cryptoPrice) => {
         return (amount * cryptoPrice).toFixed(2); // Fixer à 8 décimales pour Bitcoin
@@ -95,7 +100,7 @@ const CryptoItemPersonal = ({ cryptos, amounts, socket }) => {
                         <Td>{amounts[tableData.findIndex(item => item.crypto === rowData.crypto)]}</Td>
                         <Td>{calculateUSDAmount(amounts[tableData.findIndex(item => item.crypto === rowData.crypto)], rowData.price)}</Td>
                         <Td><Button onClick={() => handleBuy(rowData.crypto)}>BUY</Button>
-                            <Modal isOpen={isOpen} onClose={handleModalClose}>
+                            <Modal isOpen={isBuyModalOpen} onClose={handleModalClose}>
                                 <ModalOverlay />
                                 <ModalContent>
                                     <ModalHeader>Confirmation</ModalHeader>
@@ -105,14 +110,14 @@ const CryptoItemPersonal = ({ cryptos, amounts, socket }) => {
                                     </ModalBody>
                                     <ModalFooter>
                                         <Button colorScheme="blue" onClick={handleModalClose}>
-                                            OK
+                                            Return
                                         </Button>
                                     </ModalFooter>
                                 </ModalContent>
                             </Modal>
                         </Td>
                         <Td><Button onClick={() => handleSell(rowData.crypto)}>SELL</Button>
-                            <Modal isOpen={isOpen} onClose={handleModalClose}>
+                            <Modal isOpen={isSellModalOpen} onClose={handleModalClose}>
                                 <ModalOverlay />
                                 <ModalContent>
                                     <ModalHeader>Confirmation</ModalHeader>
@@ -122,7 +127,7 @@ const CryptoItemPersonal = ({ cryptos, amounts, socket }) => {
                                     </ModalBody>
                                     <ModalFooter>
                                         <Button colorScheme="blue" onClick={handleModalClose}>
-                                            OK
+                                            Return
                                         </Button>
                                     </ModalFooter>
                                 </ModalContent>

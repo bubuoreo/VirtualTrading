@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Button } from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
 
 const FormBuy = ({ cryptoSymbol}) => {
   const [usdAmount, setUsdAmount] = useState('');
@@ -8,6 +9,8 @@ const FormBuy = ({ cryptoSymbol}) => {
   const currentDate = new Date();
   const cryptoinfoData = useSelector((state) => state.cryptodataReducer.cryptoinfoData);
   const cryptoInfo = cryptoinfoData[cryptoSymbol];
+  
+  const navigate = useNavigate();
   
   let user = useSelector(state => state.userReducer.user);
 
@@ -44,9 +47,12 @@ const FormBuy = ({ cryptoSymbol}) => {
 
       const data = await response.json();
       console.log(data);
+      navigate('/wallet');
+
     } catch (error) {
       console.error('Erreur lors de la requête :', error.message);
     }
+
   };
 
   const handleUsdAmountChange = (event) => {

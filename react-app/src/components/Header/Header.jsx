@@ -32,7 +32,7 @@ export const Header = ({ page }) => {
   }
   useEffect(() => {
     RetrieveUser();
-  }, [])
+  }, [user.account])
 
 
 
