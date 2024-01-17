@@ -19,17 +19,30 @@ export const App = () => {
   const user = useSelector((state) => state.userReducer.user);
   const socketRef = useRef(null);
   const dispatch = useDispatch();
-  useEffect(() => {
+  // useEffect(() => {
+  //   socketRef.current = io('http://localhost:3000', { query: { id: user.id } });
+  //   setSocketsListeners(socketRef.current);
+
+    
+  //   return () => {
+  //     if (socketRef.current) {  
+  //       socketRef.current.disconnect();
+  //     }
+  //   };
+  // }, []);
+
+  const socketConnect = () => {
     socketRef.current = io('http://localhost:3000', { query: { id: user.id } });
     setSocketsListeners(socketRef.current);
+  }
 
+  
 
-    return () => {
-      if (socketRef.current) {  
-        socketRef.current.disconnect();
-      }
-    };
-  }, []);
+  const socketDisconnect = () => {
+    if (socketRef.current) {  
+      socketRef.current.disconnect();
+    }
+  }
 
   const setSocketsListeners = (socket) => {
     socket.on('/finance7j', function (data) {
@@ -56,9 +69,9 @@ export const App = () => {
     <Router>
       <Routes>
         {/* Définissez la page d'accueil comme composant pour le chemin "/" */}
-        <Route path="/" element={<LoginPage />} />
+        <Route path="/" element={<LoginPage handleSocketDisconnect={socketDisconnect}/>} />
         <Route path="/register" element={<RegistrationPage />} />
-        <Route path="/home" element={<HomePage socket={socketRef.current}/>} />
+        <Route path="/home" element={<HomePage socket={socketRef.current} handleSocketConnect={socketConnect}/>} />
         <Route path="/crypto-details/:cryptoSymbol" element={<CryptoDetailsPage socket={socketRef.current}/>} />
         <Route path="/wallet" element={<PersonalWalletPage  socket={socketRef.current} />}/>
         <Route path="/transactions/:cryptoSymbol" element={<TransactionPageBy />} />
@@ -70,3 +83,4 @@ export const App = () => {
 };
 
 export default App;
+

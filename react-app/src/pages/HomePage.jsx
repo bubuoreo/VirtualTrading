@@ -5,8 +5,12 @@ import { Footer } from '../components/Footer/Footer.jsx';
 import CryptoItem from '../components/Crypto/CryptoItem.jsx';
 import NewsItem from '../components/News/NewsItem.jsx';
 
-const HomePage = ({ socket }) => {
+const HomePage = ({ socket ,handleSocketConnect}) => { 
+    useEffect(()=> {
+        handleSocketConnect();
+    },[]);
     useEffect(() => {
+        
         // Émettre l'événement seulement si socket est défini
         if (socket) {
             socket.emit('update_page', 'HOME');
