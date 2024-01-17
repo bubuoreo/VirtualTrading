@@ -8,7 +8,7 @@ import { Button } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 
 
-const PersonalWalletPage = () => {
+const PersonalWalletPage = ({socket}) => {
   const dispatch = useDispatch();
   let user = useSelector(state => state.userReducer.user);
   const [cryptos, setCryptos] = useState([]);
@@ -36,7 +36,7 @@ const PersonalWalletPage = () => {
         }
 
         const transacinfo1 = await transacinfo.json();
-        console.log(transacinfo1);
+        // console.log(transacinfo1);
 
         // Extraction des données nécessaires et mise à jour des états
         const cryptoSymbols = transacinfo1.map(item => item.symbol);
@@ -44,6 +44,7 @@ const PersonalWalletPage = () => {
 
         setCryptos(cryptoSymbols);
         setAmounts(cryptoAmounts);
+     
       } catch (error) {
         console.error('Erreur lors de la requête :', error.message);
       }
@@ -59,7 +60,7 @@ const PersonalWalletPage = () => {
         <h2>Your Personal Wallet</h2>
         <Button onClick={handleClick}>Voir mes transactions</Button>
         <CryptoDonought cryptos={cryptos} amounts={amounts} />
-        <CryptoItemPersonal cryptos={cryptos} amounts={amounts} />
+        <CryptoItemPersonal cryptos={cryptos} amounts={amounts} socket={socket} />
       </div>
     </div>
   );

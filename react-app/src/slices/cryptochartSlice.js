@@ -8,7 +8,7 @@ export const cryptochartSlice = createSlice({
   reducers: {
     update_crypto_chart: (state, action) => {
       const { meta, quotes } = action.payload;
-      console.log(action.payload)
+      // console.log(action.payload)
       // Utiliser le symbol comme clé pour stocker les données de chaque crypto
       state.cryptochartData[meta.symbol] = { meta, quotes };
     },

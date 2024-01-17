@@ -6,7 +6,7 @@ const CryptoCourbe = ({ cryptoSymbol, socket }) => {
     const cryptoData = useSelector((state) => state.cryptochartReducer.cryptochartData);
     const [timeframe, setTimeframe] = useState('1mo');
     const [chartData, setChartData] = useState([]);
-    console.log(cryptoData);
+    // console.log(cryptoData);
 
     useEffect(() => {
         socket.emit('update_page', `${cryptoSymbol}/${timeframe}`);

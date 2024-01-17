@@ -6,6 +6,7 @@ import CryptoCourbe7 from './CryptoCourbe7';
 import FormBuy from '../Form/FormBuy';
 import FormSell from '../Form/FormSell';
 import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import {
     Modal,
     ModalOverlay,
@@ -16,13 +17,10 @@ import {
     ModalFooter,
     useDisclosure,
 } from '@chakra-ui/react';
-
-import io from 'socket.io-client';
-
 const MotionTr = chakra(motion.tr);
 
-const CryptoItemPersonal = ({ cryptos, amounts }) => {
-    const [selectedCrypto, setSelectedCrypto] = useState(null);
+const CryptoItemPersonal = ({ cryptos, amounts, socket }) => {
+    const cryptoinfoData = useSelector((state) => state.cryptodataReducer.cryptoinfoData);
     const [tableData, setTableData] = useState([]);
 
     const { isOpen, onOpen, onClose } = useDisclosure(); // Hook to control modal visibility
@@ -46,60 +44,25 @@ const CryptoItemPersonal = ({ cryptos, amounts }) => {
         return (amount * cryptoPrice).toFixed(2); // Fixer à 8 décimales pour Bitcoin
     };
 
+    const cryptoString = cryptos.join('/'); // Convertir la liste en chaîne de caractères
+    console.log(cryptoinfoData)
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const newData = await Promise.all(
-                    cryptos.map(async (crypto) => {
-                        const response = await fetch(`http://localhost:3000/finance/${crypto}`);
-                        const data = await response.json();
+        socket.emit('update_page', '/wallet/'+cryptoString); // Utiliser la chaîne de caractères
+    }, [cryptoString]);
 
-                        return {
-                            crypto,
-                            open: data.regularMarketOpen.toFixed(2),
-                            close: data.regularMarketPrice.toFixed(2),
-                            high: data.regularMarketDayHigh.toFixed(2),
-                            low: data.regularMarketDayLow.toFixed(2),
-                            marketcap: data.marketCap.toLocaleString(),
-                            volume: data.volume24Hr.toLocaleString(),
-                            logo: data.coinImageUrl,
-                            supply: data.circulatingSupply.toLocaleString(),
-                        };
-                    })
-                );
+    useEffect(() => {
+        const newData = cryptos.map(crypto => {
+            const cryptoInfo = cryptoinfoData[crypto];
+            return {
+                crypto,
+                price: cryptoInfo.regularMarketPrice.toFixed(2) || 0,
+                logo: cryptoInfo.coinImageUrl || '',
+            };
+        });
 
-                setTableData(newData);
-            } catch (error) {
-                console.error('Error loading data:', error);
-            }
-        };
+        setTableData(newData);
+    }, [cryptos, cryptoinfoData]);
 
-        fetchData();
-    }, [cryptos]);
-    //     const socket = io('http://localhost:3000');
-
-    //     socket.on('cryptoData', (update) => {
-    //         setTableData((prevData) =>
-    //         prevData.map((item) =>
-    //             item.crypto === update.symbol
-    //             ? {
-    //                 ...item,
-    //                 open: data.regularMarketOpen.toFixed(2),
-    //                 close: data.regularMarketPrice.toFixed(2),
-    //                 high: data.regularMarketDayHigh.toFixed(2),
-    //                 low: data.regularMarketDayLow.toFixed(2),
-    //                 marketcap: data.marketCap.toLocaleString(),
-    //                 volume: data.volume24Hr.toLocaleString(),
-    //                 logo: data.coinImageUrl,
-    //                 supply: data.circulatingSupply.toLocaleString(),
-    //                 }
-    //             : item
-    //         )
-    //         );
-    //     });
-
-    //     return () => socket.disconnect();
-    //   }, []); // Empty dependency array ensures useEffect runs once on mount
 
 
     return (
@@ -128,9 +91,9 @@ const CryptoItemPersonal = ({ cryptos, amounts }) => {
                     >
                         <Td><img src={rowData.logo} style={{ width: '25px', height: '25px' }}></img></Td>
                         <Td><Link to={`/transactions/${rowData.crypto}`}>{rowData.crypto}</Link></Td>
-                        <Td><Link to={`/transactions/${rowData.crypto}`}>{rowData.close}</Link></Td>
+                        <Td><Link to={`/transactions/${rowData.crypto}`}>{rowData.price}</Link></Td>
                         <Td>{amounts[tableData.findIndex(item => item.crypto === rowData.crypto)]}</Td>
-                        <Td>{calculateUSDAmount(amounts[tableData.findIndex(item => item.crypto === rowData.crypto)], rowData.close)}</Td>
+                        <Td>{calculateUSDAmount(amounts[tableData.findIndex(item => item.crypto === rowData.crypto)], rowData.price)}</Td>
                         <Td><Button onClick={() => handleBuy(rowData.crypto)}>BUY</Button>
                             <Modal isOpen={isOpen} onClose={handleModalClose}>
                                 <ModalOverlay />
