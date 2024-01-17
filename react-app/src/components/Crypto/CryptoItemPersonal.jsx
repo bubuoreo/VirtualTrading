@@ -12,6 +12,10 @@ const CryptoItemPersonal = ({ cryptos, amounts }) => {
 
     const [tableData, setTableData] = useState([]);
 
+    const calculateUSDAmount = (amount, cryptoPrice) => {
+          return (amount * cryptoPrice).toFixed(2); // Fixer à 8 décimales pour Bitcoin
+    };
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -78,14 +82,9 @@ const CryptoItemPersonal = ({ cryptos, amounts }) => {
                 <Tr>
                     <Th></Th>
                     <Th>Crypto</Th>
-                    <Th>Open</Th>
-                    <Th>Close</Th>
-                    <Th>High</Th>
-                    <Th>Low</Th>
-                    <Th>MarketCap</Th>
-                    <Th>Supply</Th>
-                    <Th>Volume 24H</Th>
+                    <Th>Price</Th>
                     <Th>Amount</Th>
+                    <Th>Value</Th>
                     <Th>
                         <div style={{ marginLeft: '90px' }}>Chart</div>
                     </Th>
@@ -101,14 +100,9 @@ const CryptoItemPersonal = ({ cryptos, amounts }) => {
                     >
                         <Td><img src={rowData.logo} style={{ width: '25px', height: '25px' }}></img></Td>
                         <Td><Link to={`/crypto-details/${rowData.crypto}`}>{rowData.crypto}</Link></Td>
-                        <Td><Link to={`/crypto-details/${rowData.crypto}`}>{rowData.open}</Link></Td>
                         <Td><Link to={`/crypto-details/${rowData.crypto}`}>{rowData.close}</Link></Td>
-                        <Td><Link to={`/crypto-details/${rowData.crypto}`}>{rowData.high}</Link></Td>
-                        <Td><Link to={`/crypto-details/${rowData.crypto}`}>{rowData.low}</Link></Td>
-                        <Td><Link to={`/crypto-details/${rowData.crypto}`}>{rowData.marketcap}</Link></Td>
-                        <Td><Link to={`/crypto-details/${rowData.crypto}`}>{rowData.supply}</Link></Td>
-                        <Td><Link to={`/crypto-details/${rowData.crypto}`}>{rowData.volume}</Link></Td>
                         <Td>{amounts[tableData.findIndex(item => item.crypto === rowData.crypto)]}</Td>
+                        <Td>{calculateUSDAmount(amounts[tableData.findIndex(item => item.crypto === rowData.crypto)],rowData.close)}</Td>
                         <Td><Link to={`/crypto-details/${rowData.crypto}`}>
                             {/* Render the CryptoCourbe7 component for each row */}
                             <CryptoCourbe7 symbol={rowData.crypto} /></Link>

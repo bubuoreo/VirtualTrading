@@ -21,4 +21,9 @@ public class AuthService {
 		return retList;
 	}
 
+	public String createConnectionCookie(Integer id) {
+		return userService.createConnectionCookie(id);
+		
+	}
+
 }

@@ -1,5 +1,6 @@
 package com.cpe.springboot.auth;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.cpe.springboot.user.CookieUtil;
 import com.cpe.springboot.user.UserModel;
 import com.cpe.springboot.user.UserService;
 
@@ -27,8 +29,10 @@ public class AuthRestController {
 	private Integer getAllCourses(@RequestBody AuthDTO authDto) {
 		List<UserModel> uList = authService.authenticateUser(authDto.getUsername(), authDto.getPassword());
 		if (uList.size() > 0) {
-
-			return uList.get(0).getId();
+//			authService.createConnectionCookie(uList.get(0).getId());
+			// TODO
+			UserModel user = uList.get(0);
+			return user.getId();
 		}
 		throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Authentification Failed", null);
 

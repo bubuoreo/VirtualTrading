@@ -28,7 +28,7 @@
       var chzButton = document.getElementById('chz');
       var dataDiv = document.getElementById('data');
 
-      btcButton.addEventListener('click', () => { socket.emit('update_page', 'BTC-USD/1wk'); });
+      btcButton.addEventListener('click', () => { socket.emit('update_page', 'wallet/BTC-USD/ETH-USD/CHZ-USD'); });
       ethButton.addEventListener('click', () => { socket.emit('update_page', 'ETH-USD/1wk'); });
       chzButton.addEventListener('click', () => { socket.emit('update_page', 'CHZ-USD/1wk'); });
 

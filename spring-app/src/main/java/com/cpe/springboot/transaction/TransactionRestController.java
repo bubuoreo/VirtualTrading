@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -43,29 +44,42 @@ public class TransactionRestController {
 
 		Optional<UserModel> user = transactionService.checkUserExistance(t.getUserId());
 
-		if (user.isPresent()) {
-			UserModel userModel = user.get();
-			if (t.getType().equals("BUY")) {
-				// Transaction is "BUY" Type
-				if (userModel.getAccount() >= t.getTransactionPrice()) {
-					return transactionService.writeTransaction(t, false);
-
+		if (t.getAssetQuantity() != 0.0 && t.getAssetPrice() != 0.0) {
+			if (user.isPresent()) {
+				UserModel userModel = user.get();
+				if (t.getType().equals("BUY")) {
+					// Transaction is "BUY" Type
+					if (userModel.getAccount() >= t.getTransactionPrice()) {
+						return transactionService.writeTransaction(t, false);
+	
+					} else {
+						throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+								"User id:" + t.getUserId() + ", not enough funds", null);
+					}
 				} else {
-					throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-							"User id:" + t.getUserId() + ", not enough funds", null);
+					// Transaction is "SELL" Type
+					if (transactionService.checkAssetAvailability(t, userModel)) {
+						return transactionService.writeTransaction(t, false);
+					} else {
+						throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User id:" + t.getUserId() + ", lack of",
+								null);
+					}
 				}
 			} else {
-				// Transaction is "SELL" Type
-				if (transactionService.checkAssetAvailability(t, userModel)) {
-					return transactionService.writeTransaction(t, false);
-				} else {
-					throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User id:" + t.getUserId() + ", lack of",
-							null);
-				}
+				throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User id:" + t.getUserId() + ", not found", null);
 			}
 		} else {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User id:" + t.getUserId() + ", not found", null);
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Null amount transaction not accepted", null);
 		}
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/transactions/user/{id}")
+	private List<TransactionDTO> getAllTransactions(@PathVariable String id) {
+		List<TransactionDTO> tDTOList = new ArrayList<TransactionDTO>();
+		for (TransactionModel transactionModel : transactionService.getUserTransactions(Integer.valueOf(id))) {
+			tDTOList.add(DTOMapper.fromTransactionModelToTransactionDTO(transactionModel));
+		}
+		return tDTOList;
 	}
 
 }
