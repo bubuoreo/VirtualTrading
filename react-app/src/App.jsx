@@ -38,12 +38,13 @@ export const App = () => {
     socket.on('/finance', function (data) {
       const result = JSON.parse(data);
       const symbol = result.symbol;
+      console.log(result)
       dispatch(update_crypto_info({ symbol, data: result }));
     });
 
     socket.on('/financeChart', function (data) {
       const result = JSON.parse(data);
-      console.log(result)
+      
       dispatch(update_crypto_chart(result));
     });
   };
@@ -55,7 +56,7 @@ export const App = () => {
         <Route path="/register" element={<RegistrationPage />} />
         <Route path="/home" element={<HomePage socket={socketRef.current}/>} />
         <Route path="/crypto-details/:cryptoSymbol" element={<CryptoDetailsPage socket={socketRef.current}/>} />
-        <Route path="/wallet" element={<PersonalWalletPage />} />
+        <Route path="/wallet" element={<PersonalWalletPage  socket={socketRef.current} />}/>
         {/* Ajoutez d'autres routes au besoin */}
       </Routes>
     </Router>

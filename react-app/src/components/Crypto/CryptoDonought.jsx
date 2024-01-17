@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend } from 'recharts';
-
+import { useSelector } from 'react-redux';
 const CryptoDonought = ({ cryptos, amounts }) => {
+    const cryptoinfoData = useSelector((state) => state.cryptodataReducer.cryptoinfoData);
 
     const [tableData, setTableData] = useState([]);
 
@@ -19,33 +20,21 @@ const CryptoDonought = ({ cryptos, amounts }) => {
 
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const newData = await Promise.all(
-                    cryptos.map(async (crypto) => {
-                        const response = await fetch(`http://localhost:3000/finance/${crypto}`);
-                        const data = await response.json();
+    
 
+                const newData = cryptos.map(crypto => {
+                        const cryptoInfo = cryptoinfoData[crypto];
                         return {
                             crypto,
-                            close: data.regularMarketPrice.toFixed(2),
+                            close: cryptoInfo.regularMarketPrice.toFixed(2),
                         };
-                    })
-                );
+                    });
+                
 
                 setTableData(newData);
-            } catch (error) {
-                console.error('Error loading data:', error);
-            }
-        };
 
-        fetchData();
-        console.log(data);
-        console.log(tableData);
-        const intervalId = setInterval(fetchData, 60000);
-
-        return () => clearInterval(intervalId);
-    }, [cryptos]);
+        
+    }, [cryptos, cryptoinfoData]);
 
     return (
         <div>

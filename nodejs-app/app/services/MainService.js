@@ -42,12 +42,14 @@ class MainService {
         } else if (request.match(/wallet/g)) {
             console.log(request);
             const symbols = request.match(/[A-Z]+-USD/g);
-            const codesList = symbols.map(item => FINANCE_STR + item);
-            for (const code of codesList) {
-                const result = await this.retrieveCodeData({ code, socketId });
-                ret = [...ret, result];
+            if (symbols) {
+                const codesList = symbols.map(item => FINANCE_STR + item);
+                for (const code of codesList) {
+                    const result = await this.retrieveCodeData({ code, socketId });
+                    ret = [...ret, result];
+                }
+                console.log(codesList);
             }
-            console.log(codesList);
         } else if (request.match(/[A-Z]*-[A-Z]*/g)[0]) {
             console.log(`${request}`);
             const codesList = [FINANCE_STR + request, FINANCE_CHART_STR + request];
@@ -175,40 +177,40 @@ class MainService {
         this.database.clear();
     }
 
-    analyzeSentiment({articles}) {
+    analyzeSentiment({ articles }) {
         var ret;
         let totalSentiment = 0;
         let totalWeight = 0;
-    
+
         articles.forEach(article => {
             let titleSentiment = 0;
             let contentSentiment = 0;
             let descriptionSentiment = 0;
-    
+
             if (article.title) {
                 titleSentiment = sentimentAnalyzer.getSentiment(article.title.split(' '));
             }
-    
+
             if (article.content) {
                 contentSentiment = sentimentAnalyzer.getSentiment(article.content.split(' '));
             }
-    
+
             if (article.description) {
                 descriptionSentiment = sentimentAnalyzer.getSentiment(article.description.split(' '));
             }
-    
+
             // Définir des poids pour chaque partie de l'article
             const titleWeight = 0.5;  // Poids pour le titre
             const contentWeight = 0.25;  // Poids pour le contenu
             const descriptionWeight = 0.25;  // Poids pour la description
-    
+
             // Calculer le score pondéré de l'article
             const weightedSentiment = (titleSentiment * titleWeight) + (contentSentiment * contentWeight) + (descriptionSentiment * descriptionWeight);
-    
+
             totalSentiment += weightedSentiment;
             totalWeight += 1;  // Vous pouvez ajuster cela en fonction de votre propre logique de pondération.
         });
-    
+
         if (totalWeight > 0) {
             const averageSentiment = totalSentiment / totalWeight;
             ret = averageSentiment

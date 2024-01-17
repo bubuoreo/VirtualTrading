@@ -6,22 +6,15 @@ const FormSell = ({ cryptoSymbol }) => {
   const [AssetAmount, setAssetAmount] = useState('');
   const [cryptoPrice, setCryptoPrice] = useState(null);
   const currentDate = new Date();
+  const cryptoinfoData = useSelector((state) => state.cryptodataReducer.cryptoinfoData);
+  const cryptoInfo = cryptoinfoData[cryptoSymbol];
   let user = useSelector(state => state.userReducer.user);
 
   useEffect(() => {
-    // Effect pour récupérer le prix en temps réel de la crypto-monnaie sélectionnée
-    const fetchCryptoPrice = async () => {
-      try {
-        const response = await fetch(`http://localhost:3000/finance/${cryptoSymbol}`);
-        const data = await response.json();
-        setCryptoPrice(data.regularMarketPrice);
-      } catch (error) {
-        console.error('Error loading crypto price:', error);
-      }
-    };
+      setCryptoPrice(cryptoInfo.regularMarketPrice);
+      console.log(cryptoPrice)
+  }, [cryptoSymbol,cryptoInfo]);
 
-    fetchCryptoPrice();
-  }, [cryptoSymbol]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();

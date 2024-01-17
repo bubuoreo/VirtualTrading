@@ -4,77 +4,37 @@ import { Table, Thead, Tbody, Tr, Th, Td, chakra } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import CryptoCourbe7 from './CryptoCourbe7';
 import { Link } from 'react-router-dom';
-import io from 'socket.io-client';
+import { useSelector } from 'react-redux';
 
 const MotionTr = chakra(motion.tr);
 
-const CryptoItemPersonal = ({ cryptos, amounts }) => {
-
+const CryptoItemPersonal = ({ cryptos, amounts, socket }) => {
+    const cryptoinfoData = useSelector((state) => state.cryptodataReducer.cryptoinfoData);
     const [tableData, setTableData] = useState([]);
 
-    const calculateUSDAmount = (amount, cryptoPrice) => {
-          return (amount * cryptoPrice).toFixed(2); // Fixer à 8 décimales pour Bitcoin
-    };
+
+    const cryptoString = cryptos.join('/'); // Convertir la liste en chaîne de caractères
+    console.log(cryptoinfoData)
+    useEffect(() => {
+        socket.emit('update_page', '/wallet/'+cryptoString); // Utiliser la chaîne de caractères
+    }, [cryptoString]);
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const newData = await Promise.all(
-                    cryptos.map(async (crypto) => {
-                        const response = await fetch(`http://localhost:3000/finance/${crypto}`);
-                        const data = await response.json();
+        const newData = cryptos.map(crypto => {
+            const cryptoInfo = cryptoinfoData[crypto];
+            return {
+                crypto,
+                price: cryptoInfo.regularMarketPrice.toFixed(2) || 0,
+                logo: cryptoInfo.coinImageUrl || '',
+            };
+        });
 
-                        return {
-                            crypto,
-                            open: data.regularMarketOpen.toFixed(2),
-                            close: data.regularMarketPrice.toFixed(2),
-                            high: data.regularMarketDayHigh.toFixed(2),
-                            low: data.regularMarketDayLow.toFixed(2),
-                            marketcap: data.marketCap.toLocaleString(),
-                            volume: data.volume24Hr.toLocaleString(),
-                            logo: data.coinImageUrl,
-                            supply: data.circulatingSupply.toLocaleString(),
-                        };
-                    })
-                );
+        setTableData(newData);
+    }, [cryptos, cryptoinfoData]);
 
-                setTableData(newData);
-            } catch (error) {
-                console.error('Error loading data:', error);
-            }
-        };
-
-        fetchData();
-
-        const intervalId = setInterval(fetchData, 60000);
-
-        return () => clearInterval(intervalId);
-    }, [cryptos]);
-    //     const socket = io('http://localhost:3000');
-
-    //     socket.on('cryptoData', (update) => {
-    //         setTableData((prevData) =>
-    //         prevData.map((item) =>
-    //             item.crypto === update.symbol
-    //             ? {
-    //                 ...item,
-    //                 open: data.regularMarketOpen.toFixed(2),
-    //                 close: data.regularMarketPrice.toFixed(2),
-    //                 high: data.regularMarketDayHigh.toFixed(2),
-    //                 low: data.regularMarketDayLow.toFixed(2),
-    //                 marketcap: data.marketCap.toLocaleString(),
-    //                 volume: data.volume24Hr.toLocaleString(),
-    //                 logo: data.coinImageUrl,
-    //                 supply: data.circulatingSupply.toLocaleString(),
-    //                 }
-    //             : item
-    //         )
-    //         );
-    //     });
-
-    //     return () => socket.disconnect();
-    //   }, []); // Empty dependency array ensures useEffect runs once on mount
-
+    const calculateUSDAmount = (amount, cryptoPrice) => {
+        return (amount * cryptoPrice).toFixed(2);
+    };
 
     return (
         <Table variant="simple" mt="8">
@@ -98,15 +58,14 @@ const CryptoItemPersonal = ({ cryptos, amounts }) => {
                         whileTap={{ scale: 0.98 }}
                         transition={{ duration: 0.2 }}
                     >
-                        <Td><img src={rowData.logo} style={{ width: '25px', height: '25px' }}></img></Td>
+                        <Td><img src={rowData.logo} style={{ width: '25px', height: '25px' }} alt={rowData.crypto} /></Td>
                         <Td><Link to={`/crypto-details/${rowData.crypto}`}>{rowData.crypto}</Link></Td>
-                        <Td><Link to={`/crypto-details/${rowData.crypto}`}>{rowData.close}</Link></Td>
+                        <Td><Link to={`/crypto-details/${rowData.crypto}`}>{rowData.price}</Link></Td>
                         <Td>{amounts[tableData.findIndex(item => item.crypto === rowData.crypto)]}</Td>
-                        <Td>{calculateUSDAmount(amounts[tableData.findIndex(item => item.crypto === rowData.crypto)],rowData.close)}</Td>
+                        <Td>{calculateUSDAmount(amounts[tableData.findIndex(item => item.crypto === rowData.crypto)], rowData.price)}</Td>
                         <Td><Link to={`/crypto-details/${rowData.crypto}`}>
-                            {/* Render the CryptoCourbe7 component for each row */}
-                            <CryptoCourbe7 symbol={rowData.crypto} /></Link>
-                        </Td>
+                            <CryptoCourbe7 symbol={rowData.crypto} />
+                        </Link></Td>
                     </MotionTr>
                 ))}
             </Tbody>
