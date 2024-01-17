@@ -35,62 +35,24 @@ class MainService {
                     console.log('MainService: addUserToNotifPageQueues: Vérification de l\'existance de la donnée dans la database');
                     const code = codeBase + symbol;
 
-                    // if (this.database.has(code)) {
-                    //     console.log('MainService: addUserToNotifPageQueues: Le code est dans la Database');
-                    //     const element = {
-                    //         "dest": [socketId],
-                    //         "code": code,
-                    //         "data": this.database.get(code),
-                    //     };
-                    //     ret = [...ret, element];
-                    // } else {
-                    //     const result = await this.apiRequest({ code });
-                    //     const element = {
-                    //         "dest": [socketId],
-                    //         "code": code,
-                    //         "data": result,
-                    //     };
-                    //     ret = [...ret, element];
-                    // }
-
-                    // if (this.fetchQueues.has(code)) {
-                    //     const queue = this.fetchQueues.get(code);
-                    //     this.fetchQueues.set(code, [...queue, socketId]);
-                    // } else {
-                    //     this.fetchQueues.set(code, [socketId]);
-                    // }
                     const result = await this.retrieveCodeData({ code, socketId });
                     ret = [...ret, result];
                 }
             }
+        } else if (request.match(/wallet/g)) {
+            console.log(request);
+            const symbols = request.match(/[A-Z]+-USD/g);
+            const codesList = symbols.map(item => FINANCE_STR + item);
+            for (const code of codesList) {
+                const result = await this.retrieveCodeData({ code, socketId });
+                ret = [...ret, result];
+            }
+            console.log(codesList);
         } else if (request.match(/[A-Z]*-[A-Z]*/g)[0]) {
             console.log(`${request}`);
             const codesList = [FINANCE_STR + request, FINANCE_CHART_STR + request];
             for (const code of codesList) {
-                // if (this.database.has(code)) {
-                //     console.log('MainService: addUserToNotifPageQueues: Le code est dans la Database');
-                //     const element = {
-                //         "dest": [socketId],
-                //         "code": code,
-                //         "data": this.database.get(code),
-                //     };
-                //     ret = [...ret, element];
-                // } else {
-                //     const result = await this.apiRequest({ code: code });
-                //     const element = {
-                //         "dest": [socketId],
-                //         "code": code,
-                //         "data": result,
-                //     };
-                //     ret = [...ret, element];
-                // }
 
-                // if (this.fetchQueues.has(code)) {
-                //     const queue = this.fetchQueues.get(code);
-                //     this.fetchQueues.set(code, [...queue, socketId]);
-                // } else {
-                //     this.fetchQueues.set(code, [socketId]);
-                // }
                 const result = await this.retrieveCodeData({ code, socketId });
                 ret = [...ret, result];
             }
