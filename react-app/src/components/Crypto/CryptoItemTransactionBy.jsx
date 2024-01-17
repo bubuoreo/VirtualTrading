@@ -6,8 +6,8 @@ import { useSelector } from 'react-redux';
 
 const MotionTr = chakra(motion.tr);
 
-const CryptoItemTransactionBy = () => {
-    const { cryptoSymbol } = useParams();
+const CryptoItemTransactionBy = ({cryptoSymbol}) => {
+    
     let user = useSelector(state => state.userReducer.user);
     const [tableData, setTableData] = useState([]);
 

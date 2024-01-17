@@ -1,6 +1,7 @@
 // HomePage.jsx
 import React, { useEffect } from 'react';
 import { Header } from '../components/Header/Header.jsx';
+import { Footer } from '../components/Footer/Footer.jsx';
 import CryptoItem from '../components/Crypto/CryptoItem.jsx';
 import NewsItem from '../components/News/NewsItem.jsx';
 
@@ -23,6 +24,7 @@ const HomePage = ({ socket }) => {
                     <CryptoItem />
                 </div>
             </div>
+            <Footer />
         </div>
     );
 };

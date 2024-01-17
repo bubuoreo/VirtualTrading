@@ -5,6 +5,14 @@ const CryptoDonought = ({ cryptos, amounts }) => {
 
     const [tableData, setTableData] = useState([]);
 
+    const hashStringToColor = (str) => {
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) {
+            hash = str.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        const c = (hash & 0x00FFFFFF).toString(16).toUpperCase();
+        return '#' + '00000'.substring(0, 6 - c.length) + c;
+    };
 
     const calculateUSDAmount = (amount, cryptoPrice) => {
         return (parseFloat((amount * cryptoPrice).toFixed(2))); // Fixer à 8 décimales pour Bitcoin
@@ -61,7 +69,7 @@ const CryptoDonought = ({ cryptos, amounts }) => {
                         label={(entry) => entry.name}
                     >
                         {data.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={`#${Math.floor(Math.random() * 16777215).toString(16)}`} />
+                            <Cell key={`cell-${index}`} fill={hashStringToColor(entry.name)} />
                         ))}
                     </Pie>
                     <Legend verticalAlign="middle" align="right" layout="vertical" />

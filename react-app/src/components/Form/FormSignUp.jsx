@@ -43,7 +43,7 @@ const UserForm = ({ onSubmit, onCancel }) => {
           pwd: password,
           email: email,
           surName: surname,
-          account: 100000,
+          account: 0,
           lastName: lastname,
         }),
       });
