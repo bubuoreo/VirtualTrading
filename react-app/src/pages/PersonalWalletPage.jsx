@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Header } from '../components/Header/Header.jsx';
 import CryptoItemPersonal from '../components/Crypto/CryptoItemPersonal.jsx';
 import CryptoDonought from '../components/Crypto/CryptoDonought.jsx';
+import { Button } from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
 
 
 const PersonalWalletPage = () => {
@@ -11,6 +13,12 @@ const PersonalWalletPage = () => {
   let user = useSelector(state => state.userReducer.user);
   const [cryptos, setCryptos] = useState([]);
   const [amounts, setAmounts] = useState([]);
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate('/transactions');
+  };
+
 
 
   useEffect(() => {
@@ -49,6 +57,7 @@ const PersonalWalletPage = () => {
       <Header />
       <div>
         <h2>Your Personal Wallet</h2>
+        <Button onClick={handleClick}>Voir mes transactions</Button>
         <CryptoDonought cryptos={cryptos} amounts={amounts} />
         <CryptoItemPersonal cryptos={cryptos} amounts={amounts} />
       </div>

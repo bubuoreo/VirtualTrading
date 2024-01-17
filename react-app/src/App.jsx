@@ -10,6 +10,10 @@ import io from 'socket.io-client';
 import { update_crypto_data } from '../src/slices/cryptoSlice'; 
 import { update_crypto_info } from '../src/slices/cryptodataSlice';  
 import { update_crypto_chart } from '../src/slices/cryptochartSlice.js';  
+import TransactionPage from './pages/TransactionPage.jsx';
+import TransactionPageBy from './pages/TransactionPageBy.jsx';
+
+
 export const App = () => {
   const cryptoinfoData = useSelector((state) => state.cryptodataReducer.cryptoinfoData);
   const user = useSelector((state) => state.userReducer.user);
@@ -56,6 +60,8 @@ export const App = () => {
         <Route path="/home" element={<HomePage socket={socketRef.current}/>} />
         <Route path="/crypto-details/:cryptoSymbol" element={<CryptoDetailsPage socket={socketRef.current}/>} />
         <Route path="/wallet" element={<PersonalWalletPage />} />
+        <Route path="/transactions/:cryptoSymbol" element={<TransactionPageBy />} />
+        <Route path="/transactions" element={<TransactionPage />} />
         {/* Ajoutez d'autres routes au besoin */}
       </Routes>
     </Router>
