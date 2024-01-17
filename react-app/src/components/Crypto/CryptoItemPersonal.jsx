@@ -22,7 +22,7 @@ const MotionTr = chakra(motion.tr);
 const CryptoItemPersonal = ({ cryptos, amounts, socket }) => {
     const cryptoinfoData = useSelector((state) => state.cryptodataReducer.cryptoinfoData);
     const [tableData, setTableData] = useState([]);
-
+    const [selectedCrypto,setSelectedCrypto] =useState(null);
     const { isOpen, onOpen, onClose } = useDisclosure(); // Hook to control modal visibility
 
     const handleBuy = (cryptoSymbol) => {
