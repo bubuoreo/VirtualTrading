@@ -43,7 +43,7 @@ class MainController {
 
     notifyUsers({ io, data }) {
         console.log("MainController: notifyUsers:");
-        console.log(data);
+        // console.log(data);
         data.forEach(item => {
             item.dest.forEach(dest => {
                 const socketCode = item.code.match(/^\/finance\w*/g)[0];
