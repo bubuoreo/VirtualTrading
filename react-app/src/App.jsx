@@ -21,6 +21,8 @@ export const App = () => {
   const user = useSelector((state) => state.userReducer.user);
   const socketRef = useRef(null);
   const dispatch = useDispatch();
+  const [resultScenario, setResultScenario] = useState(null)
+  
   // useEffect(() => {
   //   socketRef.current = io('http://localhost:3000', { query: { id: user.id } });
   //   setSocketsListeners(socketRef.current);
@@ -57,7 +59,6 @@ export const App = () => {
     socket.on('/finance', function (data) {
       const result = JSON.parse(data);
       const symbol = result.symbol;
-      console.log(result)
       dispatch(update_crypto_info({ symbol, data: result }));
     });
 
@@ -66,6 +67,13 @@ export const App = () => {
       
       dispatch(update_crypto_chart(result));
     });
+
+    socket.on('/financeGame', function (data) {
+      const resultScenario = JSON.parse(data);
+      console.log(resultScenario);
+      setResultScenario(resultScenario); // Définissez resultscenario dans l'état
+    });
+    
   };
   return (
     <Router>
@@ -78,7 +86,7 @@ export const App = () => {
         <Route path="/wallet" element={<PersonalWalletPage  socket={socketRef.current} />}/>
         <Route path="/transactions/:cryptoSymbol" element={<TransactionPageBy />} />
         <Route path="/transactions" element={<TransactionPage />} />
-        <Route path="/game" element={<GamePage />} />
+        <Route path="/game" element={<GamePage socket={socketRef.current} result={resultScenario}/>} />
         {/* Ajoutez d'autres routes au besoin */}
       </Routes>
     </Router>
