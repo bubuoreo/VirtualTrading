@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 const NewsItem = () => {
   const [articles, setArticles] = useState([]);
+  const [score, setScore] = useState(0); // Initialisez le score à 0
 
   useEffect(() => {
     const fetchArticles = async () => {
@@ -9,6 +10,7 @@ const NewsItem = () => {
         const response = await fetch('http://localhost:3000/articles');
         const data = await response.json();
         setArticles(data.articles.slice(0, 4));
+        setScore(data.finalScore);
       } catch (error) {
         console.error('Erreur lors de la récupération des articles:', error);
       }
@@ -53,6 +55,12 @@ const NewsItem = () => {
           </li>
         ))}
       </ul>
+      
+      {/* Ajoutez le curseur de score en dessous des articles */}
+      <div style={{ textAlign: 'center', marginTop: '20px' }}>
+        <p>Score de marché : {score}</p>
+        <progress value={score} max={100} style={{ width: '300px' }} />
+      </div>
     </div>
   );
 };
