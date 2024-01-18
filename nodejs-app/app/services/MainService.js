@@ -15,6 +15,12 @@ const SCENARIOS = [
         "from": new Date(2017, 12, 3),
         "to": new Date(2018, 10, 3),
         "granularity": "1mo"
+    },
+    {
+        "symbol": "CHZ-USD",
+        "from": new Date(2020, 1, 15),
+        "to": new Date(2018, 12, 15),
+        "granularity": "1mo"
     }
 ]
 
@@ -75,7 +81,6 @@ class MainService {
                     const result = await this.retrieveCodeData({ code, socketId });
                     ret = [...ret, result];
                 }
-                console.log(codesList);
             }
         } else if (request.match(/[A-Z]*-[A-Z]*/g)[0]) {
             console.log(`${request}`);
@@ -96,6 +101,7 @@ class MainService {
 
     async retrieveCodeData({ code, socketId }) {
         var ret;
+
         if (this.database.has(code)) {
             console.log('MainService: retrieveCodeData: Le code est dans la Database');
             const element = {
@@ -120,7 +126,6 @@ class MainService {
         } else {
             this.fetchQueues.set(code, [socketId]);
         }
-
         return ret;
     }
 
@@ -134,14 +139,15 @@ class MainService {
             else {
                 this.fetchQueues.set(url, updatedQueue);
             }
-
         }
+
         console.log("MainService: removeUserFromAllQueues: fetchQueue");
         console.log([...this.fetchQueues.entries()]);
     }
 
     async apiRequestAllCodes() {
-        var ret = [];
+        let ret = [];
+        let requestedCodes = [];
         for (const [code, queue] of this.fetchQueues.entries()) {
             var result = await this.apiRequest({ code });
             var element = {
@@ -150,7 +156,14 @@ class MainService {
                 "data": result
             }
             ret = [...ret, element]
+            requestedCodes = [...requestedCodes, code];
         }
+        // Delete database entries if not update (data peremption)
+        let nonRequestedCodes = Array.from(this.database.keys()).filter(code => !requestedCodes.includes(code));
+        console.log("MainService: apiRequestAllCodes:");
+        console.log(Array.from(this.database.keys()));
+        console.log(nonRequestedCodes);
+        this.deleteDatabaseKeys({keys: nonRequestedCodes})
         return ret;
     }
 
@@ -159,7 +172,6 @@ class MainService {
         var result;
         if (code.startsWith("/finance/")) {
             try {
-                // Utilisez la méthode 'quote' pour obtenir les données actuelles de l'actif
                 result = await yahooFinance.quote(symbol);
                 this.updateDatabase({ code: code, json: result });
 
@@ -169,10 +181,10 @@ class MainService {
         }
         else if (code.startsWith("/finance7j/")) {
             const sevenDaysAgo = new Date();
-            sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7); // Définir la date à il y a 7 jours
+            sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
             try {
                 result = await yahooFinance.chart(symbol, {
-                    period1: sevenDaysAgo.toISOString().split('T')[0], // Start Date 7 days ago
+                    period1: sevenDaysAgo.toISOString().split('T')[0],
                     interval: '1d',
                 });
                 this.updateDatabase({ code: code, json: result });
@@ -188,8 +200,8 @@ class MainService {
             oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
             try {
                 result = await yahooFinance.chart(symbol, {
-                    period1: oneYearAgo.toISOString().split('T')[0], // Start Date one year ago
-                    interval: timeframe,  // Timeframe granularity passed as a parameter
+                    period1: oneYearAgo.toISOString().split('T')[0],
+                    interval: timeframe,
                 });
                 this.updateDatabase({ code: code, json: result });
             } catch (error) {
@@ -200,8 +212,15 @@ class MainService {
     }
 
     resetDatabase() {
-        console.log("MainService: resetDatabase: On réinitialise la Database");
+        console.log("MainService: resetDatabase");
         this.database.clear();
+    }
+
+    deleteDatabaseKeys({keys}) {
+        keys.forEach(code => {
+            this.database.delete(code);
+            console.log(`MainService: deleteDatabaseKeys: ${code} deleted from database`);
+        });
     }
 
     analyzeSentiment({ articles }) {
@@ -227,15 +246,14 @@ class MainService {
             }
 
             // Définir des poids pour chaque partie de l'article
-            const titleWeight = 0.5;  // Poids pour le titre
-            const contentWeight = 0.25;  // Poids pour le contenu
-            const descriptionWeight = 0.25;  // Poids pour la description
+            const titleWeight = 0.5;
+            const contentWeight = 0.25;
+            const descriptionWeight = 0.25;
 
-            // Calculer le score pondéré de l'article
             const weightedSentiment = (titleSentiment * titleWeight) + (contentSentiment * contentWeight) + (descriptionSentiment * descriptionWeight);
 
             totalSentiment += weightedSentiment;
-            totalWeight += 1;  // Vous pouvez ajuster cela en fonction de votre propre logique de pondération.
+            totalWeight += 1;
         });
 
         if (totalWeight > 0) {
