@@ -1,27 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Button } from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
 
 const FormBuy = ({ cryptoSymbol}) => {
   const [usdAmount, setUsdAmount] = useState('');
   const [cryptoPrice, setCryptoPrice] = useState(null);
   const currentDate = new Date();
+  const cryptoinfoData = useSelector((state) => state.cryptodataReducer.cryptoinfoData);
+  const cryptoInfo = cryptoinfoData[cryptoSymbol];
+  
+  const navigate = useNavigate();
+  
   let user = useSelector(state => state.userReducer.user);
 
   useEffect(() => {
-    // Effect pour récupérer le prix en temps réel de la crypto-monnaie sélectionnée
-    const fetchCryptoPrice = async () => {
-      try {
-        const response = await fetch(`http://localhost:3000/finance/${cryptoSymbol}`);
-        const data = await response.json();
-        setCryptoPrice(data.regularMarketPrice);
-      } catch (error) {
-        console.error('Error loading crypto price:', error);
-      }
-    };
-
-    fetchCryptoPrice();
-  }, [cryptoSymbol]);
+        setCryptoPrice(cryptoInfo.regularMarketPrice);
+        console.log(cryptoPrice)
+  }, [cryptoSymbol,cryptoInfo]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -51,9 +47,12 @@ const FormBuy = ({ cryptoSymbol}) => {
 
       const data = await response.json();
       console.log(data);
+      navigate('/wallet');
+
     } catch (error) {
       console.error('Erreur lors de la requête :', error.message);
     }
+
   };
 
   const handleUsdAmountChange = (event) => {

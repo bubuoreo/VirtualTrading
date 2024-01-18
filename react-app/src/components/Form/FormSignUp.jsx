@@ -16,15 +16,17 @@ import {
   ModalFooter,
   useDisclosure,
 } from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
 
 const UserForm = ({ onSubmit, onCancel }) => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [surname, setSurname] = useState('');
-  const [money, setMoney] = useState(0);
+  // const [money, setMoney] = useState(0);
   const [password, setPassword] = useState('');
   const [lastname, setLastname] = useState('');
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -41,7 +43,7 @@ const UserForm = ({ onSubmit, onCancel }) => {
           pwd: password,
           email: email,
           surName: surname,
-          account: money,
+          account: 0,
           lastName: lastname,
         }),
       });
@@ -52,6 +54,7 @@ const UserForm = ({ onSubmit, onCancel }) => {
 
       const data = await response.json();
       console.log(data);
+      navigate('/');
     } catch (error) {
       console.error('Erreur lors de la requête :', error.message);
     }
@@ -119,7 +122,7 @@ const UserForm = ({ onSubmit, onCancel }) => {
               required
             />
           </FormControl>
-          <FormControl>
+          {/* <FormControl>
             <FormLabel htmlFor="money">Money</FormLabel>
             <Input
               id="money"
@@ -128,7 +131,7 @@ const UserForm = ({ onSubmit, onCancel }) => {
               onChange={(e) => setMoney(e.target.value)}
               required
             />
-          </FormControl>
+          </FormControl> */}
           <FormControl>
             <FormLabel htmlFor="password">Password</FormLabel>
             <Input

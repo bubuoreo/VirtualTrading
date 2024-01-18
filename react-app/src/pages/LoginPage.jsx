@@ -1,16 +1,17 @@
-import React  from 'react';
+import React, { useEffect } from 'react';
 import FormLogin from '../components/Form/FormLogin'
+const LoginPage = ({handleSocketDisconnect}) => {
 
-
-const LoginPage = () => {
-
+  useEffect(() => {
+    handleSocketDisconnect();
+  }, []);
 
   return (
     <div>
-          <FormLogin/>
+      <FormLogin />
     </div>
-      
-);
+
+  );
 };
 
 export default LoginPage;
