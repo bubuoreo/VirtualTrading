@@ -4,13 +4,15 @@ import { Header } from '../components/Header/Header.jsx';
 import { Footer } from '../components/Footer/Footer.jsx';
 import CryptoItem from '../components/Crypto/CryptoItem.jsx';
 import NewsItem from '../components/News/NewsItem.jsx';
+import SpeedTestGauge from '../components/SentimentGauge/SpeedTestGauge.jsx';
+import { Box, Grid, GridItem } from '@chakra-ui/react';
 
-const HomePage = ({ socket ,handleSocketConnect}) => { 
-    useEffect(()=> {
-        handleSocketConnect();
-    },[]);
+const HomePage = ({ socket, handleSocketConnect }) => {
     useEffect(() => {
-        
+        handleSocketConnect();
+    }, []);
+    useEffect(() => {
+
         // Émettre l'événement seulement si socket est défini
         if (socket) {
             socket.emit('update_page', 'HOME');
@@ -18,19 +20,34 @@ const HomePage = ({ socket ,handleSocketConnect}) => {
     }, [socket]);
 
     return (
-        <div>
+        <Box>
             <Header />
-            <div className="bg-gray-200 min-h-screen">
-                <div className="container mx-auto">
-                    <h1 className="text-4xl font-bold mt-8 mb-4 center" style={{ marginLeft: '550px', marginTop: '20px' }}>Crypto News</h1>
-                    <NewsItem />
-                    <h1 className="text-4xl font-bold mt-8 mb-4 center" style={{ marginLeft: '550px', marginTop: '20px' }}>Crypto Explorer</h1>
+            <Box className="bg-gray-200 min-h-screen">
+                <Grid templateColumns="repeat(12, 1fr)" gap={4} p={4}>
+                    {/* Colonne des actualités (NewsItem) */}
+                    <GridItem colSpan={8}>
+                        <h1 className="text-4xl font-bold mt-8 mb-4">Crypto News</h1>
+                        <NewsItem />
+                    </GridItem>
+
+                    {/* Colonne de la jauge (SpeedTestGauge) */}
+                    <GridItem colSpan={4}>
+                        <h1 className="text-4xl font-bold mt-8 mb-4">Fear & Greed</h1>
+                        <SpeedTestGauge />
+                    </GridItem>
+                </Grid>
+
+                {/* Section CryptoItem */}
+                <div className="container mx-auto mt-8">
+                    <h1 className="text-4xl font-bold mt-8 mb-4">Crypto Explorer</h1>
                     <CryptoItem />
                 </div>
-            </div>
+            </Box>
+
             <Footer />
-        </div>
+        </Box>
     );
 };
+
 
 export default HomePage;
