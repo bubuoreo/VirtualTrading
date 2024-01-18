@@ -5,6 +5,7 @@ import HomePage from './pages/HomePage.jsx';
 import RegistrationPage from './pages/RegistrationPage.jsx';
 import CryptoDetailsPage from './pages/CryptoDetailsPage.jsx';
 import PersonalWalletPage from './pages/PersonalWalletPage.jsx';
+import GamePage from './pages/GamePage.jsx';
 import { useSelector, useDispatch } from 'react-redux';
 import io from 'socket.io-client';
 import { update_crypto_data } from '../src/slices/cryptoSlice'; 
@@ -12,6 +13,7 @@ import { update_crypto_info } from '../src/slices/cryptodataSlice';
 import { update_crypto_chart } from '../src/slices/cryptochartSlice.js';  
 import TransactionPage from './pages/TransactionPage.jsx';
 import TransactionPageBy from './pages/TransactionPageBy.jsx';
+
 
 
 export const App = () => {
@@ -76,6 +78,7 @@ export const App = () => {
         <Route path="/wallet" element={<PersonalWalletPage  socket={socketRef.current} />}/>
         <Route path="/transactions/:cryptoSymbol" element={<TransactionPageBy />} />
         <Route path="/transactions" element={<TransactionPage />} />
+        <Route path="/game" element={<GamePage />} />
         {/* Ajoutez d'autres routes au besoin */}
       </Routes>
     </Router>
