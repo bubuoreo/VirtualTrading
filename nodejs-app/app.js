@@ -128,26 +128,8 @@ async function emitCryptoData(socket) {
 // Ajout pour News
 app.use(express.static(CONFIG.www));
 
-app.get('/articles', (req, res) => {
-	const apiKey = '28969bda89aa4648827906d830743c8b';
-	const q = 'crypto';
-	const language = 'fr';
-	const oldestDate = '2024-01-01';
-	const apiUrl = `https://newsapi.org/v2/everything?q=${q}&from=${oldestDate}&sortBy=publishedAt&language=${language}&apiKey=${apiKey}`;
-
-	axios.get(apiUrl)
-		.then(response => {
-			res.json(response.data);
-		})
-		.catch(error => {
-			console.error('Erreur lors de la requête API :', error);
-			res.status(500).send('Erreur serveur');
-		});
-});
-
-app.get('/articles/:keyword', async (req, res) => {
+app.get('/articles', async (req, res) => {
     const apiKey = '28969bda89aa4648827906d830743c8b';
-    const { keyword } = req.params;
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7); // Définir la date à il y a 7 jours
     const URL = 'https://newsapi.org/v2/everything';
@@ -156,7 +138,7 @@ app.get('/articles/:keyword', async (req, res) => {
         try {
             const response = await axios.get(URL, {
                 params: {
-                    q: 'crypto AND ' + keyword,
+                    q: 'crypto',
                     from: sevenDaysAgo.toISOString(), // Utiliser une chaîne de date ISO pour from
                     sortBy: 'publishedAt',
                     language: 'en',
@@ -165,7 +147,9 @@ app.get('/articles/:keyword', async (req, res) => {
             });
             const articles = response.data.articles;
             const score = mainController.analyzeSentiment({ articles: articles }); // Assurez-vous que mainController est défini
-            return { articles, score };
+			 // Calculer le score final
+        	const finalScore = score * 50 + 50;
+            return { articles, finalScore };
         } catch (error) {
             console.error('Erreur lors de la requête API :', error);
             throw error; // Lancez l'erreur pour la gérer dans la route express
