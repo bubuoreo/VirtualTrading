@@ -30,7 +30,7 @@
 
       btcButton.addEventListener('click', () => { socket.emit('update_page', 'wallet/BTC-USD/ETH-USD/CHZ-USD'); });
       ethButton.addEventListener('click', () => { socket.emit('update_page', 'ETH-USD/1wk'); });
-      chzButton.addEventListener('click', () => { socket.emit('update_page', 'CHZ-USD/1wk'); });
+      chzButton.addEventListener('click', () => { socket.emit('update_page', 'GAME'); });
 
       socket.on('/finance', (data) => {
         var item = document.createElement('p');
@@ -45,6 +45,12 @@
         window.scrollTo(0, document.body.scrollHeight);
       });
       socket.on('/financeChart', (data) => {
+        var item = document.createElement('p');
+        item.textContent = data;
+        dataDiv.appendChild(item);
+        window.scrollTo(0, document.body.scrollHeight);
+      });
+      socket.on('/financeGame', (data) => {
         var item = document.createElement('p');
         item.textContent = data;
         dataDiv.appendChild(item);

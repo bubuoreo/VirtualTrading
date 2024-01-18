@@ -3,6 +3,20 @@ const FINANCE_STR = "/finance/"
 const FINANCE7J_STR = "/finance7j/"
 const FINANCE_CHART_STR = "/financeChart/"
 const HOME_FETCH_BASE_CODES = [FINANCE7J_STR, FINANCE_STR];
+const SCENARIOS = [
+    {
+        "symbol": "BTC-USD",
+        "from": new Date(2021, 3, 12),
+        "to": new Date(2021, 11, 12),
+        "granularity": "1mo"
+    },
+    {
+        "symbol": "ETH-USD",
+        "from": new Date(2017, 12, 3),
+        "to": new Date(2018, 10, 3),
+        "granularity": "1mo"
+    }
+]
 
 const yahooFinance = require('yahoo-finance2').default;
 const natural = require('natural');
@@ -12,12 +26,12 @@ const sentimentAnalyzer = new SentimentAnalyzer('English', stemmer, 'afinn');
 
 class MainService {
 
-
     constructor() {
         this.fetchQueues = new Map();
         this.database = new Map();
         this.updateDatabase = this.updateDatabase.bind(this);
         this.analyzeSentiment = this.analyzeSentiment.bind(this);
+        this.scenariosList = null;
     }
 
     updateDatabase({ code, json }) {
@@ -39,6 +53,19 @@ class MainService {
                     ret = [...ret, result];
                 }
             }
+        } else if (request === 'GAME') {
+            let result;
+            if (this.scenariosList) {
+                result = this.scenariosList;
+            } else {
+                result = await this.initScenarios();
+            }
+            const element = {
+                "dest": [socketId],
+                "code": "/financeGame",
+                "data": result,
+            };
+            ret = [element];
         } else if (request.match(/wallet/g)) {
             console.log(request);
             const symbols = request.match(/[A-Z]+-USD/g);
@@ -217,6 +244,30 @@ class MainService {
             console.log(`Moyenne pondérée du sentiment du marché: ${averageSentiment}`);
         } else {
             console.log("Aucun article trouvé pour l'analyse.");
+        }
+        return ret;
+    }
+
+    async initScenarios() {
+        let ret = [];
+        for (let index = 0; index < SCENARIOS.length; index++) {
+            const scenario = SCENARIOS[index];
+            let result;
+            const symbol = scenario.symbol;
+            const from = scenario.from
+            const to = scenario.to
+            const granularity = scenario.granularity
+
+            try {
+                result = await yahooFinance.chart(symbol, {
+                    period1: from.toISOString().split('T')[0],
+                    period2: to.toISOString().split('T')[0],
+                    interval: granularity,
+                });
+            } catch (error) {
+                console.error(`Error fetching data for ${symbol}: ${error.message}`);
+            }
+            ret = [...ret, result];
         }
         return ret;
     }
