@@ -3,6 +3,20 @@ const FINANCE_STR = "/finance/"
 const FINANCE7J_STR = "/finance7j/"
 const FINANCE_CHART_STR = "/financeChart/"
 const HOME_FETCH_BASE_CODES = [FINANCE7J_STR, FINANCE_STR];
+const SCENARIOS = [
+    {
+        "symbol": "BTC-USD",
+        "from": new Date(2021, 3, 12),
+        "to": new Date(2021, 11, 12),
+        "granularity": "1mo"
+    },
+    {
+        "symbol": "ETH-USD",
+        "from": new Date(2017, 12, 3),
+        "to": new Date(2018, 10, 3),
+        "granularity": "1mo"
+    }
+]
 
 const yahooFinance = require('yahoo-finance2').default;
 const natural = require('natural');
@@ -12,12 +26,12 @@ const sentimentAnalyzer = new SentimentAnalyzer('English', stemmer, 'afinn');
 
 class MainService {
 
-
     constructor() {
         this.fetchQueues = new Map();
         this.database = new Map();
         this.updateDatabase = this.updateDatabase.bind(this);
         this.analyzeSentiment = this.analyzeSentiment.bind(this);
+        this.scenariosList = null;
     }
 
     updateDatabase({ code, json }) {
@@ -39,6 +53,19 @@ class MainService {
                     ret = [...ret, result];
                 }
             }
+        } else if (request === 'GAME') {
+            let result;
+            if (this.scenariosList) {
+                result = this.scenariosList;
+            } else {
+                result = await this.initScenarios();
+            }
+            const element = {
+                "dest": [socketId],
+                "code": "/financeGame",
+                "data": result,
+            };
+            ret = [element];
         } else if (request.match(/wallet/g)) {
             console.log(request);
             const symbols = request.match(/[A-Z]+-USD/g);
@@ -175,46 +202,70 @@ class MainService {
         this.database.clear();
     }
 
-    analyzeSentiment({articles}) {
+    analyzeSentiment({ articles }) {
         var ret;
         let totalSentiment = 0;
         let totalWeight = 0;
-    
+
         articles.forEach(article => {
             let titleSentiment = 0;
             let contentSentiment = 0;
             let descriptionSentiment = 0;
-    
+
             if (article.title) {
                 titleSentiment = sentimentAnalyzer.getSentiment(article.title.split(' '));
             }
-    
+
             if (article.content) {
                 contentSentiment = sentimentAnalyzer.getSentiment(article.content.split(' '));
             }
-    
+
             if (article.description) {
                 descriptionSentiment = sentimentAnalyzer.getSentiment(article.description.split(' '));
             }
-    
+
             // Définir des poids pour chaque partie de l'article
             const titleWeight = 0.5;  // Poids pour le titre
             const contentWeight = 0.25;  // Poids pour le contenu
             const descriptionWeight = 0.25;  // Poids pour la description
-    
+
             // Calculer le score pondéré de l'article
             const weightedSentiment = (titleSentiment * titleWeight) + (contentSentiment * contentWeight) + (descriptionSentiment * descriptionWeight);
-    
+
             totalSentiment += weightedSentiment;
             totalWeight += 1;  // Vous pouvez ajuster cela en fonction de votre propre logique de pondération.
         });
-    
+
         if (totalWeight > 0) {
             const averageSentiment = totalSentiment / totalWeight;
             ret = averageSentiment
             console.log(`Moyenne pondérée du sentiment du marché: ${averageSentiment}`);
         } else {
             console.log("Aucun article trouvé pour l'analyse.");
+        }
+        return ret;
+    }
+
+    async initScenarios() {
+        let ret = [];
+        for (let index = 0; index < SCENARIOS.length; index++) {
+            const scenario = SCENARIOS[index];
+            let result;
+            const symbol = scenario.symbol;
+            const from = scenario.from
+            const to = scenario.to
+            const granularity = scenario.granularity
+
+            try {
+                result = await yahooFinance.chart(symbol, {
+                    period1: from.toISOString().split('T')[0],
+                    period2: to.toISOString().split('T')[0],
+                    interval: granularity,
+                });
+            } catch (error) {
+                console.error(`Error fetching data for ${symbol}: ${error.message}`);
+            }
+            ret = [...ret, result];
         }
         return ret;
     }
