@@ -1,67 +1,76 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import { Box, Text, Image, Link } from '@chakra-ui/react';
+import Slider from 'react-slick';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 
-const NewsItem = () => {
-  const [articles, setArticles] = useState([]);
-  const [score, setScore] = useState(0); // Initialisez le score à 0
-
-  useEffect(() => {
-    const fetchArticles = async () => {
-      try {
-        const response = await fetch('http://localhost:3000/articles');
-        const data = await response.json();
-        setArticles(data.articles.slice(0, 4));
-        setScore(data.finalScore);
-      } catch (error) {
-        console.error('Erreur lors de la récupération des articles:', error);
-      }
-    };
-
-    fetchArticles();
-  }, []);
+const NewsItem = ({ articles }) => {
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 2,
+    slidesToScroll: 1,
+    dotsClass: 'slick-dots custom-dots', // Ajoute une classe personnalisée aux dots
+    autoplay: true,  // Activer le défilement automatique
+    autoplaySpeed: 1000,  // Définir la durée entre les diapositives en millisecondes (ici, 5 secondes)
+  };
 
   return (
-    <div style={{ marginTop: '20px' }}>
-      <ul style={{ listStyleType: 'none', padding: 0, display: 'flex', flexWrap: 'wrap' }}>
+    <Box mt="20px">
+      <style>
+        {`
+          /* Styles pour personnaliser la position des dots */
+          .slick-dots.custom-dots {
+            bottom: 35px;  /* Ajuste la position verticale en fonction de tes préférences */
+            top: auto;     /* Assure que top est en 'auto' pour ne pas interférer avec bottom */
+            left: 0px;
+          }
+
+          .slick-dots li {
+            margin: 0 15px;  /* Ajuste l'espace horizontal entre les dots */
+          }
+        `}
+      </style>
+
+      <Slider {...settings}>
         {articles.map((article, index) => (
-          <li
+          <Box
             key={index}
-            style={{
-              borderBottom: '1px solid #ddd',
-              marginBottom: '10px',
-              paddingBottom: '10px',
-              flexBasis: 'calc(33.333% - 20px)',
-              marginRight: index % 2 === 0 ? '20px' : '0',
-              marginTop: index >= 2 ? '20px' : '0',
-              boxSizing: 'border-box',
-              maxWidth: '300px', // Ajustement de la taille maximale
-            }}
+            borderBottom="1px solid #ddd"
+            mb="10px"
+            pb="10px"
+            boxSizing="border-box"
+            maxW="300px"
           >
-            <h3 style={{ margin: '0', fontSize: '16px' }}>{article.title}</h3>
+            <Text fontSize="16px" m="0">
+              {article.title}
+            </Text>
             {article.urlToImage && (
-              <img
+              <Image
                 src={article.urlToImage}
                 alt={article.title}
-                style={{ width: '100%', height: 'auto', marginTop: '10px' }}
+                w="100%"
+                h="auto"
+                mt="10px"
               />
             )}
-            <p style={{ margin: '5px 0', fontSize: '14px' }}>Auteur: {article.author}</p>
-            <p style={{ margin: '5px 0', fontSize: '14px' }}>
+            <Text m="5px 0" fontSize="14px">
+              Auteur: {article.author}
+            </Text>
+            <Text m="5px 0" fontSize="14px">
               Date de publication: {new Date(article.publishedAt).toLocaleDateString()}
-            </p>
-            <p style={{ margin: '5px 0', fontSize: '14px' }}>Source: {article.source.name}</p>
-            <p style={{ margin: '5px 0', fontSize: '14px' }}>
-              Lien: <a href={article.url} target="_blank" rel="noopener noreferrer">Lien vers l'article</a>
-            </p>
-          </li>
+            </Text>
+            <Text m="5px 0" fontSize="14px">
+              Source: {article.source.name}
+            </Text>
+            <Text m="5px 0" fontSize="14px">
+              Lien: <Link href={article.url} target="_blank" rel="noopener noreferrer">Lien vers l'article</Link>
+            </Text>
+          </Box>
         ))}
-      </ul>
-      
-      {/* Ajoutez le curseur de score en dessous des articles */}
-      <div style={{ textAlign: 'center', marginTop: '20px' }}>
-        <p>Score de marché : {score}</p>
-        <progress value={score} max={100} style={{ width: '300px' }} />
-      </div>
-    </div>
+      </Slider>
+    </Box>
   );
 };
 
