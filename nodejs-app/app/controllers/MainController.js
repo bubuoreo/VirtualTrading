@@ -18,6 +18,18 @@ class MainController {
         socket.on('update_page', (code) => {
             this.addUserToNotifPageQueues({ io: io, socket: socket, request: code });
         });
+
+        socket.on('multi_participate', (data) => {
+            this.addUserToMultiGameRoom({ id: idUser });
+        });
+
+        socket.on('multi_start', (data) => {
+
+        });
+
+        socket.on('multi_action', (data) => {
+
+        });
     }
 
     disconnect({ socket, userId }) {
@@ -41,6 +53,10 @@ class MainController {
         this.notifyUsers({ io, data });
     }
 
+    addUserToMultiGameRoom({ id }) {
+        this.userService.addUserToMultiGameRoom({id: id})
+    }
+
     notifyUsers({ io, data }) {
         console.log("MainController: notifyUsers:");
         // console.log(data);
@@ -60,8 +76,8 @@ class MainController {
         this.mainService.resetDatabase();
     }
 
-    analyzeSentiment({ articles }){
-        return this.mainService.analyzeSentiment({articles});
+    analyzeSentiment({ articles }) {
+        return this.mainService.analyzeSentiment({ articles });
     }
 }
 
