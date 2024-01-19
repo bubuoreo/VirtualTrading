@@ -11,7 +11,7 @@ class MainController {
     async init({ io, socket, idUser }) {
         console.log(`MainController: init: ${idUser}`);
         this.userService.addUser({ id: idUser, socketId: socket.id });
-        //this.addUserToNotifPageQueues({ io: io, socket: socket, request: "HOME" });
+        // this.addUserToNotifPageQueues({ io: io, socket: socket, request: "HOME" });
         // this.addUserToNotifPageQueues({ io: io, socket: socket, request: "BTC-USD/1wk" });
         // this.addUserToNotifPageQueues({ io: io, socket: socket, request: "ETH-USD/1wk" });
 
@@ -27,22 +27,23 @@ class MainController {
 
     async apiRequestAllCodes({ io }) {
         const data = await this.mainService.apiRequestAllCodes();
-        console.log("MainController: apiRequestAllCodes:");
-        console.log(data);
+        // console.log("MainController: apiRequestAllCodes:");
+        // console.log(data);
         this.notifyUsers({ io, data });
     }
 
     async addUserToNotifPageQueues({ io, socket, request }) {
         const data = await this.mainService.addUserToNotifPageQueues({ socketId: socket.id, request: request });
-        console.log("MainController: addUserToNotifPageQueues:");
-        console.log(data);
+        // console.log("MainController: addUserToNotifPageQueues:");
+        // console.log(data);
         // const data = await this.mainService.apiRequestAllCodes();
+        console.log(data);
         this.notifyUsers({ io, data });
     }
 
     notifyUsers({ io, data }) {
         console.log("MainController: notifyUsers:");
-        console.log(data);
+        // console.log(data);
         data.forEach(item => {
             item.dest.forEach(dest => {
                 const socketCode = item.code.match(/^\/finance\w*/g)[0];
