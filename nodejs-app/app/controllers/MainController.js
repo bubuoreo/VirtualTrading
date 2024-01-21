@@ -28,13 +28,20 @@ class MainController {
                 });
             } else if (code == 'multi_start') {
                 result.forEach(info => {
+                    io.to(info.socketId).emit('multi_wait_update', result.length);
                     io.to(info.socketId).emit(code, result.map(info => info.nickname));
                 });
             }
         });
 
         socket.on('multi_action', (data) => {
-            const [code, data] = this.multiGameAction({ userId: userId, transactionDetails: data });
+            const [code, result] = this.multiGameAction({ userId: userId, transactionDetails: data });
+            console.log(result);
+
+            // Emit the result to specific socket IDs
+            result.forEach(info => {
+                io.to(info.socketId).emit(code, JSON.stringify(result));
+            });
         });
     }
 
@@ -64,7 +71,7 @@ class MainController {
         return result;
     }
 
-    multiGameAction({ userId, transactionDetails}) {
+    multiGameAction({ userId, transactionDetails }) {
         const result = this.multiGameService.action({ userId: userId, transactionDetails: transactionDetails });
         return result;
     }

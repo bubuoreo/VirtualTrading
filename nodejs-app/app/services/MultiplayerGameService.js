@@ -6,7 +6,7 @@ const SCENARIOS = [
         "granularity": "1mo"
     }
 ]
-const ROOM_SIZE = 2;
+const ROOM_SIZE = 3;
 const WALLET_AMOUNT = 1000;
 
 function getRandomInt(min, max) {
@@ -71,7 +71,8 @@ class MultiplayerGameService {
         while (roomKey == 0 || Object.keys(this.gameRooms).includes(roomKey)) {
             roomKey = getRandomInt(1, 100);
         }
-        this.gameRooms[roomKey] = Object.values(playersInfo);
+
+        this.gameRooms[roomKey] = playersInfo;
         return roomKey;
     }
 
@@ -80,7 +81,7 @@ class MultiplayerGameService {
             const playersInRoom = Object.values(this.gameRooms[room]);
             const player = playersInRoom.find(player => player.id === userId);
             if (player) {
-                const otherPlayers = playersInRoom.find(player => player.id !== userId);
+                const otherPlayers = playersInRoom.filter(player => player.id !== userId);
                 return [room, player, otherPlayers];
             }
         }
@@ -91,7 +92,11 @@ class MultiplayerGameService {
 
         var [roomId, player, otherPlayers] = this.getRoomDetails({ userId: userId });
         const room = this.gameRooms[roomId];
-        
+
+        this.gameRooms[roomId][player.id].transactions.push(transactionDetails);
+
+        return ['multi_update', Object.values(this.gameRooms[roomId])]
+
         // if () {
         //     if (attackPlayer.gamePoints > 0) {
         //         const cardAttack = attackPlayer.cards[cardId];
@@ -144,7 +149,6 @@ class MultiplayerGameService {
         //     }
         // } else {
         //     return ["multi_failure", 'You don\'t have enough funds to perform this action']
-
         // }
     }
 
