@@ -21,7 +21,7 @@
 
     function load() {
 
-      var randomNumber = getRandomInt(1, 1000);
+      var randomNumber = getRandomInt(1, 1000);  
       const socket = io({ query: { id: randomNumber } });
       var btcButton = document.getElementById('btc');
       var ethButton = document.getElementById('eth');
@@ -30,7 +30,7 @@
 
       btcButton.addEventListener('click', () => { socket.emit('update_page', 'wallet/BTC-USD/ETH-USD/CHZ-USD'); });
       ethButton.addEventListener('click', () => { socket.emit('update_page', 'ETH-USD/1wk'); });
-      chzButton.addEventListener('click', () => { socket.emit('update_page', 'GAME'); });
+      chzButton.addEventListener('click', () => { socket.emit('multi_participate', 'bubu'); });
 
       socket.on('/finance', (data) => {
         var item = document.createElement('p');
@@ -51,6 +51,20 @@
         window.scrollTo(0, document.body.scrollHeight);
       });
       socket.on('/financeGame', (data) => {
+        var item = document.createElement('p');
+        item.textContent = data;
+        dataDiv.appendChild(item);
+        window.scrollTo(0, document.body.scrollHeight);
+      });
+      socket.on('multi_wait_update', (data) => {
+        console.log(data);
+        var item = document.createElement('p');
+        item.textContent = data;
+        dataDiv.appendChild(item);
+        window.scrollTo(0, document.body.scrollHeight);
+      });
+      socket.on('multi_start', (data) => {
+        console.log(data);
         var item = document.createElement('p');
         item.textContent = data;
         dataDiv.appendChild(item);

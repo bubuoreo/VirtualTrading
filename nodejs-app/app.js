@@ -38,7 +38,7 @@ var intervalId;
 io.on('connection', (socket) => {
 	const userId = socket.handshake.query.id;
 	console.log('Un utilisateur s\'est connecté');
-	mainController.init({ io, socket, idUser: userId });
+	mainController.init({ io, socket, userId });
 
 	// A la connection d premier utilisateur
 	if (mainController.getConnectedUsersNumber() === 1) {

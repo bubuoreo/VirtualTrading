@@ -1,34 +1,40 @@
-const UserServiceClass = require("../services/UserService.js")
-const MainServiceClass = require("../services/MainService.js")
+const UserServiceClass = require("../services/UserService.js");
+const MainServiceClass = require("../services/MainService.js");
+const MultiplayerGameServiceClass = require("../services/MultiplayerGameService.js");
 
 class MainController {
 
     constructor() {
         this.userService = new UserServiceClass();
         this.mainService = new MainServiceClass();
+        this.multiGameService = new MultiplayerGameServiceClass(this.userService);
     }
 
-    async init({ io, socket, idUser }) {
-        console.log(`MainController: init: ${idUser}`);
-        this.userService.addUser({ id: idUser, socketId: socket.id });
-        // this.addUserToNotifPageQueues({ io: io, socket: socket, request: "HOME" });
-        // this.addUserToNotifPageQueues({ io: io, socket: socket, request: "BTC-USD/1wk" });
-        // this.addUserToNotifPageQueues({ io: io, socket: socket, request: "ETH-USD/1wk" });
+    async init({ io, socket, userId }) {
+        console.log(`MainController: init: ${userId}`);
+        this.userService.addUser({ userId: userId, socketId: socket.id });
 
-        socket.on('update_page', (code) => {
-            this.addUserToNotifPageQueues({ io: io, socket: socket, request: code });
+        socket.on('update_page', (data) => {
+            this.addUserToNotifPageQueues({ userId: userId, io: io, socket: socket, request: data });
         });
 
         socket.on('multi_participate', (data) => {
-            this.addUserToMultiGameRoom({ id: idUser });
-        });
-
-        socket.on('multi_start', (data) => {
-
+            console.log(`MainController: init: Nickname = ${data}`);
+            const [code, result] = this.multiGameInit({ userId: userId, nickname: data });
+            console.log(result);
+            if (code == 'multi_wait_update') {
+                result.forEach(socketId => {
+                    io.to(socketId).emit(code, result.length);
+                });
+            } else if (code == 'multi_start') {
+                result.forEach(info => {
+                    io.to(info.socketId).emit(code, result.map(info => info.nickname));
+                });
+            }
         });
 
         socket.on('multi_action', (data) => {
-
+            const [code, data] = this.multiGameAction({ userId: userId, transactionDetails: data });
         });
     }
 
@@ -44,8 +50,8 @@ class MainController {
         this.notifyUsers({ io, data });
     }
 
-    async addUserToNotifPageQueues({ io, socket, request }) {
-        const data = await this.mainService.addUserToNotifPageQueues({ socketId: socket.id, request: request });
+    async addUserToNotifPageQueues({ userId, io, socket, request }) {
+        const data = await this.mainService.addUserToNotifPageQueues({ userId: userId, socketId: socket.id, request: request });
         // console.log("MainController: addUserToNotifPageQueues:");
         // console.log(data);
         // const data = await this.mainService.apiRequestAllCodes();
@@ -53,8 +59,14 @@ class MainController {
         this.notifyUsers({ io, data });
     }
 
-    addUserToMultiGameRoom({ id }) {
-        this.userService.addUserToMultiGameRoom({id: id})
+    multiGameInit({ userId, nickname }) {
+        const result = this.multiGameService.init({ userId: userId, nickname: nickname });
+        return result;
+    }
+
+    multiGameAction({ userId, transactionDetails}) {
+        const result = this.multiGameService.action({ userId: userId, transactionDetails: transactionDetails });
+        return result;
     }
 
     notifyUsers({ io, data }) {

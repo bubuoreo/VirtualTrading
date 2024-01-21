@@ -4,16 +4,16 @@ class UserService {
         this.socketsMap = new Map();
     }
 
-    addUser({ id, socketId }) {
-        this.socketsMap.set(id, socketId);
+    addUser({ userId, socketId }) {
+        this.socketsMap.set(userId, socketId);
     }
 
     removeUser({ id }) {
         this.socketsMap.delete(id);
     }
 
-    getSocket({ id }) {
-        console.log(`UserManager: ${id}`);
+    getSocketId({ id }) {
+        console.log(`UserService: ${id}`);
         var ret = null;
         if (this.socketsMap.has(id)) {
             ret = this.socketsMap.get(id)
@@ -23,10 +23,6 @@ class UserService {
 
     getConnectedUsers() {
         return [...this.socketsMap.keys()];
-    }
-
-    addUserToMultiGameRoom({ id }) {
-
     }
 }
 

@@ -30,6 +30,7 @@ const SentimentAnalyzer = natural.SentimentAnalyzer;
 const stemmer = natural.PorterStemmer;
 const sentimentAnalyzer = new SentimentAnalyzer('English', stemmer, 'afinn');
 
+
 class MainService {
 
     constructor() {
@@ -44,7 +45,7 @@ class MainService {
         this.database.set(code, json);
     }
 
-    async addUserToNotifPageQueues({ socketId, request }) {
+    async addUserToNotifPageQueues({ userId, socketId, request }) {
         this.removeUserFromAllQueues({ userSocketId: socketId });
         var ret = [];
 
@@ -163,7 +164,7 @@ class MainService {
         console.log("MainService: apiRequestAllCodes:");
         console.log(Array.from(this.database.keys()));
         console.log(nonRequestedCodes);
-        this.deleteDatabaseKeys({keys: nonRequestedCodes})
+        this.deleteDatabaseKeys({ keys: nonRequestedCodes })
         return ret;
     }
 
@@ -216,7 +217,7 @@ class MainService {
         this.database.clear();
     }
 
-    deleteDatabaseKeys({keys}) {
+    deleteDatabaseKeys({ keys }) {
         keys.forEach(code => {
             this.database.delete(code);
             console.log(`MainService: deleteDatabaseKeys: ${code} deleted from database`);
