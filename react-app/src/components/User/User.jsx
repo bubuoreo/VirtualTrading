@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import binanceLogo from '../../assets/binance-logo-0.png'
-import { Img } from '@chakra-ui/react';
+import { Img, Button } from '@chakra-ui/react';
 
 const User = ({ name, email, balance, page }) => {
   
@@ -10,6 +10,14 @@ const User = ({ name, email, balance, page }) => {
   const handleHome = async () => {
     navigate('/home');
   };
+
+  const navigateToGame = () => {
+    navigate('/game'); // Utilisez la fonction navigate pour naviguer vers la page '/game'
+  }
+
+  const navigateToNews = () => {
+    navigate('/news'); // Utilisez la fonction navigate pour naviguer vers la page '/news'
+  }
 
   const handleWallet = async () => {
     navigate('/wallet');
@@ -38,6 +46,8 @@ const User = ({ name, email, balance, page }) => {
           onClick={handleHome}
         />
       </h3>
+      {/* Bouton Game ici */}
+      <Button onClick={navigateToGame} style={{ float: 'left', marginLeft: '20px', marginTop: '25px' }}>Game</Button>
     </div>
   );
 };
