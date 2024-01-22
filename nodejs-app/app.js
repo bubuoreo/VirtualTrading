@@ -38,7 +38,7 @@ var intervalId;
 io.on('connection', (socket) => {
 	const userId = socket.handshake.query.id;
 	console.log('Un utilisateur s\'est connecté');
-	mainController.init({ io, socket, idUser: userId });
+	mainController.init({ io, socket, userId });
 
 	// A la connection d premier utilisateur
 	if (mainController.getConnectedUsersNumber() === 1) {
@@ -71,6 +71,36 @@ app.get('/finance/:symbol/:timeframe', async (req, res) => {
 		const result = await yahooFinance.chart(symbol, {
 			period1: oneYearAgo.toISOString().split('T')[0], // Start Date one year ago
 			interval: timeframe,  // Timeframe granularity passed as a parameter
+		});
+		res.json(result);
+	} catch (error) {
+		res.status(500).send("Error fetching data: " + error);
+	}
+});
+
+// DELETE: test
+app.get('/test', async (req, res) => {
+	console.log("fetch: /test");
+
+    // Calculate the difference in milliseconds between January 1, 2020, and today
+    const startDate = new Date('2020-01-01');
+    const sixMonthsAgo = new Date();
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+    const timeDifference = sixMonthsAgo.getTime() - startDate.getTime();
+
+    // Generate a random number of milliseconds within the date range
+    const randomMilliseconds = Math.floor(Math.random() * timeDifference);
+
+    // Create a random date between January 1, 2020, and today
+    const randomDate = new Date(startDate.getTime() + randomMilliseconds);
+    const randomDatePlus6Months = new Date(randomDate.getTime());
+	randomDatePlus6Months.setMonth(randomDate.getMonth() + 6)
+
+	try {
+		const result = await yahooFinance.chart("BTC-USD", {
+			period1: randomDate.toISOString().split('T')[0],
+			period2: randomDatePlus6Months.toISOString().split('T')[0],
+			interval: "1mo",  // Timeframe granularity passed as a parameter
 		});
 		res.json(result);
 	} catch (error) {
