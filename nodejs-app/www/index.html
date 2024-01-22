@@ -25,13 +25,13 @@
       const socket = io({ query: { id: randomNumber } });
       var btcButton = document.getElementById('btc');
       var ethButton = document.getElementById('eth');
-      var chzButton = document.getElementById('chz');
+      var multiButton = document.getElementById('multi');
       var actionButton = document.getElementById('action');
       var dataDiv = document.getElementById('data');
 
       btcButton.addEventListener('click', () => { socket.emit('update_page', 'wallet/BTC-USD/ETH-USD/CHZ-USD'); });
       ethButton.addEventListener('click', () => { socket.emit('update_page', 'ETH-USD/1wk'); });
-      chzButton.addEventListener('click', () => { socket.emit('multi_participate', 'bubu'); });
+      multiButton.addEventListener('click', () => { socket.emit('multi_participate', 'bubu'); });
       actionButton.addEventListener('click', () => { socket.emit('multi_action', [1532.987, 5.98]); });
 
       socket.on('/finance', (data) => {
@@ -86,10 +86,10 @@
 <body onload="load()">
   <h1>Crypto Chart</h1>
 
-  <button id="btc">BTC</button> <span id="btc-price"></span>
-  <button id="eth">ETH</button> <span id="eth-price"></span>
-  <button id="chz">CHZ</button> <span id="chz-price"></span>
-  <button id="action">action</button> <span id="action"></span>
+  <button id="btc">BTC</button>
+  <button id="eth">ETH</button>
+  <button id="multi">Multiplayer</button>
+  <button id="action">action</button>
 
   <div id="data"></div>
 </body>
