@@ -1,3 +1,5 @@
+const SYMBOLS = ['BTC-USD', 'ETH-USD', 'CHZ-USD', 'WBNB-USD', 'SOL-USD', 'XRP-USD', 'ADA-USD', 'AVAX-USD', 'DOGE-USD', 'EGLD-USD'];
+
 const UserServiceClass = require("../services/UserService.js");
 const MainServiceClass = require("../services/MainService.js");
 const MultiplayerGameServiceClass = require("../services/MultiplayerGameService.js");
@@ -10,7 +12,7 @@ class MainController {
         this.multiGameService = new MultiplayerGameServiceClass(this.userService);
     }
 
-    async init({ io, socket, userId }) {
+    init({ io, socket, userId }) {
         console.log(`MainController: init: ${userId}`);
         this.userService.addUser({ userId: userId, socketId: socket.id });
 
@@ -19,29 +21,24 @@ class MainController {
         });
 
         socket.on('multi_participate', (data) => {
-            console.log(`MainController: init: Nickname = ${data}`);
-            const [code, result] = this.multiGameInit({ userId: userId, nickname: data });
-            console.log(result);
-            if (code == 'multi_wait_update') {
-                result.forEach(socketId => {
-                    io.to(socketId).emit(code, result.length);
-                });
-            } else if (code == 'multi_start') {
-                result.forEach(info => {
-                    io.to(info.socketId).emit('multi_wait_update', result.length);
-                    io.to(info.socketId).emit(code, result.map(info => info.nickname));
-                });
-            }
+            this.multiplayerParticipate({ io: io, userId: userId, data: data })
         });
 
         socket.on('multi_action', (data) => {
             const [code, result] = this.multiGameAction({ userId: userId, transactionDetails: data });
             console.log(result);
-
-            // Emit the result to specific socket IDs
-            result.forEach(info => {
-                io.to(info.socketId).emit(code, JSON.stringify(result));
-            });
+            if (code === "failure") {
+                socket.emit('multi_failure', result)
+            } else if (code === "multi_end") {
+                // TODO: delete gameRoom
+                result.forEach(info => {
+                    io.to(info.socketId).emit(code, JSON.stringify(result));
+                });
+            } else {
+                result.forEach(info => {
+                    io.to(info.socketId).emit(code, JSON.stringify(result));
+                });
+            }
         });
     }
 
@@ -66,8 +63,8 @@ class MainController {
         this.notifyUsers({ io, data });
     }
 
-    multiGameInit({ userId, nickname }) {
-        const result = this.multiGameService.init({ userId: userId, nickname: nickname });
+    async multiGameInit({ userId, nickname }) {
+        const result = await this.multiGameService.init({ userId: userId, nickname: nickname });
         return result;
     }
 
@@ -97,6 +94,22 @@ class MainController {
 
     analyzeSentiment({ articles }) {
         return this.mainService.analyzeSentiment({ articles });
+    }
+
+    async multiplayerParticipate({ io, userId, data }) {
+        console.log(`MainController: init: Nickname = ${data}`);
+        const [code, result] = await this.multiGameInit({ userId: userId, nickname: data });
+        console.log(result);
+        if (code == 'multi_wait_update') {
+            result.forEach(socketId => {
+                io.to(socketId).emit(code, result.length);
+            });
+        } else if (code == 'multi_start') {
+            result.forEach(info => {
+                io.to(info.socketId).emit('multi_wait_update', result.length);
+                io.to(info.socketId).emit(code, result.map(info => info.nickname));
+            });
+        }
     }
 }
 

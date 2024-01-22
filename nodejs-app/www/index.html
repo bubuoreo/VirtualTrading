@@ -26,13 +26,17 @@
       var btcButton = document.getElementById('btc');
       var ethButton = document.getElementById('eth');
       var multiButton = document.getElementById('multi');
-      var actionButton = document.getElementById('action');
+      var buyButton = document.getElementById('buy');
+      var sellButton = document.getElementById('sell');
+      var stayButton = document.getElementById('stay');
       var dataDiv = document.getElementById('data');
 
       btcButton.addEventListener('click', () => { socket.emit('update_page', 'wallet/BTC-USD/ETH-USD/CHZ-USD'); });
       ethButton.addEventListener('click', () => { socket.emit('update_page', 'ETH-USD/1wk'); });
       multiButton.addEventListener('click', () => { socket.emit('multi_participate', 'bubu'); });
-      actionButton.addEventListener('click', () => { socket.emit('multi_action', [1532.987, 5.98]); });
+      buyButton.addEventListener('click', () => { socket.emit('multi_action', {"type":"BUY", "price": 32.987, "quantity": 5.98}); });
+      sellButton.addEventListener('click', () => { socket.emit('multi_action', {"type":"SELL", "price": 34.421, "quantity": 2.87}); });
+      stayButton.addEventListener('click', () => { socket.emit('multi_action', {"type":"STAY", "price": null, "quantity": null}); });
 
       socket.on('/finance', (data) => {
         var item = document.createElement('p');
@@ -61,21 +65,42 @@
       socket.on('multi_wait_update', (data) => {
         console.log(data);
         var item = document.createElement('p');
-        item.textContent = data;
+        item.textContent = "multi_wait_update:  " + data;
         dataDiv.appendChild(item);
         window.scrollTo(0, document.body.scrollHeight);
       });
       socket.on('multi_start', (data) => {
         console.log(data);
         var item = document.createElement('p');
-        item.textContent = data;
+        item.textContent = "multi_start:  " + data;
         dataDiv.appendChild(item);
         window.scrollTo(0, document.body.scrollHeight);
       });
       socket.on('multi_update', (data) => {
         console.log(data);
         var item = document.createElement('p');
-        item.textContent = data;
+        item.textContent = "multi_update:  " + data;
+        dataDiv.appendChild(item);
+        window.scrollTo(0, document.body.scrollHeight);
+      });
+      socket.on('multi_end_round', (data) => {
+        console.log(data);
+        var item = document.createElement('p');
+        item.textContent = "multi_end_round:  " + data;
+        dataDiv.appendChild(item);
+        window.scrollTo(0, document.body.scrollHeight);
+      });
+      socket.on('multi_failure', (data) => {
+        console.log(data);
+        var item = document.createElement('p');
+        item.textContent = "multi_failure:  " + data;
+        dataDiv.appendChild(item);
+        window.scrollTo(0, document.body.scrollHeight);
+      });
+      socket.on('multi_end', (data) => {
+        console.log(data);
+        var item = document.createElement('p');
+        item.textContent = "multi_end:  " + data;
         dataDiv.appendChild(item);
         window.scrollTo(0, document.body.scrollHeight);
       });
@@ -89,7 +114,9 @@
   <button id="btc">BTC</button>
   <button id="eth">ETH</button>
   <button id="multi">Multiplayer</button>
-  <button id="action">action</button>
+  <button id="buy">action</button>
+  <button id="sell">SELL</button>
+  <button id="stay">STAY</button>
 
   <div id="data"></div>
 </body>

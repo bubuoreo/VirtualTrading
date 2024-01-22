@@ -1,3 +1,4 @@
+const SYMBOLS = ['BTC-USD', 'ETH-USD', 'CHZ-USD', 'WBNB-USD', 'SOL-USD', 'XRP-USD', 'ADA-USD', 'AVAX-USD', 'DOGE-USD', 'EGLD-USD'];
 const SCENARIOS = [
     {
         "symbol": "BTC-USD",
@@ -6,8 +7,10 @@ const SCENARIOS = [
         "granularity": "1mo"
     }
 ]
-const ROOM_SIZE = 3;
+const ROOM_SIZE = 2;
 const WALLET_AMOUNT = 1000;
+
+const yahooFinance = require('yahoo-finance2').default;
 
 function getRandomInt(min, max) {
     min = Math.ceil(min);
@@ -23,7 +26,7 @@ class MultiplayerGameService {
         this.waitingUsersInfo = {};
     }
 
-    init({ userId, nickname }) {
+    async init({ userId, nickname }) {
         this.addUserToWaitingList({ id: userId, nickname: nickname });
         var userIdWaitingList = Object.keys(this.waitingUsersInfo);
         console.log(`MultiplayerGameService : init: taille waiting list ${userIdWaitingList.length}`);
@@ -35,16 +38,16 @@ class MultiplayerGameService {
                 tmp[userIdWaitingList[index]] = playerInfo;
             }
 
-            const roomKey = this.createRoom({ playersInfo: tmp });
+            const roomKey = await this.createRoom({ playersInfo: tmp });
 
             console.log(`MultiplayerGameService: init: Création de la room ${roomKey} avec les joueurs ${Object.keys(tmp)}`);
             console.log(`MultiplayerGameService: init:`);
             console.log(this.gameRooms[roomKey]);
 
-            return ['multi_start', Object.values(this.gameRooms[roomKey]).map(info => ({
+            return ['multi_start', [...Object.values(this.gameRooms[roomKey]).filter(info => info.id).map(info => ({
                 "socketId": info.socketId,
                 "nickname": info.nickname
-            }))];
+            }))], this.gameRooms[roomKey].Chart.quotes[0]];
         }
         else {
             console.log(`MultiplayerGameService: init: Pas assez de joueurs disponibles`);
@@ -59,6 +62,8 @@ class MultiplayerGameService {
             "socketId": userSocketId,
             "nickname": nickname,
             "wallet": WALLET_AMOUNT,
+            "actionEnabled": true,
+            "assetQuantity": 0.00,
             "transactions": [],
         }
         this.waitingUsersInfo[id] = playerInfo;
@@ -66,13 +71,14 @@ class MultiplayerGameService {
         console.log(this.waitingUsersInfo);
     }
 
-    createRoom({ playersInfo }) {
+    async createRoom({ playersInfo }) {
         var roomKey = 0;
         while (roomKey == 0 || Object.keys(this.gameRooms).includes(roomKey)) {
             roomKey = getRandomInt(1, 100);
         }
-
+        playersInfo['Chart'] = await this.createRandomScenario();
         this.gameRooms[roomKey] = playersInfo;
+        console.log(this.gameRooms[roomKey]);
         return roomKey;
     }
 
@@ -90,66 +96,84 @@ class MultiplayerGameService {
     action({ userId, transactionDetails }) {
         console.log("MultiplayerGameService: action: On se positionne sur le marché");
 
+        // obtain details about the room
         var [roomId, player, otherPlayers] = this.getRoomDetails({ userId: userId });
         const room = this.gameRooms[roomId];
 
-        this.gameRooms[roomId][player.id].transactions.push(transactionDetails);
+        if (!player.actionEnabled) {
+            return ["failure", "You already submitted your action for this round"];
+        }
 
-        return ['multi_update', Object.values(this.gameRooms[roomId])]
+        const performTransaction = () => {
+            player.transactions.push(transactionDetails);
+            player.actionEnabled = false;
+            this.gameRooms[roomId][player.id] = player;
+        };
 
-        // if () {
-        //     if (attackPlayer.gamePoints > 0) {
-        //         const cardAttack = attackPlayer.cards[cardId];
-        //         const cardDefense = defensePlayer.cards[opponentCardId];
-        //         if (cardAttack && cardDefense && cardAttack.hp > 0 && cardDefense.hp > 0) {
-        //             cardDefense.hp = cardDefense.hp - (cardAttack.att - cardDefense.def);
-        //             if (cardDefense.hp < 0) {
-        //                 cardDefense.hp = 0;
-        //             }
+        const handleEndRound = () => {
+            const transactionArrays = Object.values(this.gameRooms[roomId]).filter(info => info.transactions).map(info => info.transactions);
+            const transactionLengths = transactionArrays.map(transactions => transactions.length);
 
-        //             // MAJ dans les cartes du défenseur des hp de la carte visée
-        //             defensePlayer.cards[opponentCardId].hp = cardDefense.hp;
-        //             // Vérifier si l'attaque qui vient d'être lancée signe la fin du jeu
-        //             if (this.isEndGame({ player: defensePlayer })) {
+            if (transactionLengths.every(length => length === transactionLengths[0])) {
+                Object.values(this.gameRooms[roomId]).forEach(entry => {
+                    if (entry.id) {
+                        entry.actionEnabled = true;
+                    }
+                });
 
-        //                 attackPlayer = this.updateWallet({ player: attackPlayer, amount: this.moneyPrice })
-        //                 defensePlayer = this.updateWallet({ player: defensePlayer, amount: -this.moneyPrice })
+                if (transactionLengths[0] == this.gameRooms[roomId].Chart.quotes.length) {
+                    const result = Object.values(this.gameRooms[roomId]).filter(info => info.id);
+                    delete this.gameRooms[roomId];
+                    console.log(this.gameRooms);
+                    return ['multi_end', result];
+                } else {
+                    return ['multi_end_round', [...Object.values(this.gameRooms[roomId]).filter(info => info.id), this.gameRooms[roomId].Chart.quotes[transactionLengths[0]]]];
+                }
+            } else {
+                return ['multi_update', Object.values(this.gameRooms[roomId]).filter(info => info.id)];
+            }
+        };
 
-        //                 // MAJ de la room
-        //                 const [labelAttackPlayer, labelDefensePlayer] = this.getPlayerLabeling({ roomId: roomId, userId: attackPlayer.id })
-        //                 room[labelAttackPlayer] = attackPlayer;
-        //                 room[labelDefensePlayer] = defensePlayer;
-        //                 console.log(`MultiplayerGameService: attaque: ${room}`);
+        const handleBuyAction = () => {
+            console.log("MultiplayerGameService: action: It is a BUY action");
 
-        //                 const infoPlayers = { "winner": attackPlayer, "looser": defensePlayer };
+            if (player.wallet >= transactionDetails.price * transactionDetails.quantity) {
+                player = this.updateWallet({ player, amount: -(transactionDetails.price * transactionDetails.quantity) });
+                player = this.updateAssetQuantity({ player, quantity: transactionDetails.quantity });
+                performTransaction();
+                return handleEndRound();
+            } else {
+                return ["failure", "Not enough money for the BUY action"];
+            }
+        };
 
-        //                 return ["end", infoPlayers];
-        //             }
-        //             // Enlever un gamePoint au joueur
-        //             attackPlayer.gamePoints -= 1;
+        const handleSellAction = () => {
+            console.log("MultiplayerGameService: action: It is a SELL action");
 
-        //             // MAJ de la room
-        //             const [labelAttackPlayer, labelDefensePlayer] = this.getPlayerLabeling({ roomId: roomId, userId: attackPlayer.id })
-        //             room[labelAttackPlayer] = attackPlayer;
-        //             room[labelDefensePlayer] = defensePlayer;
-        //             console.log(`MultiplayerGameService: attaque: ${room}`);
+            if (player.assetQuantity >= transactionDetails.quantity) {
+                player = this.updateWallet({ player, amount: transactionDetails.price * transactionDetails.quantity });
+                player = this.updateAssetQuantity({ player, quantity: -transactionDetails.quantity });
+                performTransaction();
+                return handleEndRound();
+            } else {
+                return ["failure", "Not enough asset to perform your SELL request"];
+            }
+        };
 
-        //             const infoPlayer1 = { "self": attackPlayer, "opponent": defensePlayer };
-        //             const infoPlayer2 = { "self": defensePlayer, "opponent": attackPlayer };
-        //             if (attackPlayer.gamePoints <= 0) {
-        //                 return ["success_endTurn", { infoPlayer1, infoPlayer2 }];
-        //             } else {
-        //                 return ["success", { infoPlayer1, infoPlayer2 }];
-        //             }
-        //         } else {
-        //             return ["failure", 'Card invalid']
-        //         }
-        //     } else {
-        //         return ["failure", 'No game points left. Press the button "End turn".']
-        //     }
-        // } else {
-        //     return ["multi_failure", 'You don\'t have enough funds to perform this action']
-        // }
+        const handleStayAction = () => {
+            console.log("MultiplayerGameService: action: It is a STAY action");
+            performTransaction();
+            return handleEndRound();
+        };
+
+        switch (transactionDetails.type) {
+            case "BUY":
+                return handleBuyAction();
+            case "SELL":
+                return handleSellAction();
+            default:
+                return handleStayAction();
+        }
     }
 
 
@@ -187,6 +211,41 @@ class MultiplayerGameService {
     updateWallet({ player, amount }) {
         player.wallet += amount;
         return player;
+    }
+
+    updateAssetQuantity({ player, quantity }) {
+        player.assetQuantity += quantity;
+        return player;
+    }
+
+    async createRandomScenario() {
+        // Calculate the difference in milliseconds between January 1, 2020, and today
+        const startDate = new Date('2020-01-01');
+        const sixMonthsAgo = new Date();
+        sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+        const timeDifference = sixMonthsAgo.getTime() - startDate.getTime();
+
+        // Generate a random number of milliseconds within the date range
+        const randomMilliseconds = Math.floor(Math.random() * timeDifference);
+
+        // Create a random date between January 1, 2020, and today
+        const randomDate = new Date(startDate.getTime() + randomMilliseconds);
+        const randomDatePlus6Months = new Date(randomDate.getTime());
+        randomDatePlus6Months.setMonth(randomDate.getMonth() + 6)
+
+        console.log(randomDate);
+        console.log(randomDatePlus6Months);
+
+        try {
+            const result = await yahooFinance.chart(SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)], {
+                period1: randomDate.toISOString().split('T')[0],
+                period2: randomDatePlus6Months.toISOString().split('T')[0],
+                interval: "1mo",  // Timeframe granularity passed as a parameter
+            });
+            return result;
+        } catch (error) {
+            throw new Error("Error fetching data: " + error);
+        }
     }
 }
 
