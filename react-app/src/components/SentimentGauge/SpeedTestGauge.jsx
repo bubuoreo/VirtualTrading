@@ -1,33 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import {
   Box,
   CircularProgress,
   CircularProgressLabel,
   ChakraProvider,
 } from '@chakra-ui/react';
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-} from 'recharts';
 
-const SpeedTestGauge = () => {
-  const [score, setScore] = useState(60);
 
-  // Simule un changement de score toutes les 2 secondes
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const newScore = Math.random() * 100; // Remplacez par votre logique de récupération de score réel
-      setScore(newScore);
-    }, 2000);
-
-    
-
-    return () => clearInterval(interval);
-  }, []);
+const SpeedTestGauge = ({score}) => {
+  
 
   const getColor = () => {
     if (score >= 60) {

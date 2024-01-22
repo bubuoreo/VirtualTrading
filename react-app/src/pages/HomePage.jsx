@@ -1,5 +1,5 @@
 // HomePage.jsx
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Header } from '../components/Header/Header.jsx';
 import { Footer } from '../components/Footer/Footer.jsx';
 import CryptoItem from '../components/Crypto/CryptoItem.jsx';
@@ -8,9 +8,26 @@ import SpeedTestGauge from '../components/SentimentGauge/SpeedTestGauge.jsx';
 import { Box, Grid, GridItem } from '@chakra-ui/react';
 
 const HomePage = ({ socket, handleSocketConnect }) => {
+
+    const [articles, setArticles] = useState([]);
+    const [score, setScore] = useState(0); // Initialisez le score à 0
+
     useEffect(() => {
         handleSocketConnect();
+        const fetchArticles = async () => {
+            try {
+              const response = await fetch('http://localhost:3000/articles');
+              const data = await response.json();
+              setArticles(data.articles.slice(0, 4));
+              setScore(data.finalScore);
+            } catch (error) {
+              console.error('Erreur lors de la récupération des articles:', error);
+            }
+          };
+      
+          fetchArticles();
     }, []);
+
     useEffect(() => {
 
         // Émettre l'événement seulement si socket est défini
@@ -27,13 +44,13 @@ const HomePage = ({ socket, handleSocketConnect }) => {
                     {/* Colonne des actualités (NewsItem) */}
                     <GridItem colSpan={8}>
                         <h1 className="text-4xl font-bold mt-8 mb-4">Crypto News</h1>
-                        <NewsItem />
+                        <NewsItem articles={articles}/>
                     </GridItem>
 
                     {/* Colonne de la jauge (SpeedTestGauge) */}
                     <GridItem colSpan={4}>
                         <h1 className="text-4xl font-bold mt-8 mb-4">Fear & Greed</h1>
-                        <SpeedTestGauge />
+                        <SpeedTestGauge score={score}/>
                     </GridItem>
                 </Grid>
 
