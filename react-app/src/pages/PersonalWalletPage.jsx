@@ -24,7 +24,7 @@ const PersonalWalletPage = ({socket}) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const transacinfo = await fetch('http://localhost:8080/asset/user/' + String(user.id), {
+        const transacinfo = await fetch('http://localhost/asset/user/' + String(user.id), {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

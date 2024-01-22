@@ -13,7 +13,7 @@ const CryptoItemTransaction = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const transacinfo = await fetch('http://localhost:8080/transactions/user/' + String(user.id), {
+                const transacinfo = await fetch('http://localhost/transactions/user/' + String(user.id), {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
