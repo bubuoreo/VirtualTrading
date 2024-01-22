@@ -12,7 +12,7 @@ export const Header = ({ page }) => {
 
   const RetrieveUser = async (event) => {
     try {
-      const userinfo = await fetch('http://localhost:8080/user/' + String(userToken), {
+      const userinfo = await fetch('http://localhost/user/' + String(userToken), {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

@@ -33,7 +33,7 @@ const FormBuy = ({ cryptoSymbol}) => {
         assetQuantity: parseFloat(calculateBitcoinAmount()),
       });
       console.log(body);
-      const response = await fetch('http://localhost:8080/transaction', {
+      const response = await fetch('http://localhost/transaction', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
