@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { useSelector, useDispatch } from 'react-redux';
+import { Button } from "@chakra-ui/react";
 
 const CryptoCourbe = ({ cryptoSymbol, socket }) => {
     const cryptoData = useSelector((state) => state.cryptochartReducer.cryptochartData);
@@ -27,9 +28,10 @@ const CryptoCourbe = ({ cryptoSymbol, socket }) => {
         <div>
             <h1>Crypto Chart</h1>
             <br />
-            <button onClick={() => handleTimeframeClick('1d')}>Day</button>
-            <button onClick={() => handleTimeframeClick('1wk')}>Week</button>
-            <button onClick={() => handleTimeframeClick('1mo')}>Month</button>
+            <Button onClick={() => handleTimeframeClick('1d')} mr={2}>Day</Button> {/* mr est pour margin-right */}
+            <Button onClick={() => handleTimeframeClick('1wk')} mx={2}>Week</Button> {/* mx est pour margin-horizontal (gauche et droite) */}
+            <Button onClick={() => handleTimeframeClick('1mo')} ml={2}>Month</Button> {/* ml est pour margin-left */}
+
 
             <ResponsiveContainer width="90%" height={400}>
                 <LineChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 10 }}>
