@@ -48,6 +48,8 @@ const User = ({ name, email, balance, page }) => {
       </h3>
       {/* Bouton Game ici */}
       <Button onClick={navigateToGame} style={{ float: 'left', marginLeft: '20px', marginTop: '25px' }}>Game</Button>
+      {/* Bouton News ici */}
+      <Button onClick={navigateToNews} style={{ float: 'left', marginLeft: '20px', marginTop: '25px' }}>News</Button>
     </div>
   );
 };

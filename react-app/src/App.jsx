@@ -14,6 +14,7 @@ import { update_crypto_chart } from '../src/slices/cryptochartSlice.js';
 import TransactionPage from './pages/TransactionPage.jsx';
 import TransactionPageBy from './pages/TransactionPageBy.jsx';
 import CryptoChartScenario from './pages/CryptoChartScenario.jsx';
+import NewsPage from './pages/NewsPage.jsx';
 
 
 
@@ -88,6 +89,7 @@ export const App = () => {
         <Route path="/transactions/:cryptoSymbol" element={<TransactionPageBy />} />
         <Route path="/transactions" element={<TransactionPage />} />
         <Route path="/game" element={<GamePage socket={socketRef.current} result={resultScenario}/>} />
+        <Route path="/news" element={<NewsPage/>} />
         <Route path="/crypto-chart-scenario/:scenarioId" element={<CryptoChartScenario result={resultScenario}/>} />
         {/* Ajoutez d'autres routes au besoin */}
       </Routes>
