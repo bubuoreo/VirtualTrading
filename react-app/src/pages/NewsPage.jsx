@@ -5,7 +5,7 @@ import { Footer } from '../components/Footer/Footer.jsx';
 import CryptoItem from '../components/Crypto/CryptoItem.jsx';
 import NewsItem2 from '../components/News/NewsItem2.jsx';
 import SpeedTestGauge from '../components/SentimentGauge/SpeedTestGauge.jsx';
-import { Box, Grid, GridItem } from '@chakra-ui/react';
+import { Box, Center, Grid, GridItem } from '@chakra-ui/react';
 
 const NewsPage = ({}) => {
 
@@ -32,7 +32,8 @@ const NewsPage = ({}) => {
           <Header />
     
           {/* Indicateur de score en haut */}
-          <Box p={4} bg="gray.200">
+          <Center>
+          <Box p={4}>
             <Grid templateColumns="repeat(12, 1fr)" gap={4}>
               <GridItem colSpan={4}>
                 <h1 className="text-4xl font-bold mt-8 mb-4">Fear & Greed</h1>
@@ -40,6 +41,7 @@ const NewsPage = ({}) => {
               </GridItem>
             </Grid>
           </Box>
+          </Center>
             <h1 className="text-4xl font-bold mt-8 mb-4">Crypto News</h1>
             <NewsItem2 articles={articles} />
           <Footer />

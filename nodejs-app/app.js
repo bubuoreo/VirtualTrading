@@ -129,7 +129,7 @@ async function emitCryptoData(socket) {
 app.use(express.static(CONFIG.www));
 
 app.get('/articles', async (req, res) => {
-    const apiKey = '28969bda89aa4648827906d830743c8b';
+    const apiKey = '654fec218e1c4f5186c29512a9d490d5';
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7); // Définir la date à il y a 7 jours
     const URL = 'https://newsapi.org/v2/everything';
