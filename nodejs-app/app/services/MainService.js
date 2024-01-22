@@ -18,8 +18,8 @@ const SCENARIOS = [
     },
     {
         "symbol": "CHZ-USD",
-        "from": new Date(2020, 1, 15),
-        "to": new Date(2018, 12, 15),
+        "from": new Date(2018, 12, 15),
+        "to": new Date(2020, 1, 15),
         "granularity": "1mo"
     }
 ]

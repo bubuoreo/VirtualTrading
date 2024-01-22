@@ -2,19 +2,17 @@ import React, { useEffect, useState } from 'react';
 import { Header } from '../components/Header/Header.jsx';
 import { Footer } from '../components/Footer/Footer.jsx';
 import CryptoScenario from '../components/Crypto/CryptoScenario.jsx';
+import { Link, useNavigate } from 'react-router-dom'; // Utilisez useNavigate
 
 const GamePage = ({ socket, result }) => {
   const [selectedScenario, setSelectedScenario] = useState(null);
+  const navigate = useNavigate(); // Utilisez useNavigate au lieu de useHistory
 
   useEffect(() => {
     if (socket) {
       socket.emit('update_page', 'GAME');
     }
   }, [socket]);
-
-  const handleScenarioClick = (id) => {
-    setSelectedScenario(id);
-  };
 
   return (
     <div>
@@ -23,11 +21,9 @@ const GamePage = ({ socket, result }) => {
         {result && result.length > 0 ? (
           <div className="crypto-scenario-container">
             {result.map((item, index) => (
-              <CryptoScenario
-                key={index}
-                id={index + 1}
-                onClick={() => handleScenarioClick(index + 1)}
-              />
+              <button key={index} onClick={() => navigate(`/crypto-chart-scenario/${index}`)}>
+                <CryptoScenario id={index + 1} item={item} />
+              </button>
             ))}
           </div>
         ) : (

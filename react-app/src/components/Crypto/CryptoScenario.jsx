@@ -1,6 +1,7 @@
 import React from 'react';
 
-const CryptoScenario = ({ id, onClick }) => {
+const CryptoScenario = ({ id, item }) => {
+  console.log(item)
   const cryptoScenarioStyle = {
     display: 'flex',
     justifyContent: 'center',
@@ -13,7 +14,7 @@ const CryptoScenario = ({ id, onClick }) => {
   };
 
   return (
-    <div className="crypto-scenario" style={cryptoScenarioStyle} onClick={onClick}>
+    <div className="crypto-scenario" style={cryptoScenarioStyle}>
       Scénario {id}
     </div>
   );

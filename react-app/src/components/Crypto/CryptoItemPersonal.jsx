@@ -50,7 +50,10 @@ const CryptoItemPersonal = ({ cryptos, amounts, socket }) => {
 
     const cryptoString = cryptos.join('/');
     useEffect(() => {
-        socket.emit('update_page', '/wallet/' + cryptoString);
+        if (socket) {
+            socket.emit('update_page', '/wallet/' + cryptoString);
+        }
+        
     }, [cryptoString]);
 
     useEffect(() => {

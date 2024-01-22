@@ -9,7 +9,10 @@ const CryptoCourbe = ({ cryptoSymbol, socket }) => {
     // console.log(cryptoData);
 
     useEffect(() => {
-        socket.emit('update_page', `${cryptoSymbol}/${timeframe}`);
+        if (socket) {
+            socket.emit('update_page', `${cryptoSymbol}/${timeframe}`);
+        }
+        
     }, [cryptoSymbol, timeframe]);
 
     useEffect(() => {
