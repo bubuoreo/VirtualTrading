@@ -110,7 +110,7 @@ export const App = () => {
         <Route path="/transactions" element={<TransactionPage />} />
         <Route path="/game" element={<GamePage socket={socketRef.current} result={resultScenario}/>} />
         <Route path="/crypto-chart-scenario/:scenarioId" element={<CryptoChartScenario result={resultScenario}/>} />
-        <Route path="/crypto-chart-scenario/multi" element={<CryptoMultiScenario/>}/>
+        {/* <Route path="/crypto-chart-scenario/multi" element={<CryptoMultiScenario/>}/> */}
       </Routes>
     </Router>
   );
