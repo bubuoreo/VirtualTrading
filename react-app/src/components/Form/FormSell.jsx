@@ -82,11 +82,11 @@ const FormSell = ({ cryptoSymbol }) => {
 
   return (
     <div>
-      <h2>Vendre des {cryptoSymbol}</h2>
+      <h2>Sell {cryptoSymbol}</h2>
       <form onSubmit={handleSubmit}>
 
         <label>
-          Quantité de {cryptoSymbol}:
+          Quantity of {cryptoSymbol}:
           <input
             type="number"
             value={AssetAmount}
@@ -95,10 +95,10 @@ const FormSell = ({ cryptoSymbol }) => {
         </label>
 
         <div>
-          <p>Montant en USD: {calculateUSDAmount()}</p>
+          <p>USD Amount: {calculateUSDAmount()}</p>
         </div>
         <Button type="submit">
-          Vendre
+          Sell
         </Button>
       </form>
       <Modal isOpen={responseModalOpen} onClose={handleResponseModalClose}>
@@ -111,7 +111,7 @@ const FormSell = ({ cryptoSymbol }) => {
           </ModalBody>
           <ModalFooter>
             <Button colorScheme="blue" onClick={handleResponseModalClose}>
-              Fermer
+              Close
             </Button>
           </ModalFooter>
         </ModalContent>

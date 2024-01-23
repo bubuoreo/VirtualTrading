@@ -59,7 +59,7 @@ const PersonalWalletPage = ({socket}) => {
       <Header />
       <div>
         <h2>Your Personal Wallet</h2>
-        <Button onClick={handleClick}>Voir mes transactions</Button>
+        <Button onClick={handleClick}>View all transactions</Button>
         <CryptoDonought cryptos={cryptos} amounts={amounts} />
         <CryptoItemPersonal cryptos={cryptos} amounts={amounts} socket={socket} />
       </div>

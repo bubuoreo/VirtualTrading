@@ -47,7 +47,7 @@ export const Footer = () => {
 
             {/* Bouton de basculement entre le mode sombre et le mode clair */}
             <Button onClick={toggleDarkMode}>
-                {darkMode ? 'Désactiver' : 'Activer'} le Dark Mode
+                {darkMode ? 'Switch off' : 'Switch on'} Dark Mode
             </Button>
         </Flex>
     );
