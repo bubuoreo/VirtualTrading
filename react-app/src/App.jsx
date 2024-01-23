@@ -18,43 +18,30 @@ import CryptoChartScenario from './pages/CryptoChartScenario.jsx';
 
 
 export const App = () => {
-  const cryptoinfoData = useSelector((state) => state.cryptodataReducer.cryptoinfoData);
+  // const cryptoinfoData = useSelector((state) => state.cryptodataReducer.cryptoinfoData);
   const user = useSelector((state) => state.userReducer.user);
   const socketRef = useRef(null);
   const dispatch = useDispatch();
-  const [resultScenario, setResultScenario] = useState(null)
-  
-  // useEffect(() => {
-  //   socketRef.current = io('http://localhost:3000', { query: { id: user.id } });
-  //   setSocketsListeners(socketRef.current);
-
-    
-  //   return () => {
-  //     if (socketRef.current) {  
-  //       socketRef.current.disconnect();
-  //     }
-  //   };
-  // }, []);
+  const [resultScenario, setResultScenario] = useState(null);
+  const [waitingListSize, setWaitingListSize] = useState(0);
+  const [multiDetails, setMultiDetails] = useState(null);
 
   const socketConnect = () => {
     socketRef.current = io('http://localhost:3000', { query: { id: user.id } });
     setSocketsListeners(socketRef.current);
-  }
-
-  
+  };
 
   const socketDisconnect = () => {
     if (socketRef.current) {  
       socketRef.current.disconnect();
     }
-  }
+  };
 
   const setSocketsListeners = (socket) => {
     socket.on('/finance7j', function (data) {
       const result = JSON.parse(data);
       const code = result.meta.symbol;
       dispatch(update_crypto_data({ code, data: result.quotes }));
-      
     });
 
     socket.on('/finance', function (data) {
@@ -65,20 +52,19 @@ export const App = () => {
 
     socket.on('/financeChart', function (data) {
       const result = JSON.parse(data);
-      
       dispatch(update_crypto_chart(result));
     });
 
     socket.on('/financeGame', function (data) {
       const resultScenario = JSON.parse(data);
       console.log(resultScenario);
-      setResultScenario(resultScenario); // Définissez resultscenario dans l'état
+      setResultScenario(resultScenario);
     });
 
     socket.on('multi_wait_update', function (data) {
       const result = JSON.parse(data);
       console.log(result);
-      // TODO
+      setWaitingListSize(result)
     });
 
     socket.on('multi_start', function (data) {
@@ -110,12 +96,11 @@ export const App = () => {
       console.log(result);
       // TODO
     });
-    
   };
+
   return (
     <Router>
       <Routes>
-        {/* Définissez la page d'accueil comme composant pour le chemin "/" */}
         <Route path="/" element={<LoginPage handleSocketDisconnect={socketDisconnect}/>} />
         <Route path="/register" element={<RegistrationPage />} />
         <Route path="/home" element={<HomePage socket={socketRef.current} handleSocketConnect={socketConnect}/>} />
@@ -125,7 +110,7 @@ export const App = () => {
         <Route path="/transactions" element={<TransactionPage />} />
         <Route path="/game" element={<GamePage socket={socketRef.current} result={resultScenario}/>} />
         <Route path="/crypto-chart-scenario/:scenarioId" element={<CryptoChartScenario result={resultScenario}/>} />
-        {/* Ajoutez d'autres routes au besoin */}
+        <Route path="/crypto-chart-scenario/multi" element={<CryptoMultiScenario/>}/>
       </Routes>
     </Router>
   );

@@ -7,7 +7,7 @@ const SCENARIOS = [
         "granularity": "1mo"
     }
 ]
-const ROOM_SIZE = 2;
+const ROOM_SIZE = 3;
 const WALLET_AMOUNT = 1000;
 
 const yahooFinance = require('yahoo-finance2').default;
