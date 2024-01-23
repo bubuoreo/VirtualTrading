@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const CryptoCourbeMulti = ({ multiQuotes }) => {
-    const multiQuotes = cryptoinfo;
     const [chartData, setChartData] = useState([]);
-    const [showFullChart, setShowFullChart] = useState(false);
+    
 
     useEffect(() => {
         if (multiQuotes) {
-            setChartData(multiQuotes.map(q => ({ date: q.date.substring(0, 10), close: q.close })));
+            console.log(multiQuotes);
+            console.log(multiQuotes.map(q => ({ date: q.date.substring(0, 10), close: q.close })));
+            setChartData([...chartData, multiQuotes.map(q => ({ date: q.date.substring(0, 10), close: q.close }))]);
         }
     }, [multiQuotes]);
 
@@ -29,11 +30,12 @@ const CryptoCourbeMulti = ({ multiQuotes }) => {
             <h1>Crypto Chart</h1>
             <br />
             <ResponsiveContainer width="90%" height={400}>
-                <LineChart data={showFullChart ? chartData : chartData}>
+                <LineChart data={chartData}>
                     <XAxis dataKey="date" />
                     <YAxis />
                     <Tooltip />
                     <Legend />
+                    <Line type="monotone" dataKey="close" stroke="#82ca9d" />
                 </LineChart>
             </ResponsiveContainer>
         </div>
