@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import binanceLogo from '../../assets/binance-logo-0.png'
+import Logo from '../../assets/Logo.png'
 import { Img, Button } from '@chakra-ui/react';
 
 const User = ({ name, email, balance, page }) => {
@@ -35,8 +35,8 @@ const User = ({ name, email, balance, page }) => {
       <h3 className="ui left floated header">
         {/* Utilisez la balise img pour afficher le logo de Binance */}
         <Img
-          src={binanceLogo} // Assurez-vous d'ajuster le chemin en conséquence
-          alt="Binance Logo"
+          src={Logo} // Assurez-vous d'ajuster le chemin en conséquence
+          alt="Logo"
           style={{
             width: '80px',
             height: '80px',
