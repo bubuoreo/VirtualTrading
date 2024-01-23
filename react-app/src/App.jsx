@@ -85,9 +85,8 @@ export const App = () => {
       setMultiDetails(result);
     });
 
-    socket.on('multi_failure', function (data) {
-      const result = JSON.parse(data);
-      console.log(result);
+    socket.on('multi_failure', function (message) {
+      console.log(message);
       // TODO
     });
     

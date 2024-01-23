@@ -7,7 +7,7 @@ const SCENARIOS = [
         "granularity": "1mo"
     }
 ]
-const ROOM_SIZE = 3;
+const ROOM_SIZE = 2;
 const WALLET_AMOUNT = 1000;
 
 const yahooFinance = require('yahoo-finance2').default;
@@ -47,7 +47,7 @@ class MultiplayerGameService {
             return ['multi_start', [...Object.values(this.gameRooms[roomKey]).filter(info => info.id).map(info => ({
                 "socketId": info.socketId,
                 "nickname": info.nickname
-            }))], this.gameRooms[roomKey].Chart.quotes[0]];
+            })), this.gameRooms[roomKey].Chart.quotes[0]]];
         }
         else {
             console.log(`MultiplayerGameService: init: Pas assez de joueurs disponibles`);
