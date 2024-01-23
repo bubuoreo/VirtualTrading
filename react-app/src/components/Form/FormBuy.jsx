@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { Button, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton } from '@chakra-ui/react';
+import { Button, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, Input, FormControl,FormLabel } from '@chakra-ui/react';
 
 const FormBuy = ({ cryptoSymbol }) => {
   const [usdAmount, setUsdAmount] = useState('');
@@ -62,7 +62,7 @@ const FormBuy = ({ cryptoSymbol }) => {
 
       const data = await response.json();
       console.log(data);
-      
+
       navigate('/wallet');
 
     } catch (error) {
@@ -88,14 +88,16 @@ const FormBuy = ({ cryptoSymbol }) => {
     <div>
       <h2>Buy {cryptoSymbol}</h2>
       <form onSubmit={handleSubmit}>
-        <label>
-          USD Amount:
-          <input
+        <FormControl>
+          <FormLabel>USD Amount:</FormLabel>
+          <Input
             type="number"
             value={usdAmount}
             onChange={handleUsdAmountChange}
+            borderColor="black" // Cette ligne définit la couleur de la bordure en noir
+            borderWidth="2px"   // Cette ligne définit la largeur de la bordure
           />
-        </label>
+        </FormControl>
 
         <div>
           <p>Quantity of {cryptoSymbol}: {calculateBitcoinAmount()}</p>

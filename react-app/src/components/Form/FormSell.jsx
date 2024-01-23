@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Button } from '@chakra-ui/react';
-import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton } from '@chakra-ui/react';
+import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, Input, FormControl,FormLabel } from '@chakra-ui/react';
 
 const FormSell = ({ cryptoSymbol }) => {
   const [AssetAmount, setAssetAmount] = useState('');
@@ -84,15 +84,16 @@ const FormSell = ({ cryptoSymbol }) => {
     <div>
       <h2>Sell {cryptoSymbol}</h2>
       <form onSubmit={handleSubmit}>
-
-        <label>
-          Quantity of {cryptoSymbol}:
-          <input
+        <FormControl>
+          <FormLabel>Quantity of {cryptoSymbol}:</FormLabel>
+          <Input
             type="number"
             value={AssetAmount}
             onChange={handleAssetAmountChange}
+            borderColor="black" // Cette ligne définit la couleur de la bordure en noir
+            borderWidth="2px"   // Cette ligne définit la largeur de la bordure
           />
-        </label>
+        </FormControl>
 
         <div>
           <p>USD Amount: {calculateUSDAmount()}</p>
