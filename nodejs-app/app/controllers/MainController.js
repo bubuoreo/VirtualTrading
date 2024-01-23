@@ -30,11 +30,12 @@ class MainController {
             if (code === "failure") {
                 socket.emit('multi_failure', result)
             } else if (code === "multi_end") {
+                const roomId = result.pop()
                 result.forEach(info => {
                     io.to(info.socketId).emit(code, JSON.stringify(result));
                 });
                 // TODO: delete gameRoom
-                this.deleteGameRoom({roomId: result[-1]});
+                this.deleteGameRoom({roomId: roomId});
             } else {
                 result.forEach(info => {
                     io.to(info.socketId).emit(code, JSON.stringify(result));

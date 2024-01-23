@@ -44,7 +44,10 @@ class MultiplayerGameService {
             console.log(`MultiplayerGameService: init:`);
             console.log(this.gameRooms[roomKey]);
 
-            return ['multi_start', [...Object.values(this.gameRooms[roomKey]).filter(info => info.id), this.gameRooms[roomKey].Chart.quotes[0]]];
+            const startPoints = this.gameRooms[roomKey].Chart.quotes.slice(0,6);
+            this.gameRooms[roomKey].Chart.quotes = this.gameRooms[roomKey].Chart.quotes.slice(6,12);
+
+            return ['multi_start', [...Object.values(this.gameRooms[roomKey]).filter(info => info.id), startPoints]];
         }
         else {
             console.log(`MultiplayerGameService: init: Pas assez de joueurs disponibles`);
@@ -187,27 +190,27 @@ class MultiplayerGameService {
     async createRandomScenario() {
         // Calculate the difference in milliseconds between January 1, 2020, and today
         const startDate = new Date('2020-10-01');
-        const sixMonthsAgo = new Date();
-        sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
-        const timeDifference = sixMonthsAgo.getTime() - startDate.getTime();
+        const twelveMonthsAgo = new Date();
+        twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 12);
+        const timeDifference = twelveMonthsAgo.getTime() - startDate.getTime();
 
         // Generate a random number of milliseconds within the date range
         const randomMilliseconds = Math.floor(Math.random() * timeDifference);
 
-        // Create a random date between January 1, 2020, and today
+        // Create a random date between October 1, 2020, and today
         const randomDate = new Date(startDate.getTime() + randomMilliseconds);
-        const randomDatePlus6Months = new Date(randomDate.getTime());
-        randomDatePlus6Months.setMonth(randomDate.getMonth() + 6)
+        const randomDatePlus12Months = new Date(randomDate.getTime());
+        randomDatePlus12Months.setMonth(randomDate.getMonth() + 12)
         const randomSymbol = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
 
         console.log(randomSymbol);
         console.log(randomDate);
-        console.log(randomDatePlus6Months);
+        console.log(randomDatePlus12Months);
 
         try {
             const result = await yahooFinance.chart(randomSymbol, {
                 period1: randomDate.toISOString().split('T')[0],
-                period2: randomDatePlus6Months.toISOString().split('T')[0],
+                period2: randomDatePlus12Months.toISOString().split('T')[0],
                 interval: "1mo",  // Timeframe granularity passed as a parameter
             });
             return result;
