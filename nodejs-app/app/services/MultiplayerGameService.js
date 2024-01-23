@@ -125,7 +125,7 @@ class MultiplayerGameService {
                     const result = Object.values(this.gameRooms[roomId]).filter(info => info.id);
                     delete this.gameRooms[roomId];
                     console.log(this.gameRooms);
-                    return ['multi_end', result];
+                    return ['multi_end', [...result, roomId]];
                 } else {
                     return ['multi_end_round', [...Object.values(this.gameRooms[roomId]).filter(info => info.id), this.gameRooms[roomId].Chart.quotes[transactionLengths[0]]]];
                 }
@@ -216,6 +216,11 @@ class MultiplayerGameService {
         } catch (error) {
             throw new Error("Error fetching data: " + error);
         }
+    }
+
+    deleteGameRoom({roomId}) {
+        delete this.gameRooms[roomId];
+        console.log(this.gameRooms);
     }
 }
 
