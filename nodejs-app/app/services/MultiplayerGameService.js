@@ -176,38 +176,6 @@ class MultiplayerGameService {
         }
     }
 
-
-    endTurn({ userId }) {
-        console.log(`MultiplayerGameService: endTurn: ${userId}`);
-        console.log(`MultiplayerGameService: endTurn: ${this.getRoomDetails({ userId: userId })}`);
-        var [roomId, attackPlayer, defensePlayer] = this.getRoomDetails({ userId: userId });
-        const room = this.gameRooms[roomId];
-        if (attackPlayer.canAttack) {
-            attackPlayer.canAttack = false;
-            defensePlayer.canAttack = true;
-            attackPlayer.gamePoints += 1;
-
-            // MAJ de la room
-            const [labelAttackPlayer, labelDefensePlayer] = this.getPlayerLabeling({ roomId: roomId, userId: attackPlayer.id })
-            room[labelAttackPlayer] = attackPlayer;
-            room[labelDefensePlayer] = defensePlayer;
-            console.log(`MultiplayerGameService: endTurn:`);
-            console.log(room);
-
-            const infoPlayer1 = { "self": attackPlayer, "opponent": defensePlayer };
-            const infoPlayer2 = { "self": defensePlayer, "opponent": attackPlayer };
-            return ["success", { infoPlayer1, infoPlayer2 }];
-        }
-        else {
-            return ["failure", 'It is not your turn. wait for your opponent end of turn.']
-        }
-    }
-
-    isEndGame({ player }) {
-        const playerCards = Object.values(player.cards);
-        return playerCards.every(card => card.hp <= 0);
-    }
-
     updateWallet({ player, amount }) {
         player.wallet += amount;
         return player;
@@ -220,7 +188,7 @@ class MultiplayerGameService {
 
     async createRandomScenario() {
         // Calculate the difference in milliseconds between January 1, 2020, and today
-        const startDate = new Date('2020-01-01');
+        const startDate = new Date('2020-10-01');
         const sixMonthsAgo = new Date();
         sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
         const timeDifference = sixMonthsAgo.getTime() - startDate.getTime();
@@ -232,12 +200,14 @@ class MultiplayerGameService {
         const randomDate = new Date(startDate.getTime() + randomMilliseconds);
         const randomDatePlus6Months = new Date(randomDate.getTime());
         randomDatePlus6Months.setMonth(randomDate.getMonth() + 6)
+        const randomSymbol = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
 
+        console.log(randomSymbol);
         console.log(randomDate);
         console.log(randomDatePlus6Months);
 
         try {
-            const result = await yahooFinance.chart(SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)], {
+            const result = await yahooFinance.chart(randomSymbol, {
                 period1: randomDate.toISOString().split('T')[0],
                 period2: randomDatePlus6Months.toISOString().split('T')[0],
                 interval: "1mo",  // Timeframe granularity passed as a parameter
