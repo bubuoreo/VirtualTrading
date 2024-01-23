@@ -25,6 +25,7 @@ export const App = () => {
   const [resultScenario, setResultScenario] = useState(null);
   const [waitingListSize, setWaitingListSize] = useState(0);
   const [multiDetails, setMultiDetails] = useState(null);
+  const [multiQuotes, setMultiQuotes] = useState([]);
 
   const socketConnect = () => {
     socketRef.current = io('http://localhost:3000', { query: { id: user.id } });
@@ -70,6 +71,7 @@ export const App = () => {
     socket.on('multi_start', function (data) {
       const result = JSON.parse(data);
       console.log(result);
+      setMultiQuotes([...multiQuotes, result.pop()])
       setMultiDetails(result);
     });
 
@@ -82,6 +84,7 @@ export const App = () => {
     socket.on('multi_end_round', function (data) {
       const result = JSON.parse(data);
       console.log(result);
+      setMultiQuotes([...multiQuotes, result.pop()])
       setMultiDetails(result);
     });
 
@@ -109,7 +112,7 @@ export const App = () => {
         <Route path="/transactions" element={<TransactionPage />} />
         <Route path="/game" element={<GamePage socket={socketRef.current} result={resultScenario}/>} />
         <Route path="/crypto-chart-scenario/:scenarioId" element={<CryptoChartScenario result={resultScenario}/>} />
-        <Route path="/crypto-chart-scenario/multi" element={<CryptoMultiScenario socket={socketRef.current} waitingListSize={waitingListSize} multiDetails={multiDetails}/>}/>
+        <Route path="/crypto-chart-scenario/multi" element={<CryptoMultiScenario socket={socketRef.current} waitingListSize={waitingListSize} multiDetails={multiDetails} multiQuotes={multiQuotes}/>}/>
       </Routes>
     </Router>
   );

@@ -2,24 +2,25 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Header } from '../components/Header/Header';
 import { useSelector } from 'react-redux';
 
-const CryptoMultiScenario = ({ socket, waitingListSize, multiDetails }) => {
+const CryptoMultiScenario = ({ socket, waitingListSize, multiDetails, multiQuotes }) => {
     const user = useSelector((state) => state.userReducer.user);
     const buyQuantity = useRef();
     const sellQuantity = useRef();
+    console.log(multiDetails)
 
     const handleBuy = () => {
-        console.log(multiDetails)
+
         console.log(buyQuantity.current.value)
         if (multiDetails && buyQuantity.current.value) {
-            socket.emit('multi_action', { "type": 'BUY', "price": multiDetails[2].close, "quantity": buyQuantity.current.value });
+            socket.emit('multi_action', { "type": 'BUY', "price": multiQuotes[multiQuotes.length - 1].close, "quantity": parseFloat(buyQuantity.current.value) });
         }
     };
 
     const handleSell = () => {
-        console.log(multiDetails)
+
         console.log(sellQuantity.current.value)
         if (multiDetails && sellQuantity.current.value) {
-            socket.emit('multi_action', { type: 'SELL', price: multiDetails[2].close, quantity: sellQuantity.current.value });
+            socket.emit('multi_action', { "type": 'SELL', "price": multiQuotes[multiQuotes.length - 1].close, "quantity": parseFloat(sellQuantity.current.value) });
         }
     };
 
@@ -34,6 +35,7 @@ const CryptoMultiScenario = ({ socket, waitingListSize, multiDetails }) => {
             socket.emit('multi_participate', user.login);
         }
     }, [socket, user]);
+
 
     return (
         <div>
@@ -81,10 +83,17 @@ const CryptoMultiScenario = ({ socket, waitingListSize, multiDetails }) => {
                         </form>
                     </div>
 
+
                     {/* Wait Button */}
                     <button onClick={handleWait} >
                         Wait
                     </button>
+
+                    {multiDetails && <p>multiDetails : {multiDetails[0].wallet}</p>}
+                    {multiDetails && <p>multiDetails : {parseFloat(multiDetails[0].assetQuantity)}</p>}
+                    {multiDetails && <p>multiQutoes : {multiQuotes[multiQuotes.length - 1].close}</p>}
+                    {multiDetails && <p>Total Value{multiDetails[0].wallet + parseFloat(multiDetails[0].assetQuantity) * multiQuotes[multiQuotes.length - 1].close}</p>}
+
                 </div>
             </div>
         </div>

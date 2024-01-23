@@ -44,10 +44,7 @@ class MultiplayerGameService {
             console.log(`MultiplayerGameService: init:`);
             console.log(this.gameRooms[roomKey]);
 
-            return ['multi_start', [...Object.values(this.gameRooms[roomKey]).filter(info => info.id).map(info => ({
-                "socketId": info.socketId,
-                "nickname": info.nickname
-            })), this.gameRooms[roomKey].Chart.quotes[0]]];
+            return ['multi_start', [...Object.values(this.gameRooms[roomKey]).filter(info => info.id), this.gameRooms[roomKey].Chart.quotes[0]]];
         }
         else {
             console.log(`MultiplayerGameService: init: Pas assez de joueurs disponibles`);
@@ -95,6 +92,7 @@ class MultiplayerGameService {
 
     action({ userId, transactionDetails }) {
         console.log("MultiplayerGameService: action: On se positionne sur le marché");
+        console.log(transactionDetails);
 
         // obtain details about the room
         var [roomId, player, otherPlayers] = this.getRoomDetails({ userId: userId });
