@@ -13,7 +13,7 @@ const NewsItem = ({ articles }) => {
     slidesToScroll: 1,
     dotsClass: 'slick-dots custom-dots', // Ajoute une classe personnalisée aux dots
     autoplay: true,  // Activer le défilement automatique
-    autoplaySpeed: 1000,  // Définir la durée entre les diapositives en millisecondes (ici, 5 secondes)
+    autoplaySpeed: 2000,  // Définir la durée entre les diapositives en millisecondes (ici, 5 secondes)
   };
 
   return (

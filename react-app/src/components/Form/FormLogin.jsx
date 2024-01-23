@@ -23,7 +23,7 @@ const FormLogin = ({ onConnect, onCancel }) => {
     event.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:8080/auth', {
+      const response = await fetch('http://localhost/auth', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -42,7 +42,7 @@ const FormLogin = ({ onConnect, onCancel }) => {
 
       navigate('/home');
 
-      const userinfo = await fetch('http://localhost:8080/user/' + String(data), {
+      const userinfo = await fetch('http://localhost/user/' + String(data), {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

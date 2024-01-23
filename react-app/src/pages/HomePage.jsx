@@ -16,7 +16,7 @@ const HomePage = ({ socket, handleSocketConnect }) => {
         handleSocketConnect();
         const fetchArticles = async () => {
             try {
-              const response = await fetch('http://localhost:3000/articles');
+              const response = await fetch('http://localhost/articles');
               const data = await response.json();
               setArticles(data.articles.slice(0, 4));
               setScore(data.finalScore);

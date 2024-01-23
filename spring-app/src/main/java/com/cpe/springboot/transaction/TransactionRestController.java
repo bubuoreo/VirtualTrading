@@ -61,7 +61,7 @@ public class TransactionRestController {
 					if (transactionService.checkAssetAvailability(t, userModel)) {
 						return transactionService.writeTransaction(t, false);
 					} else {
-						throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User id:" + t.getUserId() + ", lack of",
+						throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User id:" + t.getUserId() + ", lack of assets",
 								null);
 					}
 				}
@@ -97,6 +97,5 @@ public class TransactionRestController {
 	    }
 	    return filteredTransactions;
 	}
-
 
 }

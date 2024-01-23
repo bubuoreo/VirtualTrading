@@ -3,16 +3,18 @@ import User from '../User/User.jsx';
 import { useSelector, useDispatch } from 'react-redux';
 import { update_user_action } from '../../slices/userSlice';
 import Cookies from 'universal-cookie';
+import { useNavigate } from 'react-router-dom'; // Assurez-vous d'importer useNavigate
 
 export const Header = ({ page }) => {
   let user = useSelector(state => state.userReducer.user);
   const dispatch = useDispatch();
   const cookies = new Cookies();
   const userToken = cookies.get('userToken');
+  const navigate = useNavigate(); // Utilisez useNavigate pour obtenir la fonction de navigation
 
   const RetrieveUser = async (event) => {
     try {
-      const userinfo = await fetch('http://localhost:8080/user/' + String(userToken), {
+      const userinfo = await fetch('http://localhost/user/' + String(userToken), {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -30,18 +32,14 @@ export const Header = ({ page }) => {
       console.error('Error fetching user:', error);
     }
   }
+  
   useEffect(() => {
     RetrieveUser();
-  }, [user.account])
-
-
-
+  }, [user.account]);
 
   return (
-
     <header>
       <User name={user.login} email={user.email} balance={user.account} page={page} />
     </header>
   );
 };
-
