@@ -6,10 +6,10 @@ import FormBuy from '../components/Form/FormBuy';
 import FormSell from '../components/Form/FormSell';
 import { Header } from '../components/Header/Header.jsx';
 import { Footer } from '../components/Footer/Footer.jsx';
-import { Flex,Box } from "@chakra-ui/react";
+import { Flex, Box } from "@chakra-ui/react";
 
 
-const CryptoDetailsPage = ({socket}) => {
+const CryptoDetailsPage = ({ socket }) => {
   const { cryptoSymbol } = useParams();
 
 
@@ -22,7 +22,7 @@ const CryptoDetailsPage = ({socket}) => {
           <div>
             <CryptoCourbe cryptoSymbol={cryptoSymbol} socket={socket} />
           </div>
-  
+
           <div className="flex">
             {/* CryptoInfo à gauche */}
             <div className="flex-1">
@@ -30,9 +30,14 @@ const CryptoDetailsPage = ({socket}) => {
             </div>
             {/* FormAction à droite */}
             <Flex align="center" justify="center">
-              <div><FormBuy cryptoSymbol={cryptoSymbol}/></div>
-              <FormSell cryptoSymbol={cryptoSymbol}/>
+              <Box mr={10}> {/* Ajoutez une marge à droite pour le premier formulaire */}
+                <FormBuy cryptoSymbol={cryptoSymbol} />
+              </Box>
+              <Box ml={10}> {/* Ajoutez une marge à gauche pour le second formulaire */}
+                <FormSell cryptoSymbol={cryptoSymbol} />
+              </Box>
             </Flex>
+
           </div>
         </div>
       </Box>
