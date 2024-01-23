@@ -107,7 +107,7 @@ class MainController {
             });
         } else if (code == 'multi_start') {
             result.forEach(info => {
-                io.to(info.socketId).emit('multi_wait_update', result.length);
+                io.to(info.socketId).emit('multi_wait_update', result.length -1);
                 io.to(info.socketId).emit(code, JSON.stringify(result));
             });
         }
