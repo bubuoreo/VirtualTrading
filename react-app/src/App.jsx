@@ -74,6 +74,42 @@ export const App = () => {
       console.log(resultScenario);
       setResultScenario(resultScenario); // Définissez resultscenario dans l'état
     });
+
+    socket.on('multi_wait_update', function (data) {
+      const result = JSON.parse(data);
+      console.log(result);
+      // TODO
+    });
+
+    socket.on('multi_start', function (data) {
+      const result = JSON.parse(data);
+      console.log(result);
+      // TODO
+    });
+
+    socket.on('multi_update', function (data) {
+      const result = JSON.parse(data);
+      console.log(result);
+      // TODO
+    });
+
+    socket.on('multi_end_round', function (data) {
+      const result = JSON.parse(data);
+      console.log(result);
+      // TODO
+    });
+
+    socket.on('multi_failure', function (data) {
+      const result = JSON.parse(data);
+      console.log(result);
+      // TODO
+    });
+    
+    socket.on('multi_end', function (data) {
+      const result = JSON.parse(data);
+      console.log(result);
+      // TODO
+    });
     
   };
   return (
