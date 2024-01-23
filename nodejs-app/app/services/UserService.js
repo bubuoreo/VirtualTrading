@@ -14,6 +14,7 @@ class UserService {
 
     getSocketId({ id }) {
         console.log(`UserService: ${id}`);
+        console.log(this.socketsMap);
         var ret = null;
         if (this.socketsMap.has(id)) {
             ret = this.socketsMap.get(id)

@@ -41,6 +41,29 @@ class MainController {
                 });
             }
         });
+        socket.on('chat message', (msg) => {
+            console.log("reception message");
+            var parsedMsg = JSON.parse(msg);
+            console.log(parsedMsg);
+            if (parsedMsg.dest !== '-1' ) {
+                var idDestUser = parsedMsg.dest;
+                parsedMsg["emit"] = userId;
+                console.log(parsedMsg);
+                try {
+                    this.userService.getSocketId({ id: idDestUser }).emit('chat message', JSON.stringify(parsedMsg));
+                } catch (error) {
+                    console.log(error);
+                }
+                try {
+                    this.userService.getSocketId({ id: userId }).emit('chat message', JSON.stringify(parsedMsg));
+                } catch (error) {
+                    console.log(error);
+                }
+            } else {
+                parsedMsg["emit"] = userId;
+                io.emit('chat message', JSON.stringify(parsedMsg));
+            }
+        });
     }
 
     disconnect({ socket, userId }) {
