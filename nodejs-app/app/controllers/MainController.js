@@ -34,6 +34,8 @@ class MainController {
                 result.forEach(info => {
                     io.to(info.socketId).emit(code, JSON.stringify(result));
                 });
+                // TODO: delete gameRoom
+                this.deleteGameRoom({roomId: result[-1]});
             } else {
                 result.forEach(info => {
                     io.to(info.socketId).emit(code, JSON.stringify(result));
@@ -90,6 +92,10 @@ class MainController {
 
     resetDatabase() {
         this.mainService.resetDatabase();
+    }
+
+    deleteGameRoom({roomId}) {
+        this.multiGameService.deleteGameRoom({roomId: roomId});
     }
 
     analyzeSentiment({ articles }) {
