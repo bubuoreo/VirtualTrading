@@ -34,7 +34,6 @@ class MainController {
                 result.forEach(info => {
                     io.to(info.socketId).emit(code, JSON.stringify(result));
                 });
-                // TODO: delete gameRoom
                 this.deleteGameRoom({roomId: roomId});
             } else {
                 result.forEach(info => {
@@ -51,16 +50,11 @@ class MainController {
 
     async apiRequestAllCodes({ io }) {
         const data = await this.mainService.apiRequestAllCodes();
-        // console.log("MainController: apiRequestAllCodes:");
-        // console.log(data);
         this.notifyUsers({ io, data });
     }
 
     async addUserToNotifPageQueues({ userId, io, socket, request }) {
         const data = await this.mainService.addUserToNotifPageQueues({ userId: userId, socketId: socket.id, request: request });
-        // console.log("MainController: addUserToNotifPageQueues:");
-        // console.log(data);
-        // const data = await this.mainService.apiRequestAllCodes();
         console.log(data);
         this.notifyUsers({ io, data });
     }
@@ -76,8 +70,6 @@ class MainController {
     }
 
     notifyUsers({ io, data }) {
-        console.log("MainController: notifyUsers:");
-        // console.log(data);
         data.forEach(item => {
             item.dest.forEach(dest => {
                 const socketCode = item.code.match(/^\/finance\w*/g)[0];
@@ -112,7 +104,7 @@ class MainController {
             });
         } else if (code == 'multi_start') {
             result.forEach(info => {
-                io.to(info.socketId).emit('multi_wait_update', result.length -1);
+                io.to(info.socketId).emit('multi_wait_update', null);
                 io.to(info.socketId).emit(code, JSON.stringify(result));
             });
         }

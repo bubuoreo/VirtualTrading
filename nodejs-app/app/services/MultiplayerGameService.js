@@ -47,7 +47,7 @@ class MultiplayerGameService {
             const startPoints = this.gameRooms[roomKey].Chart.quotes.slice(0,6);
             this.gameRooms[roomKey].Chart.quotes = this.gameRooms[roomKey].Chart.quotes.slice(6,12);
 
-            return ['multi_start', [...Object.values(this.gameRooms[roomKey]).filter(info => info.id), startPoints]];
+            return ['multi_start', [...Object.values(this.gameRooms[roomKey]).filter(info => info.id), startPoints, roomKey]];
         }
         else {
             console.log(`MultiplayerGameService: init: Pas assez de joueurs disponibles`);

@@ -6,11 +6,10 @@ import Leaderboard from '../components/Game/Leaderboard.jsx'
 import CryptoCourbeMulti from '../components/Crypto/CryptoCourbeMulti.jsx';
 
 
-const CryptoMultiScenario = ({ socket, waitingListSize, multiDetails, multiQuotes }) => {
+const CryptoMultiScenario = ({ socket, waitingListSize, multiDetails, multiQuotes, roomNumber }) => {
     const user = useSelector((state) => state.userReducer.user);
     const buyQuantity = useRef();
     const sellQuantity = useRef();
-    console.log(multiDetails)
 
     const handleBuy = () => {
 
@@ -46,7 +45,8 @@ const CryptoMultiScenario = ({ socket, waitingListSize, multiDetails, multiQuote
             <Header />
             <div className="bg-gray-200 min-h-screen">
                 <div className="container mx-auto">
-                    <p>{waitingListSize}</p>
+                    {waitingListSize && <p>Users in the waiting list : {waitingListSize}</p>}
+                    {roomNumber && <p>You are in game in the room : {roomNumber}</p>}
 
                     <div className="flex space-x-4 mb-4">
                         <button onClick={handleBuy}>
