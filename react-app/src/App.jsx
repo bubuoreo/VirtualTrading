@@ -8,12 +8,13 @@ import PersonalWalletPage from './pages/PersonalWalletPage.jsx';
 import GamePage from './pages/GamePage.jsx';
 import { useSelector, useDispatch } from 'react-redux';
 import io from 'socket.io-client';
-import { update_crypto_data } from '../src/slices/cryptoSlice'; 
-import { update_crypto_info } from '../src/slices/cryptodataSlice';  
-import { update_crypto_chart } from '../src/slices/cryptochartSlice.js';  
+import { update_crypto_data } from '../src/slices/cryptoSlice';
+import { update_crypto_info } from '../src/slices/cryptodataSlice';
+import { update_crypto_chart } from '../src/slices/cryptochartSlice.js';
 import TransactionPage from './pages/TransactionPage.jsx';
 import TransactionPageBy from './pages/TransactionPageBy.jsx';
 import CryptoChartScenario from './pages/CryptoChartScenario.jsx';
+import NewsPage from './pages/NewsPage.jsx';
 
 
 
@@ -28,7 +29,7 @@ export const App = () => {
   //   socketRef.current = io('http://localhost:3000', { query: { id: user.id } });
   //   setSocketsListeners(socketRef.current);
 
-    
+
   //   return () => {
   //     if (socketRef.current) {  
   //       socketRef.current.disconnect();
@@ -38,13 +39,12 @@ export const App = () => {
 
   const socketConnect = () => {
     socketRef.current = io('http://localhost:3000', { query: { id: user.id } });
+    // socketRef.current = io({ query: { id: user.id } });
     setSocketsListeners(socketRef.current);
   }
 
-  
-
   const socketDisconnect = () => {
-    if (socketRef.current) {  
+    if (socketRef.current) {
       socketRef.current.disconnect();
     }
   }
@@ -54,7 +54,7 @@ export const App = () => {
       const result = JSON.parse(data);
       const code = result.meta.symbol;
       dispatch(update_crypto_data({ code, data: result.quotes }));
-      
+
     });
 
     socket.on('/finance', function (data) {
@@ -65,7 +65,7 @@ export const App = () => {
 
     socket.on('/financeChart', function (data) {
       const result = JSON.parse(data);
-      
+
       dispatch(update_crypto_chart(result));
     });
 
@@ -80,14 +80,15 @@ export const App = () => {
     <Router>
       <Routes>
         {/* Définissez la page d'accueil comme composant pour le chemin "/" */}
-        <Route path="/" element={<LoginPage handleSocketDisconnect={socketDisconnect}/>} />
+        <Route path="/" element={<LoginPage handleSocketDisconnect={socketDisconnect} />} />
         <Route path="/register" element={<RegistrationPage />} />
-        <Route path="/home" element={<HomePage socket={socketRef.current} handleSocketConnect={socketConnect}/>} />
-        <Route path="/crypto-details/:cryptoSymbol" element={<CryptoDetailsPage socket={socketRef.current}/>} />
-        <Route path="/wallet" element={<PersonalWalletPage  socket={socketRef.current} />}/>
+        <Route path="/home" element={<HomePage socket={socketRef.current} handleSocketConnect={socketConnect} />} />
+        <Route path="/crypto-details/:cryptoSymbol" element={<CryptoDetailsPage socket={socketRef.current} />} />
+        <Route path="/wallet" element={<PersonalWalletPage socket={socketRef.current} />} />
         <Route path="/transactions/:cryptoSymbol" element={<TransactionPageBy />} />
         <Route path="/transactions" element={<TransactionPage />} />
         <Route path="/game" element={<GamePage socket={socketRef.current} result={resultScenario}/>} />
+        <Route path="/news" element={<NewsPage/>} />
         <Route path="/crypto-chart-scenario/:scenarioId" element={<CryptoChartScenario result={resultScenario}/>} />
         {/* Ajoutez d'autres routes au besoin */}
       </Routes>

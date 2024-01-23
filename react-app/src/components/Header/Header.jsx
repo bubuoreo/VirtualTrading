@@ -37,14 +37,9 @@ export const Header = ({ page }) => {
     RetrieveUser();
   }, [user.account]);
 
-  const navigateToGame = () => {
-    navigate('/game'); // Utilisez la fonction navigate pour naviguer vers la page '/game'
-  }
-
   return (
     <header>
       <User name={user.login} email={user.email} balance={user.account} page={page} />
-      <button onClick={navigateToGame}>Game</button> {/* Ajoutez un bouton "Game" qui appelle la fonction navigateToGame */}
     </header>
   );
 };
