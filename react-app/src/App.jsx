@@ -82,10 +82,14 @@ export const App = () => {
     });
 
     socket.on('multi_end_round', function (data) {
+      console.log(data);
       const result = JSON.parse(data);
       console.log(result);
-      setMultiQuotes([...multiQuotes, result.pop()])
-      setMultiDetails(result);
+      const latestQuote = result.pop()
+      console.log(latestQuote);
+      console.log([...multiQuotes, latestQuote]);
+      setMultiQuotes([...multiQuotes, latestQuote])
+      setMultiDetails();
     });
 
     socket.on('multi_failure', function (message) {

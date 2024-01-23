@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Header } from '../components/Header/Header';
 import { useSelector } from 'react-redux';
-
+import CryptoCourbeMulti from '../components/Crypto/CryptoCourbeMulti';
 const CryptoMultiScenario = ({ socket, waitingListSize, multiDetails, multiQuotes }) => {
     const user = useSelector((state) => state.userReducer.user);
     const buyQuantity = useRef();
@@ -93,7 +93,7 @@ const CryptoMultiScenario = ({ socket, waitingListSize, multiDetails, multiQuote
                     {multiDetails && <p>multiDetails : {parseFloat(multiDetails[0].assetQuantity)}</p>}
                     {multiDetails && <p>multiQutoes : {multiQuotes[multiQuotes.length - 1].close}</p>}
                     {multiDetails && <p>Total Value{multiDetails[0].wallet + parseFloat(multiDetails[0].assetQuantity) * multiQuotes[multiQuotes.length - 1].close}</p>}
-
+                    <CryptoCourbeMulti multiQuotes={multiQuotes}/>
                 </div>
             </div>
         </div>
