@@ -14,6 +14,10 @@ const GamePage = ({ socket, result }) => {
     }
   }, [socket]);
 
+  const navigateTomulti = () => {
+    navigate('/crypto-chart-scenario/multi');
+  }
+
   return (
     <div>
       <Header />
@@ -29,6 +33,11 @@ const GamePage = ({ socket, result }) => {
         ) : (
           <p>Aucun résultat disponible</p>
         )}
+        
+        {/* Bouton "Multi-joueurs" avec un contour */}
+        <button className="multi-button" onClick={navigateTomulti}>
+          Multi-joueurs
+        </button>
       </div>
       <Footer />
     </div>
