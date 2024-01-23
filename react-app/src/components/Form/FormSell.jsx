@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Button } from '@chakra-ui/react';
+import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton } from '@chakra-ui/react';
 
 const FormSell = ({ cryptoSymbol }) => {
   const [AssetAmount, setAssetAmount] = useState('');
@@ -9,6 +10,19 @@ const FormSell = ({ cryptoSymbol }) => {
   const cryptoinfoData = useSelector((state) => state.cryptodataReducer.cryptoinfoData);
   const cryptoInfo = cryptoinfoData[cryptoSymbol];
   let user = useSelector(state => state.userReducer.user);
+
+  const [responseModalOpen, setResponseModalOpen] = useState(false);
+  const [responseBody, setResponseBody] = useState('');
+
+  const handleResponseModalClose = () => {
+    setResponseModalOpen(false);
+    setResponseBody('');
+  };
+
+  const handleResponseModalOpen = (body) => {
+    setResponseBody(body);
+    setResponseModalOpen(true);
+  };
 
   useEffect(() => {
       setCryptoPrice(cryptoInfo.regularMarketPrice);
@@ -39,6 +53,8 @@ const FormSell = ({ cryptoSymbol }) => {
       });
 
       if (!response.ok) {
+        const data = await response.json();
+        handleResponseModalOpen(JSON.stringify(data.message, null, 2));
         throw new Error(`Erreur HTTP! Statut : ${response.status}`);
       }
 
@@ -85,6 +101,21 @@ const FormSell = ({ cryptoSymbol }) => {
           Vendre
         </Button>
       </form>
+      <Modal isOpen={responseModalOpen} onClose={handleResponseModalClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Transaction Failed</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <pre>{responseBody}</pre>
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" onClick={handleResponseModalClose}>
+              Fermer
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </div>
   );
 };

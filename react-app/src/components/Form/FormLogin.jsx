@@ -12,12 +12,26 @@ import {
   Flex
 } from '@chakra-ui/react';
 import Cookies from 'universal-cookie';
+import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton } from '@chakra-ui/react';
 
 const FormLogin = ({ onConnect, onCancel }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const [responseModalOpen, setResponseModalOpen] = useState(false);
+  const [responseBody, setResponseBody] = useState('');
+
+  const handleResponseModalClose = () => {
+    setResponseModalOpen(false);
+    setResponseBody('');
+  };
+
+  const handleResponseModalOpen = (body) => {
+    setResponseBody(body);
+    setResponseModalOpen(true);
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -35,6 +49,8 @@ const FormLogin = ({ onConnect, onCancel }) => {
       });
 
       if (!response.ok) {
+        const data = await response.json();
+        handleResponseModalOpen(JSON.stringify(data.message, null, 2));
         throw new Error(`Erreur HTTP! Statut : ${response.status}`);
       }
 
@@ -120,58 +136,23 @@ const FormLogin = ({ onConnect, onCancel }) => {
       </Flex>
       </Stack>
     </form>
+    <Modal isOpen={responseModalOpen} onClose={handleResponseModalClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Authentification Failed</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <pre>{responseBody}</pre>
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" onClick={handleResponseModalClose}>
+              Fermer
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
 </Flex>
-
-
-    // <div className="flex flex-col items-center justify-center h-screen">
-    //   <div className="w-full max-w-xs">
-    //     <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-    //       <FormControl mb="4">
-    //         <FormLabel htmlFor="username" className="block text-gray-700 text-sm font-bold mb-2">
-    //           Username
-    //         </FormLabel>
-    //         <Input
-    //           type="text"
-    //           id="username"
-    //           placeholder="Username"
-    //           value={username}
-    //           onChange={(e) => setUsername(e.target.value)}
-    //           className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-    //         />
-    //       </FormControl>
-    //       <FormControl mb="6">
-    //         <FormLabel htmlFor="password" className="block text-gray-700 text-sm font-bold mb-2">
-    //           Password
-    //         </FormLabel>
-    //         <Input
-    //           type="password"
-    //           id="password"
-    //           placeholder="******************"
-    //           value={password}
-    //           onChange={(e) => setPassword(e.target.value)}
-    //           className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
-    //         />
-    //       </FormControl>
-    //       <div className="flex items-center justify-between">
-    //         <Button
-    //           onClick={handleSubmit}
-    //           colorScheme="green"
-    //           type="submit"
-    //           className="font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-    //         >
-    //           Connect
-    //         </Button>
-    //         <Button
-    //           onClick={handleRegisterClick}
-    //           colorScheme="blue"
-    //           className="inline-block align-baseline font-bold text-sm hover:text-blue-800"
-    //         >
-    //           Register
-    //         </Button>
-    //       </div>
-    //     </form>
-    //   </div>
-    // </div>
   );
 };
 
