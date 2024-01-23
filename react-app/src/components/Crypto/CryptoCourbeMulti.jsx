@@ -3,26 +3,24 @@ import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } f
 
 const CryptoCourbeMulti = ({ multiQuotes }) => {
     const [chartData, setChartData] = useState([]);
-    
 
     useEffect(() => {
         if (multiQuotes) {
             console.log(multiQuotes);
-            console.log(multiQuotes.map(q => ({ date: q.date.substring(0, 10), close: q.close })));
-            setChartData([...chartData, multiQuotes.map(q => ({ date: q.date.substring(0, 10), close: q.close }))]);
+            setChartData([...chartData, ...multiQuotes.map(q => ({ date: q.date.substring(0, 10), close: q.close }))]);
         }
     }, [multiQuotes]);
 
     const handleInvestClick = () => {
-        
+        // Handle invest click
     };
 
     const handleWaitClick = () => {
-        
+        // Handle wait click
     };
-    
+
     const handleSellClick = () => {
-        
+        // Handle sell click
     };
 
     return (
