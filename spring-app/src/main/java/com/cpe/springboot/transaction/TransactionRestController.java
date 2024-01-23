@@ -54,19 +54,19 @@ public class TransactionRestController {
 	
 					} else {
 						throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-								"User id:" + t.getUserId() + ", not enough funds", null);
+								"Not enough funds", null);
 					}
 				} else {
 					// Transaction is "SELL" Type
 					if (transactionService.checkAssetAvailability(t, userModel)) {
 						return transactionService.writeTransaction(t, false);
 					} else {
-						throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User id:" + t.getUserId() + ", lack of assets",
+						throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Lack of assets",
 								null);
 					}
 				}
 			} else {
-				throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User id:" + t.getUserId() + ", not found", null);
+				throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found", null);
 			}
 		} else {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Null amount transaction not accepted", null);
