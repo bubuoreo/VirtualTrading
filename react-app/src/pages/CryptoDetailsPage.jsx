@@ -5,7 +5,8 @@ import CryptoInfo from '../components/Crypto/CryptoInfo';
 import FormBuy from '../components/Form/FormBuy';
 import FormSell from '../components/Form/FormSell';
 import { Header } from '../components/Header/Header.jsx';
-import { Flex } from "@chakra-ui/react";
+import { Footer } from '../components/Footer/Footer.jsx';
+import { Flex,Box } from "@chakra-ui/react";
 
 
 const CryptoDetailsPage = ({socket}) => {
@@ -15,13 +16,13 @@ const CryptoDetailsPage = ({socket}) => {
   return (
     <div>
       <Header />
-      <div className="bg-gray-200 min-h-screen">
+      <Box>
         <div className="container mx-auto">
           {/* CryptoCourbe prend toute la largeur */}
           <div>
             <CryptoCourbe cryptoSymbol={cryptoSymbol} socket={socket} />
           </div>
-
+  
           <div className="flex">
             {/* CryptoInfo à gauche */}
             <div className="flex-1">
@@ -34,9 +35,11 @@ const CryptoDetailsPage = ({socket}) => {
             </Flex>
           </div>
         </div>
-      </div>
+      </Box>
+      <Box mt="50px"> {/* Ajoutez le margin-top pour le padding ici */}
+        <Footer />
+      </Box>
     </div>
-
   );
 };
 

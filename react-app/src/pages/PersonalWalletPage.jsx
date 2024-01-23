@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Header } from '../components/Header/Header.jsx';
+import { Footer } from '../components/Footer/Footer.jsx';
 import CryptoItemPersonal from '../components/Crypto/CryptoItemPersonal.jsx';
 import CryptoDonought from '../components/Crypto/CryptoDonought.jsx';
 import { Button } from '@chakra-ui/react';
@@ -62,6 +63,7 @@ const PersonalWalletPage = ({socket}) => {
         <CryptoDonought cryptos={cryptos} amounts={amounts} />
         <CryptoItemPersonal cryptos={cryptos} amounts={amounts} socket={socket} />
       </div>
+      <Footer />
     </div>
   );
 };
