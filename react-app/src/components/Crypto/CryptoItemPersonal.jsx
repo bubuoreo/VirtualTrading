@@ -53,7 +53,7 @@ const CryptoItemPersonal = ({ cryptos, amounts, socket }) => {
         if (socket) {
             socket.emit('update_page', '/wallet/' + cryptoString);
         }
-        
+
     }, [cryptoString]);
 
     useEffect(() => {
@@ -81,6 +81,9 @@ const CryptoItemPersonal = ({ cryptos, amounts, socket }) => {
 
     return (
         <div>
+            <div style={{ marginTop: '16px', textAlign: 'center' }}>
+                <strong style={{ fontSize: '24px' }}>Total Value: ${totalValue}</strong>
+            </div>
             <Table variant="simple" mt="8">
                 <Thead>
                     <Tr>
@@ -152,10 +155,6 @@ const CryptoItemPersonal = ({ cryptos, amounts, socket }) => {
                     ))}
                 </Tbody>
             </Table>
-
-            <div style={{ marginTop: '16px' }}>
-                <strong>Total Value: ${totalValue}</strong>
-            </div>
         </div>
     );
 };
