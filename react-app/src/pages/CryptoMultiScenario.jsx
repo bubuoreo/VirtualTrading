@@ -51,61 +51,68 @@ const CryptoMultiScenario = ({ socket, waitingListSize, multiDetails, multiQuote
                 <div className="container mx-auto">
                     {waitingListSize && <p>Users in the waiting list : {waitingListSize}</p>}
                     {roomNumber && <p>You are in game in the room : {roomNumber}</p>}
-                    {roomNumber && <ChatComponent socket={socket} users={multiDetails} nickname={multiDetails[0].nickname} messageArray={messageArray}/>}
+                    {roomNumber && <ChatComponent socket={socket} users={multiDetails} nickname={multiDetails[0].nickname} messageArray={messageArray} />}
 
                     <div className="flex space-x-4 mb-4">
-                        <Button colorScheme="green" onClick={handleBuy}>
-                            Buy
-                        </Button>
-                        <form>
-                            <label>
-                                Quantity:
-                                <input
-                                    type="number"
-                                    ref={buyQuantity}
-                                    step="0.01"
-                                    min="0"
-                                    required
-                                />
-                            </label>
-                        </form>
-                    </div>
+                        <div className="flex-1">
+                            <CryptoCourbeMulti multiQuotes={multiQuotes} />
+                        </div>
+                        <div className="flex-1 ml-4">
+                            <div className="mb-4">
+                                <Button colorScheme="green" onClick={handleBuy}>
+                                    Buy
+                                </Button>
+                                <form>
+                                    <label>
+                                        Quantity:
+                                        <input
+                                            type="number"
+                                            ref={buyQuantity}
+                                            step="0.01"
+                                            min="0"
+                                            required
+                                        />
+                                    </label>
+                                </form>
+                            </div>
 
-                    <div className="flex space-x-4 mb-4">
-                        <Button colorScheme="red" onClick={handleSell}>
-                            Sell
-                        </Button>
-                        <form>
-                            <label>
-                                Quantity:
-                                <input
-                                    type="number"
-                                    ref={sellQuantity}
-                                    step="0.01"
-                                    min="0"
-                                    required
-                                />
-                            </label>
-                        </form>
+                            <div className="flex space-x-4 mb-4">
+                                <Button colorScheme="red" onClick={handleSell}>
+                                    Sell
+                                </Button>
+                                <form>
+                                    <label>
+                                        Quantity:
+                                        <input
+                                            type="number"
+                                            ref={sellQuantity}
+                                            step="0.01"
+                                            min="0"
+                                            required
+                                        />
+                                    </label>
+                                </form>
+                            </div>
+                            <Button colorScheme="gray" onClick={handleWait}>
+                                Wait
+                            </Button>
+                        </div>
+                        <div className="flex-1 ml-4">
+                            {multiDetails && (
+                                <Box>
+                                    <Text>Money available: {multiDetails[0].wallet}</Text>
+                                    <Text>Asset quantity: {parseFloat(multiDetails[0].assetQuantity)}</Text>
+                                    <Text>Crypto price: {multiQuotes[multiQuotes.length - 1].close}</Text>
+                                    <Text>
+                                        Total Value: {multiDetails[0].wallet + parseFloat(multiDetails[0].assetQuantity) * multiQuotes[multiQuotes.length - 1].close}
+                                    </Text>
+                                </Box>
+                            )}
+                        </div>
+                        <div className="flex-1 ml-4">
+                            {multiDetails && multiQuotes && <Leaderboard marketPrice={multiQuotes[multiQuotes.length - 1].close} users={multiDetails} />}
+                        </div>
                     </div>
-                    <Button colorScheme="gray" onClick={handleWait}>
-                        Wait
-                    </Button>
-                </div>
-                <div className="flex-1 ml-4">
-                    {multiDetails && (
-                        <Box>
-                            <Text>Money available: {multiDetails[0].wallet}</Text>
-                            <Text>Asset quantity: {parseFloat(multiDetails[0].assetQuantity)}</Text>
-                            <Text>Crypto price: {multiQuotes[multiQuotes.length - 1].close}</Text>
-                            <Text>
-                                Total Value: {multiDetails[0].wallet + parseFloat(multiDetails[0].assetQuantity) * multiQuotes[multiQuotes.length - 1].close}
-                            </Text>
-                        </Box>
-                    )}
-                </div>
-                <div className="flex-1 ml-4">
-                    {multiDetails && multiQuotes && <Leaderboard marketPrice={multiQuotes[multiQuotes.length - 1].close} users={multiDetails} />}
                 </div>
             </div>
         </div>
