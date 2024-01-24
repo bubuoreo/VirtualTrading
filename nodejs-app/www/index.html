@@ -15,14 +15,18 @@
       return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
-    function messageAlert(msg) {
-      alert(msg);
-    }
-
     function load() {
 
       var randomNumber = getRandomInt(1, 1000);  
       const socket = io({ query: { id: randomNumber } });
+
+      var userParagraph = document.getElementById('idUser');
+      userParagraph.innerHTML = `User : ${randomNumber}`;
+
+      var form = document.getElementById('form');
+      var input = document.getElementById('input');
+      var dest = document.getElementById('destinataire');
+
       var btcButton = document.getElementById('btc');
       var ethButton = document.getElementById('eth');
       var multiButton = document.getElementById('multi');
@@ -37,6 +41,21 @@
       buyButton.addEventListener('click', () => { socket.emit('multi_action', {"type":"BUY", "price": 32.987, "quantity": 5.98}); });
       sellButton.addEventListener('click', () => { socket.emit('multi_action', {"type":"SELL", "price": 34.421, "quantity": 2.87}); });
       stayButton.addEventListener('click', () => { socket.emit('multi_action', {"type":"STAY", "price": null, "quantity": null}); });
+
+      form.addEventListener('submit', function (e) {
+        console.log("envoie message");
+          e.preventDefault();
+
+          if (input.value) {
+              const body = { "msg": input.value };
+              if (dest.value) {
+                  body["dest"] = dest.value;
+              }
+              socket.emit('chat message', JSON.stringify(body));
+              input.value = '';
+
+          }
+      });
 
       socket.on('/finance', (data) => {
         var item = document.createElement('p');
@@ -104,13 +123,30 @@
         dataDiv.appendChild(item);
         window.scrollTo(0, document.body.scrollHeight);
       });
+
+      socket.on('chat message', function (msg) {
+        console.log("reception message");
+        var item = document.createElement('li');
+        item.textContent = msg;
+        messages.appendChild(item);
+        window.scrollTo(0, document.body.scrollHeight);
+      });
     }
   </script>
 </head>
 
 <body onload="load()">
   <h1>Crypto Chart</h1>
-
+  <div>
+    <p id="idUser"></p>
+  </div>
+  <ul id="messages"></ul>
+  <form id="form" action="">
+    <p>Destinataire : </p>
+    <input id="destinataire" autocomplete="off" />
+    <p>Message : </p>
+    <input id="input" autocomplete="off" /><button>Envoyer</button>
+  </form>
   <button id="btc">BTC</button>
   <button id="eth">ETH</button>
   <button id="multi">Multiplayer</button>

@@ -3,7 +3,7 @@ import { Header } from '../components/Header/Header.jsx';
 import { Footer } from '../components/Footer/Footer.jsx';
 import CryptoScenario from '../components/Crypto/CryptoScenario.jsx';
 import { Link, useNavigate } from 'react-router-dom'; // Utilisez useNavigate
-
+import { Button } from '@chakra-ui/react';
 const GamePage = ({ socket, result }) => {
   const [selectedScenario, setSelectedScenario] = useState(null);
   const navigate = useNavigate(); // Utilisez useNavigate au lieu de useHistory
@@ -13,6 +13,10 @@ const GamePage = ({ socket, result }) => {
       socket.emit('update_page', 'GAME');
     }
   }, [socket]);
+
+  const navigateTomulti = () => {
+    navigate('/crypto-chart-scenario/multi');
+  }
 
   return (
     <div>
@@ -29,6 +33,10 @@ const GamePage = ({ socket, result }) => {
         ) : (
           <p>Aucun résultat disponible</p>
         )}
+        
+        <Button colorScheme="gray" onClick={navigateTomulti}>
+                        Multijoueurs
+                    </Button>
       </div>
       <Footer />
     </div>

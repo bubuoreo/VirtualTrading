@@ -30,16 +30,38 @@ class MainController {
             if (code === "failure") {
                 socket.emit('multi_failure', result)
             } else if (code === "multi_end") {
-                // TODO: delete gameRoom
+                const roomId = result.pop()
                 result.forEach(info => {
                     io.to(info.socketId).emit(code, JSON.stringify(result));
                 });
-                // TODO: delete gameRoom
-                this.deleteGameRoom({roomId: result[-1]});
+                this.deleteGameRoom({roomId: roomId});
             } else {
                 result.forEach(info => {
                     io.to(info.socketId).emit(code, JSON.stringify(result));
                 });
+            }
+        });
+        socket.on('chat message', (msg) => {
+            console.log("reception message");
+            var parsedMsg = JSON.parse(msg);
+            console.log(parsedMsg);
+            if (parsedMsg.dest !== '-1' ) {
+                var idDestUser = parsedMsg.dest;
+                parsedMsg["emit"] = userId;
+                console.log(parsedMsg);
+                try {
+                    io.to(this.userService.getSocketId({ id: idDestUser })).emit('chat message', JSON.stringify(parsedMsg));
+                } catch (error) {
+                    console.log(error);
+                }
+                try {
+                    io.to(this.userService.getSocketId({ id: userId })).emit('chat message', JSON.stringify(parsedMsg));
+                } catch (error) {
+                    console.log(error);
+                }
+            } else {
+                parsedMsg["emit"] = userId;
+                io.emit('chat message', JSON.stringify(parsedMsg));
             }
         });
     }
@@ -51,16 +73,11 @@ class MainController {
 
     async apiRequestAllCodes({ io }) {
         const data = await this.mainService.apiRequestAllCodes();
-        // console.log("MainController: apiRequestAllCodes:");
-        // console.log(data);
         this.notifyUsers({ io, data });
     }
 
     async addUserToNotifPageQueues({ userId, io, socket, request }) {
         const data = await this.mainService.addUserToNotifPageQueues({ userId: userId, socketId: socket.id, request: request });
-        // console.log("MainController: addUserToNotifPageQueues:");
-        // console.log(data);
-        // const data = await this.mainService.apiRequestAllCodes();
         console.log(data);
         this.notifyUsers({ io, data });
     }
@@ -76,8 +93,6 @@ class MainController {
     }
 
     notifyUsers({ io, data }) {
-        console.log("MainController: notifyUsers:");
-        // console.log(data);
         data.forEach(item => {
             item.dest.forEach(dest => {
                 const socketCode = item.code.match(/^\/finance\w*/g)[0];
@@ -112,8 +127,8 @@ class MainController {
             });
         } else if (code == 'multi_start') {
             result.forEach(info => {
-                io.to(info.socketId).emit('multi_wait_update', result.length);
-                io.to(info.socketId).emit(code, result.map(info => info.nickname));
+                io.to(info.socketId).emit('multi_wait_update', null);
+                io.to(info.socketId).emit(code, JSON.stringify(result));
             });
         }
     }
