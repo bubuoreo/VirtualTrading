@@ -3,11 +3,16 @@ import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } f
 
 const CryptoCourbeMulti = ({ multiQuotes }) => {
     const [chartData, setChartData] = useState([]);
+    const [cumulativeData, setCumulativeData] = useState([]);
 
     useEffect(() => {
         if (multiQuotes) {
             console.log(multiQuotes);
-            setChartData([...chartData, ...multiQuotes.map(q => ({ date: q.date.substring(0, 10), close: q.close }))]);
+            const newChartData = multiQuotes.map(q => ({ date: q.date.substring(0, 10), close: q.close }));
+            setChartData(newChartData);
+
+            // Update cumulativeData by concatenating the new data to the existing data
+            setCumulativeData(prevData => [...prevData, ...newChartData]);
         }
     }, [multiQuotes]);
 
@@ -28,7 +33,7 @@ const CryptoCourbeMulti = ({ multiQuotes }) => {
             <h1>Crypto Chart</h1>
             <br />
             <ResponsiveContainer width="90%" height={400}>
-                <LineChart data={chartData}>
+                <LineChart data={cumulativeData}>
                     <XAxis dataKey="date" />
                     <YAxis />
                     <Tooltip />
