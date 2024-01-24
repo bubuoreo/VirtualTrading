@@ -1,7 +1,7 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 
-import { Button, Box, Text } from '@chakra-ui/react';
+import { Button, Box, Text, useStatStyles } from '@chakra-ui/react';
 import { Header } from '../components/Header/Header';
 import Leaderboard from '../components/Game/Leaderboard.jsx';
 import CryptoCourbeMulti from '../components/Crypto/CryptoCourbeMulti.jsx';
@@ -11,6 +11,14 @@ const CryptoMultiScenario = ({ socket, waitingListSize, multiDetails, multiQuote
     const user = useSelector((state) => state.userReducer.user);
     const buyQuantity = useRef();
     const sellQuantity = useRef();
+    const [me, setMe] = useState(null);
+    
+    useEffect(() => {
+        if (multiDetails) {
+            console.log(multiDetails);
+            setMe(multiDetails.find(element => element.id == user.id));
+        }
+    }, [multiDetails]);
 
     const handleBuy = () => {
         console.log(buyQuantity.current.value);
@@ -51,7 +59,7 @@ const CryptoMultiScenario = ({ socket, waitingListSize, multiDetails, multiQuote
                 <div className="container mx-auto">
                     {waitingListSize && <p>Users in the waiting list : {waitingListSize}</p>}
                     {roomNumber && <p>You are in game in the room : {roomNumber}</p>}
-                    {roomNumber && <ChatComponent socket={socket} users={multiDetails} nickname={multiDetails[0].nickname} messageArray={messageArray} />}
+                    {roomNumber && me && <ChatComponent socket={socket} users={multiDetails} nickname={me.nickname} messageArray={messageArray} />}
 
                     <div className="flex space-x-4 mb-4">
                         <div className="flex-1">
@@ -98,13 +106,13 @@ const CryptoMultiScenario = ({ socket, waitingListSize, multiDetails, multiQuote
                             </Button>
                         </div>
                         <div className="flex-1 ml-4">
-                            {multiDetails && (
+                            {multiDetails && me && (
                                 <Box>
-                                    <Text>Money available: {multiDetails[0].wallet}</Text>
-                                    <Text>Asset quantity: {parseFloat(multiDetails[0].assetQuantity)}</Text>
+                                    <Text>Money available: {me.wallet}</Text>
+                                    <Text>Asset quantity: {parseFloat(me.assetQuantity)}</Text>
                                     <Text>Crypto price: {multiQuotes[multiQuotes.length - 1].close}</Text>
                                     <Text>
-                                        Total Value: {multiDetails[0].wallet + parseFloat(multiDetails[0].assetQuantity) * multiQuotes[multiQuotes.length - 1].close}
+                                        Total Value: {me.wallet + parseFloat(me.assetQuantity) * multiQuotes[multiQuotes.length - 1].close}
                                     </Text>
                                 </Box>
                             )}
