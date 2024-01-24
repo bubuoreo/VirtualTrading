@@ -51,7 +51,7 @@ const CryptoMultiScenario = ({ socket, waitingListSize, multiDetails, multiQuote
                 <div className="container mx-auto">
                     {waitingListSize && <p>Users in the waiting list : {waitingListSize}</p>}
                     {roomNumber && <p>You are in game in the room : {roomNumber}</p>}
-                    {roomNumber && <ChatComponent socket={socket} users={multiDetails} />}
+                    {roomNumber && <ChatComponent socket={socket} users={multiDetails} nickname={multiDetails[0].nickname} messageArray={messageArray}/>}
 
                     <div className="flex space-x-4 mb-4">
                         <Button colorScheme="green" onClick={handleBuy}>
