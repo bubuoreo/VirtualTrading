@@ -43,8 +43,11 @@ export const App = () => {
     setResponseModalOpen(true);
   };
 
-  const socketConnect = () => {
-    socketRef.current = io('http://localhost:3000', { query: { id: user.id } });
+  const socketConnect = (userId) => {
+    console.log("coucou");
+    console.log(userId);
+    // socketRef.current = io('http://localhost:3000', { query: { id: user.id } });
+    socketRef.current = io( { query: { id: userId } });
     setSocketsListeners(socketRef.current);
   };
 
