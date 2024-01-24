@@ -50,12 +50,12 @@ class MainController {
                 parsedMsg["emit"] = userId;
                 console.log(parsedMsg);
                 try {
-                    this.userService.getSocketId({ id: idDestUser }).emit('chat message', JSON.stringify(parsedMsg));
+                    io.to(this.userService.getSocketId({ id: idDestUser })).emit('chat message', JSON.stringify(parsedMsg));
                 } catch (error) {
                     console.log(error);
                 }
                 try {
-                    this.userService.getSocketId({ id: userId }).emit('chat message', JSON.stringify(parsedMsg));
+                    io.to(this.userService.getSocketId({ id: userId })).emit('chat message', JSON.stringify(parsedMsg));
                 } catch (error) {
                     console.log(error);
                 }
