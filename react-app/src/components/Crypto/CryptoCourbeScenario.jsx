@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-
+import { Button } from '@chakra-ui/react';
 const CryptoCourbeScenario = ({ cryptoinfo }) => {
     const cryptoData = cryptoinfo;
     const [chartData, setChartData] = useState([]);
@@ -53,8 +53,13 @@ const CryptoCourbeScenario = ({ cryptoinfo }) => {
                 </LineChart>
             </ResponsiveContainer>
             <div>
-                <button onClick={handleInvestClick}>Investir</button>
-                <button onClick={handleWaitClick}>Attendre</button>
+            <Button colorScheme="green" onClick={handleInvestClick}>
+                            Buy
+                        </Button>
+            <Button colorScheme="red" onClick={handleWaitClick}>
+                            Wait
+                        </Button>
+
             </div>
             {decision && <p>Vous avez {decision}</p>}
         </div>
