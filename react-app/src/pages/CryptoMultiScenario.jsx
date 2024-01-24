@@ -7,7 +7,7 @@ import CryptoCourbeMulti from '../components/Crypto/CryptoCourbeMulti.jsx';
 import ChatComponent from '../components/Chat/Chat';
 
 
-const CryptoMultiScenario = ({ socket, waitingListSize, multiDetails, multiQuotes, roomNumber }) => {
+const CryptoMultiScenario = ({ socket, waitingListSize, multiDetails, multiQuotes, roomNumber, messageArray }) => {
     const user = useSelector((state) => state.userReducer.user);
     const buyQuantity = useRef();
     const sellQuantity = useRef();
@@ -48,7 +48,7 @@ const CryptoMultiScenario = ({ socket, waitingListSize, multiDetails, multiQuote
                 <div className="container mx-auto">
                     {waitingListSize && <p>Users in the waiting list : {waitingListSize}</p>}
                     {roomNumber && <p>You are in game in the room : {roomNumber}</p>}
-                    {roomNumber && <ChatComponent socket={socket} users={multiDetails}/>}
+                    {roomNumber && <ChatComponent socket={socket} users={multiDetails} nickname={multiDetails[0].nickname} messageArray={messageArray}/>}
 
                     <div className="flex space-x-4 mb-4">
                         <button onClick={handleBuy}>

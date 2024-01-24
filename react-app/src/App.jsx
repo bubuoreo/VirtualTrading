@@ -30,8 +30,10 @@ export const App = () => {
   const [waitingListSize, setWaitingListSize] = useState(0);
   const [multiDetails, setMultiDetails] = useState(null);
   const [multiQuotes, setMultiQuotes] = useState([]);
+  const [messageArray, setMessageArray] = useState([]);
   const [responseModalOpen, setResponseModalOpen] = useState(false);
   const [responseBody, setResponseBody] = useState('');
+
 
   const handleResponseModalClose = () => {
     setResponseModalOpen(false);
@@ -117,6 +119,10 @@ export const App = () => {
       console.log(result);
       setMultiDetails(result);
     });
+
+    socket.on('chat message', function (data) {
+      setMessageArray(oldArray => [...oldArray, JSON.parse(data)]);
+    });
   };
 
   return (
@@ -133,7 +139,7 @@ export const App = () => {
           <Route path="/game" element={<GamePage socket={socketRef.current} result={resultScenario} />} />
           <Route path="/news" element={<NewsPage />} />
           <Route path="/crypto-chart-scenario/:scenarioId" element={<CryptoChartScenario result={resultScenario} />} />
-          <Route path="/crypto-chart-scenario/multi" element={<CryptoMultiScenario socket={socketRef.current} waitingListSize={waitingListSize} multiDetails={multiDetails} multiQuotes={multiQuotes} roomNumber={roomNumber}/>} />
+          <Route path="/crypto-chart-scenario/multi" element={<CryptoMultiScenario socket={socketRef.current} waitingListSize={waitingListSize} multiDetails={multiDetails} multiQuotes={multiQuotes} roomNumber={roomNumber} messageArray={messageArray}/>} />
         </Routes>
       </Router>
       <Modal isOpen={responseModalOpen} onClose={handleResponseModalClose}>
